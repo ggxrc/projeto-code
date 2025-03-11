@@ -1,8 +1,20 @@
-[gd_scene format=3 uid="uid://5actqkqmokhy"]
+[gd_scene load_steps=2 format=3 uid="uid://5actqkqmokhy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v4wte"]
+bg_color = Color(0.111197, 0.111197, 0.111197, 0.384314)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
 
 [node name="iniciar_button" type="Button"]
 offset_left = 305.0
 offset_top = 190.0
 offset_right = 381.0
 offset_bottom = 228.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_v4wte")
 text = "botão"
