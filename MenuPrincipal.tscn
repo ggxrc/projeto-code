@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://iy7ihik2nwjv"]
+
+[ext_resource type="FontFile" uid="uid://ds7btw5dcvyac" path="res://Fontes/mayonice/Mayonice.otf" id="1_axqsu"]
+[ext_resource type="PackedScene" uid="uid://5actqkqmokhy" path="res://Botões/button01.tscn" id="2_3vkgr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_kjrao"]
+font = ExtResource("1_axqsu")
+font_size = 64
+shadow_size = 15
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -217.5
+offset_right = 217.5
+offset_bottom = 177.0
+grow_horizontal = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Projeto Code"
+label_settings = SubResource("LabelSettings_kjrao")
+
+[node name="iniciar_button" parent="VBoxContainer" instance=ExtResource("2_3vkgr")]
+layout_mode = 2
+text = "Iniciar"
+
+[node name="op_button" parent="VBoxContainer" instance=ExtResource("2_3vkgr")]
+layout_mode = 2
+text = "Opções"
+
+[node name="sair_button" parent="VBoxContainer" instance=ExtResource("2_3vkgr")]
+layout_mode = 2
+text = "Sair"
