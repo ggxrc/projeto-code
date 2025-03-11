@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://iy7ihik2nwjv"]
 
-[ext_resource type="FontFile" uid="uid://ds7btw5dcvyac" path="res://Fontes/mayonice/Mayonice.otf" id="1_axqsu"]
 [ext_resource type="Texture2D" uid="uid://br6siex53jgtr" path="res://Texturas/3129831.jpg" id="1_xpw8q"]
 [ext_resource type="PackedScene" uid="uid://5actqkqmokhy" path="res://Botões/button01.tscn" id="2_3vkgr"]
+[ext_resource type="FontFile" uid="uid://barl0ahx7fd07" path="res://Fontes/brewed_coffee/Brewed Coffee.otf" id="2_tyk15"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_kjrao"]
-font = ExtResource("1_axqsu")
+font = ExtResource("2_tyk15")
 font_size = 42
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://bmgjixmlblc51"
-path="res://.godot/imported/Mayonice.ttf-e72b77284096d29c44b63e10572e372f.fontdata"
+uid="uid://barl0ahx7fd07"
+path="res://.godot/imported/Brewed Coffee.otf-cf9c00e38e1194eb55f42266224ad865.fontdata"
 
 [deps]
 
-source_file="res://Fontes/mayonice/Mayonice.ttf"
-dest_files=["res://.godot/imported/Mayonice.ttf-e72b77284096d29c44b63e10572e372f.fontdata"]
+source_file="res://Fontes/brewed_coffee/Brewed Coffee.otf"
+dest_files=["res://.godot/imported/Brewed Coffee.otf-cf9c00e38e1194eb55f42266224ad865.fontdata"]
 
 [params]
 
