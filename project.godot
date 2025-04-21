@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Projeto Code"
-run/main_scene="res://MenuPrincipal.tscn"
+run/main_scene="res://cenas/MenuPrincipal.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -26,6 +26,12 @@ window/handheld/orientation=4
 [dotnet]
 
 project/assembly_name="Projeto Code"
+
+[file_customization]
+
+folder_colors={
+"res://cenas/": "green"
+}
 
 [rendering]
 

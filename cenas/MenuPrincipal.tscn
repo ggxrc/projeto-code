@@ -18,7 +18,7 @@ font_color = Color(1, 1, 1, 0.513726)
 outline_size = 1
 outline_color = Color(1, 1, 1, 0)
 
-[node name="TextureRect" type="TextureRect"]
+[node name="MenuPrincipal" type="TextureRect"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
