@@ -1,35 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://iy7ihik2nwjv"]
+[gd_scene load_steps=6 format=3 uid="uid://iy7ihik2nwjv"]
 
 [ext_resource type="Texture2D" uid="uid://br6siex53jgtr" path="res://Texturas/3129831.jpg" id="1_xpw8q"]
-[ext_resource type="PackedScene" uid="uid://5actqkqmokhy" path="res://Botões/button01.tscn" id="2_3vkgr"]
-[ext_resource type="FontFile" uid="uid://barl0ahx7fd07" path="res://Fontes/brewed_coffee/Brewed Coffee.otf" id="2_tyk15"]
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://Fontes/daydream_3/Daydream.ttf" id="2_5dpk2"]
+[ext_resource type="Script" uid="uid://d30oqqqw64ea0" path="res://button.gd" id="3_pi62y"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_kjrao"]
-font = ExtResource("2_tyk15")
-font_size = 42
+font = ExtResource("2_5dpk2")
+font_size = 80
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 15
 shadow_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_r4ny2"]
-font_size = 10
+font_size = 20
 font_color = Color(1, 1, 1, 0.513726)
 outline_size = 1
 outline_color = Color(1, 1, 1, 0)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0ubah"]
-bg_color = Color(0.842254, 0.79019, 0.950936, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-expand_margin_left = 10.0
-expand_margin_top = 10.0
-expand_margin_right = 10.0
-expand_margin_bottom = 10.0
-shadow_size = 1
-shadow_offset = Vector2(5, 0)
 
 [node name="TextureRect" type="TextureRect"]
 anchors_preset = 15
@@ -38,13 +25,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_xpw8q")
-expand_mode = 1
+expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 4.0
+offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -54,6 +45,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 text = "Projeto Code"
 label_settings = SubResource("LabelSettings_kjrao")
+horizontal_alignment = 1
 
 [node name="aviso" type="Label" parent="MarginContainer"]
 layout_mode = 2
@@ -63,26 +55,10 @@ label_settings = SubResource("LabelSettings_r4ny2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+[node name="Button" type="Button" parent="MarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_0ubah")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/separation = 15
-
-[node name="iniciar_button" parent="MarginContainer/PanelContainer/VBoxContainer" instance=ExtResource("2_3vkgr")]
-layout_mode = 2
-text = "Iniciar"
-
-[node name="op_button" parent="MarginContainer/PanelContainer/VBoxContainer" instance=ExtResource("2_3vkgr")]
-layout_mode = 2
-text = "Opções"
-
-[node name="sair_button" parent="MarginContainer/PanelContainer/VBoxContainer" instance=ExtResource("2_3vkgr")]
-layout_mode = 2
-text = "Sair"
+theme_override_fonts/font = ExtResource("2_5dpk2")
+theme_override_font_sizes/font_size = 25
+text = "Pressione em qualquer lugar para continuar"
+flat = true
+script = ExtResource("3_pi62y")
