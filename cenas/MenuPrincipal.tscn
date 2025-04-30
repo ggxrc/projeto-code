@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://iy7ihik2nwjv"]
 
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://Fontes/daydream_3/Daydream.ttf" id="2_5dpk2"]
-[ext_resource type="Script" uid="uid://d30oqqqw64ea0" path="res://button.gd" id="3_pi62y"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://Botões/BotãoMenu.tscn" id="2_r2p0k"]
 
 [sub_resource type="Gradient" id="Gradient_r2p0k"]
 colors = PackedColorArray(0, 0, 0, 1, 0.389219, 0.632897, 0.604017, 1)
@@ -37,10 +37,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = 9.0
-offset_right = -93.0
-offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -53,32 +49,34 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 656.0
-offset_top = 70.0
-offset_right = 985.0
-offset_bottom = 477.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 64.0
+offset_top = -240.0
+offset_right = 393.0
+offset_bottom = 38.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Titulo" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
+size_flags_vertical = 8
 text = "Projeto
  Code
 "
 label_settings = SubResource("LabelSettings_kjrao")
 horizontal_alignment = 1
 
-[node name="Iniciar" type="Button" parent="VBoxContainer"]
+[node name="Iniciar" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_5dpk2")
-theme_override_font_sizes/font_size = 25
-text = "iniciar"
-script = ExtResource("3_pi62y")
+size_flags_vertical = 6
+text = "Iniciar"
 
-[node name="config" type="Button" parent="VBoxContainer"]
+[node name="Config" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_5dpk2")
-theme_override_font_sizes/font_size = 25
-text = "Configurar"
-script = ExtResource("3_pi62y")
+text = "Configurações"
+icon_alignment = 1
