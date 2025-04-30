@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://iy7ihik2nwjv"]
+[gd_scene load_steps=9 format=3 uid="uid://iy7ihik2nwjv"]
 
+[ext_resource type="AudioStream" uid="uid://0to2fgqd3cgp" path="res://Sons/músicas/ADS.mp3" id="1_qerp7"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://Fontes/daydream_3/Daydream.ttf" id="2_5dpk2"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://Botões/BotãoMenu.tscn" id="2_r2p0k"]
+[ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://Cenas/audio_stream_player.gd" id="3_vju2w"]
 
 [sub_resource type="Gradient" id="Gradient_r2p0k"]
 colors = PackedColorArray(0, 0, 0, 1, 0.389219, 0.632897, 0.604017, 1)
@@ -31,6 +33,13 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_qerp7")
 expand_mode = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_qerp7")
+volume_db = -13.558
+autoplay = true
+parameters/looping = true
+script = ExtResource("3_vju2w")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -80,3 +89,5 @@ text = "Iniciar"
 layout_mode = 2
 text = "Configurações"
 icon_alignment = 1
+
+[connection signal="visibility_changed" from="." to="AudioStreamPlayer" method="_on_menu_principal_visibility_changed"]

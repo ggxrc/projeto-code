@@ -30,6 +30,7 @@ project/assembly_name="Projeto Code"
 [file_customization]
 
 folder_colors={
+"res://Cenas/": "green",
 "res://cenas/": "green"
 }
 
