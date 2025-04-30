@@ -1,7 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://5actqkqmokhy"]
+[gd_scene load_steps=3 format=3 uid="uid://blbkia8fnrlk7"]
+
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://Fontes/Pixellari.ttf" id="1_jkv5i"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v4wte"]
-bg_color = Color(0.111197, 0.111197, 0.111197, 0.384314)
+bg_color = Color(0.125911, 0.125911, 0.125911, 0.384314)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
@@ -16,5 +18,6 @@ offset_left = 305.0
 offset_top = 190.0
 offset_right = 381.0
 offset_bottom = 228.0
+theme_override_fonts/font = ExtResource("1_jkv5i")
 theme_override_styles/normal = SubResource("StyleBoxFlat_v4wte")
-text = "botão"
+text = "Botão"

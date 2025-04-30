@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://ds7btw5dcvyac"
-path="res://.godot/imported/Mayonice.otf-ab3ae00c733451498bbc16ee7f083335.fontdata"
+uid="uid://bx2l44oenhpw6"
+path="res://.godot/imported/Pixellari.ttf-69c08f4e4a8d022d8c4d10b9abe58d81.fontdata"
 
 [deps]
 
-source_file="res://Fontes/mayonice/Mayonice.otf"
-dest_files=["res://.godot/imported/Mayonice.otf-ab3ae00c733451498bbc16ee7f083335.fontdata"]
+source_file="res://Fontes/Pixellari.ttf"
+dest_files=["res://.godot/imported/Pixellari.ttf-69c08f4e4a8d022d8c4d10b9abe58d81.fontdata"]
 
 [params]
 
@@ -22,7 +22,8 @@ msdf_size=48
 allow_system_fallback=true
 force_autohinter=false
 hinting=1
-subpixel_positioning=1
+subpixel_positioning=4
+keep_rounding_remainders=true
 oversampling=0.0
 Fallbacks=null
 fallbacks=[]

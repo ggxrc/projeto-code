@@ -1,0 +1,84 @@
+[gd_scene load_steps=7 format=3 uid="uid://iy7ihik2nwjv"]
+
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://Fontes/daydream_3/Daydream.ttf" id="2_5dpk2"]
+[ext_resource type="Script" uid="uid://d30oqqqw64ea0" path="res://button.gd" id="3_pi62y"]
+
+[sub_resource type="Gradient" id="Gradient_r2p0k"]
+colors = PackedColorArray(0, 0, 0, 1, 0.389219, 0.632897, 0.604017, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qerp7"]
+gradient = SubResource("Gradient_r2p0k")
+
+[sub_resource type="LabelSettings" id="LabelSettings_r4ny2"]
+font_size = 20
+font_color = Color(1, 1, 1, 0.513726)
+outline_size = 1
+outline_color = Color(1, 1, 1, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kjrao"]
+font = ExtResource("2_5dpk2")
+font_size = 45
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 15
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="MenuPrincipal" type="TextureRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_qerp7")
+expand_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = 9.0
+offset_right = -93.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="aviso" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "em fase de testes, esta versão não representa o produto final"
+label_settings = SubResource("LabelSettings_r4ny2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 656.0
+offset_top = 70.0
+offset_right = 985.0
+offset_bottom = 477.0
+
+[node name="Titulo" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Projeto
+ Code
+"
+label_settings = SubResource("LabelSettings_kjrao")
+horizontal_alignment = 1
+
+[node name="Iniciar" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5dpk2")
+theme_override_font_sizes/font_size = 25
+text = "iniciar"
+script = ExtResource("3_pi62y")
+
+[node name="config" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5dpk2")
+theme_override_font_sizes/font_size = 25
+text = "Configurar"
+script = ExtResource("3_pi62y")
