@@ -1,0 +1,88 @@
+[gd_scene load_steps=8 format=3 uid="uid://iy7ihik2nwjv"]
+
+[ext_resource type="Texture2D" uid="uid://bso2xkhqrxvt3" path="res://scenes/main menu/Background/Tela inicial fundo.png" id="1_4d5ee"]
+[ext_resource type="AudioStream" uid="uid://0to2fgqd3cgp" path="res://scenes/main menu/sfx/songs/ADS.mp3" id="1_qerp7"]
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_5dpk2"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="2_r2p0k"]
+[ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://scenes/main menu/code/audio_stream_player.gd" id="3_vju2w"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_r4ny2"]
+font_size = 20
+font_color = Color(1, 1, 1, 0.513726)
+outline_size = 1
+outline_color = Color(1, 1, 1, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kjrao"]
+font = ExtResource("2_5dpk2")
+font_size = 45
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 15
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="MenuPrincipal" type="TextureRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_4d5ee")
+expand_mode = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_qerp7")
+volume_db = -13.558
+autoplay = true
+parameters/looping = true
+script = ExtResource("3_vju2w")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="aviso" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "em fase de testes, esta versão não representa o produto final"
+label_settings = SubResource("LabelSettings_r4ny2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 64.0
+offset_top = -240.0
+offset_right = 393.0
+offset_bottom = 38.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Titulo" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Projeto
+ Code
+"
+label_settings = SubResource("LabelSettings_kjrao")
+horizontal_alignment = 1
+
+[node name="Iniciar" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Iniciar"
+
+[node name="Config" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
+layout_mode = 2
+text = "Configurações"
+icon_alignment = 1
+
+[connection signal="visibility_changed" from="." to="AudioStreamPlayer" method="_on_menu_principal_visibility_changed"]
