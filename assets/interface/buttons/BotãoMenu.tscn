@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://blbkia8fnrlk7"]
 
-[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://Fontes/Pixellari.ttf" id="1_17sfv"]
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="1_17sfv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17sfv"]
 bg_color = Color(0.497057, 0.216426, 0.920404, 1)
@@ -25,13 +25,13 @@ expand_margin_bottom = 5.0
 
 [node name="iniciar_button" type="Button"]
 offset_left = 305.0
-offset_top = 190.0
-offset_right = 381.0
-offset_bottom = 228.0
+offset_top = 153.0
+offset_right = 440.0
+offset_bottom = 227.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_fonts/font = ExtResource("1_17sfv")
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 40
 theme_override_styles/hover = SubResource("StyleBoxFlat_17sfv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_v4wte")
 text = "Botão"
