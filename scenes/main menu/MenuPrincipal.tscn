@@ -83,6 +83,7 @@ text = "Iniciar"
 [node name="Config" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
 layout_mode = 2
 size_flags_vertical = 6
+disabled = true
 text = "Configurações"
 icon_alignment = 1
 
