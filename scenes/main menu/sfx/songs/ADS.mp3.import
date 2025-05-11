@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://0to2fgqd3cgp"
-path="res://.godot/imported/ADS.mp3-4436ae20c00cc9ef4c36e7d68133b3bd.mp3str"
+path="res://.godot/imported/ADS.mp3-cff87fb761a067f990d307dcfc16b61f.mp3str"
 
 [deps]
 
-source_file="res://Sons/músicas/ADS.mp3"
-dest_files=["res://.godot/imported/ADS.mp3-4436ae20c00cc9ef4c36e7d68133b3bd.mp3str"]
+source_file="res://scenes/main menu/sfx/songs/ADS.mp3"
+dest_files=["res://.godot/imported/ADS.mp3-cff87fb761a067f990d307dcfc16b61f.mp3str"]
 
 [params]
 
