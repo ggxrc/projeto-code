@@ -9,15 +9,8 @@ script = ExtResource("1_vg7lu")
 
 [node name="LevelSelection" parent="." instance=ExtResource("2_ddja5")]
 
-[node name="voltar_menu" parent="LevelSelection" index="0"]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 924.0
-offset_bottom = 124.0
-
 [node name="MenuPrincipal" parent="." instance=ExtResource("3_n5i1m")]
 
-[connection signal="pressed" from="LevelSelection/voltar_menu" to="." method="_on_voltar_menu_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
 
 [editable path="LevelSelection"]

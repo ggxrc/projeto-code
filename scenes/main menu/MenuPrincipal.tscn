@@ -1,15 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://iy7ihik2nwjv"]
+[gd_scene load_steps=8 format=3 uid="uid://iy7ihik2nwjv"]
 
+[ext_resource type="Texture2D" uid="uid://bso2xkhqrxvt3" path="res://scenes/main menu/Background/Tela inicial fundo.png" id="1_4d5ee"]
 [ext_resource type="AudioStream" uid="uid://0to2fgqd3cgp" path="res://scenes/main menu/sfx/songs/ADS.mp3" id="1_qerp7"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_5dpk2"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="2_r2p0k"]
 [ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://scenes/main menu/code/audio_stream_player.gd" id="3_vju2w"]
-
-[sub_resource type="Gradient" id="Gradient_r2p0k"]
-colors = PackedColorArray(0, 0, 0, 1, 0.389219, 0.632897, 0.604017, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_qerp7"]
-gradient = SubResource("Gradient_r2p0k")
 
 [sub_resource type="LabelSettings" id="LabelSettings_r4ny2"]
 font_size = 20
@@ -31,7 +26,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture2D_qerp7")
+texture = ExtResource("1_4d5ee")
 expand_mode = 2
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
