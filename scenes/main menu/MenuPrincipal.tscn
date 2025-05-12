@@ -17,7 +17,7 @@ font = ExtResource("2_5dpk2")
 font_size = 65
 outline_size = 1
 outline_color = Color(0, 0, 0, 1)
-shadow_size = 10
+shadow_size = 20
 shadow_color = Color(0, 0, 0, 1)
 
 [node name="MenuPrincipal" type="TextureRect"]
