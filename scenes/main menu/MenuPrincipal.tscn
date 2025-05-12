@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://0to2fgqd3cgp" path="res://scenes/main menu/sfx/songs/ADS.mp3" id="1_qerp7"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_5dpk2"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="2_r2p0k"]
-[ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://scenes/main menu/code/audio_stream_player.gd" id="3_vju2w"]
+[ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://scenes/main menu/script/audio_stream_player.gd" id="3_vju2w"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_r4ny2"]
 font_size = 20

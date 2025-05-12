@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://btos0oij5qmbx"]
+[gd_scene load_steps=6 format=3 uid="uid://btos0oij5qmbx"]
 
 [ext_resource type="Script" uid="uid://cnp0oes3tqdgi" path="res://scenes/orquestrator/Orquestrador.gd" id="1_vg7lu"]
 [ext_resource type="PackedScene" uid="uid://spucj3xk1p7h" path="res://scenes/level selection/LevelSelection.tscn" id="2_ddja5"]
 [ext_resource type="PackedScene" uid="uid://iy7ihik2nwjv" path="res://scenes/main menu/MenuPrincipal.tscn" id="3_n5i1m"]
 [ext_resource type="PackedScene" uid="uid://b56m6q8lb21x4" path="res://scenes/prologue/prologue.tscn" id="4_i3woc"]
+[ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="5_l1is8"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_vg7lu")
@@ -13,6 +14,8 @@ script = ExtResource("1_vg7lu")
 [node name="Prologue" parent="." instance=ExtResource("4_i3woc")]
 
 [node name="MenuPrincipal" parent="." instance=ExtResource("3_n5i1m")]
+
+[node name="TransitionScreen" parent="." instance=ExtResource("5_l1is8")]
 
 [connection signal="pressed" from="LevelSelection/ScrollContainer/HFlowContainer/voltar_menu" to="." method="_on_voltar_menu_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
