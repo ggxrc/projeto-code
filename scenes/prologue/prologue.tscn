@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=16 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
@@ -997,12 +997,40 @@ texture = ExtResource("4_gfsru")
 16:9/0 = 0
 17:9/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_m1l5v"]
+texture = ExtResource("2_loiah")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_e24q1"]
 sources/0 = SubResource("TileSetAtlasSource_k4kb1")
 sources/1 = SubResource("TileSetAtlasSource_0d6ok")
 sources/2 = SubResource("TileSetAtlasSource_bxlvl")
 sources/3 = SubResource("TileSetAtlasSource_loiah")
 sources/4 = SubResource("TileSetAtlasSource_e24q1")
+sources/5 = SubResource("TileSetAtlasSource_m1l5v")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8twsp"]
 texture = ExtResource("1_3cuhw")
@@ -1205,19 +1233,40 @@ position = Vector2(727, 329)
 metadata/_edit_horizontal_guides_ = [-22.0]
 
 [node name="Banheiro" type="Node2D" parent="."]
-position = Vector2(3, -3)
-
-[node name="Base" type="TileMapLayer" parent="Banheiro"]
-position = Vector2(-3, -2)
-tile_set = SubResource("TileSet_e24q1")
+position = Vector2(-219, -115)
 
 [node name="Floor" type="TileMapLayer" parent="Banheiro"]
 position = Vector2(-3, -2)
-tile_map_data = PackedByteArray("AAD///7/AwAPAAUAAAAAAP7/AwAOAAUAAAD//wAAAwAOAAMAAAAAAAAAAwAPAAMAAAD//wEAAwAPAAcAAAAAAAEAAwAOAAcAAAABAAEAAwAPAAcAAAACAAEAAwAQAAcAAAABAP//AwAOAAMAAAACAP//AwAQAAYAAAABAP7/AwAPAAUAAAACAP7/AwAQAAUAAAD9//7/AwANAAUAAAD+//7/AwAOAAUAAAD9/wAAAwANAAYAAAD+/wAAAwAPAAMAAAD9/wEAAwANAAcAAAD+/wEAAwAOAAcAAAD9////AwANAAYAAAD+////AwAPAAMAAAD/////AwAOAAYAAAAAAP//AwAPAAYAAAABAAAAAwAOAAMAAAACAAAAAwAQAAYAAAA=")
+tile_map_data = PackedByteArray("AAD///7/AwAPAAUAAAAAAP7/AwAOAAUAAAD//wAAAwAOAAMAAAAAAAAAAwAPAAMAAAD//wEAAwAPAAcAAAAAAAEAAwAOAAcAAAABAAEAAwAQAAcAAAABAP//AwAQAAYAAAABAP7/AwAQAAUAAAD9//7/AwANAAUAAAD+//7/AwAOAAUAAAD9/wAAAwANAAYAAAD+/wAAAwAPAAMAAAD9/wEAAwANAAcAAAD+/wEAAwAOAAcAAAD9////AwANAAYAAAD+////AwAPAAMAAAD/////AwAOAAYAAAAAAP//AwAPAAYAAAABAAAAAwAQAAYAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+
+[node name="Wall" type="TileMapLayer" parent="Banheiro"]
+position = Vector2(-3, -2)
+tile_map_data = PackedByteArray("AAD9/wEABQAEAAIAAAD9/wAABQAEAAEAAAD9////BQAEAAEAAAD9//7/BQAEAAAAAAABAP7/BQAFAAAAAAD+//7/BQAEAAEAAFAAAP7/BQAEAAEAAFD///7/BQAEAAEAAFABAP//BQAFAAEAAAABAAAABQAFAAEAAAABAAEABQAFAAIAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+
+[node name="Base" type="TileMapLayer" parent="Banheiro"]
+position = Vector2(10, -2)
+tile_map_data = PackedByteArray("AAD/////BAAMAAUAAAD//wAABAAMAAYAAAD//wEABAAMAAcAAAAAAP//BAANAAUAAAAAAAAABAANAAYAAAAAAAEABAANAAcAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+
+[node name="Banheira" type="TileMapLayer" parent="Banheiro"]
+position = Vector2(-19, 13)
+tile_map_data = PackedByteArray("AAD+////AAAFABAAAAD+/wAAAAAFABEAAAD/////AAAGABAAAAD//wAAAAAGABEAAAAAAP//AAAHABAAAAAAAAAAAAAHABEAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+
+[node name="Pia" type="TileMapLayer" parent="Banheiro"]
+position = Vector2(-18, -27)
+tile_map_data = PackedByteArray("AAD/////AAABABAAAAD//wAAAAABABEAAAAAAP//AAACABAAAAAAAAAAAAACABEAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+
+[node name="Privada" type="TileMapLayer" parent="Banheiro"]
+position = Vector2(-32, -26)
+tile_map_data = PackedByteArray("AAD/////AAAIABAAAAD//wAAAAAIABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Quarto_Casa" type="Node2D" parent="."]
-position = Vector2(-332, 3)
+position = Vector2(-456, -107)
 
 [node name="Floor" type="TileMapLayer" parent="Quarto_Casa"]
 tile_map_data = PackedByteArray("AAAAAP3/AAACAAYAAAAAAP7/AAACAAYAAAAAAP//AAACAAYAAAABAP3/AAADAAYAAAABAP7/AAADAAYAAAABAP//AAADAAYAAAACAP3/AAACAAYAAAACAP7/AAACAAYAAAACAP//AAACAAYAAAADAP3/AAAEAAYAAAADAP7/AAAEAAYAAAADAP//AAAEAAYAAAD8//3/AAADAAYAAAD8//7/AAADAAYAAAD8////AAADAAYAAAD9//3/AAADAAYAAAD9//7/AAADAAYAAAD9////AAADAAYAAAD+//3/AAACAAYAAAD+//7/AAACAAYAAAD+////AAACAAYAAAD///3/AAADAAYAAAD///7/AAADAAYAAAD/////AAADAAYAAAD8/wAAAAADAAYAAAD8/wEAAAADAAYAAAD8/wIAAAACAAcAAAD9/wAAAAADAAYAAAD9/wEAAAADAAYAAAD9/wIAAAADAAcAAAD+/wAAAAACAAYAAAD+/wEAAAACAAYAAAD+/wIAAAACAAcAAAD//wAAAAADAAYAAAD//wEAAAADAAYAAAD//wIAAAADAAcAAAAAAAAAAAACAAYAAAAAAAEAAAACAAYAAAAAAAIAAAADAAcAAAABAAAAAAADAAYAAAABAAEAAAADAAYAAAABAAIAAAACAAcAAAACAAAAAAACAAYAAAACAAEAAAACAAYAAAACAAIAAAADAAcAAAADAAAAAAAEAAYAAAADAAEAAAAEAAYAAAADAAIAAAAEAAcAAAD8//z/AAADAAUAAAD9//z/AAACAAUAAAD+//z/AAADAAUAAAD///z/AAACAAUAAAAAAPz/AAADAAUAAAABAPz/AAACAAUAAAACAPz/AAADAAUAAAADAPz/AAAEAAUAAAD4//z/AAABAAUAAAD5//z/AAACAAUAAAD6//z/AAADAAUAAAD7//z/AAACAAUAAAD4//3/AAABAAYAAAD5//3/AAACAAYAAAD6//3/AAADAAYAAAD7//3/AAACAAYAAAD4//7/AAABAAYAAAD5//7/AAACAAYAAAD6//7/AAADAAYAAAD7//7/AAACAAYAAAD4////AAABAAYAAAD5////AAACAAYAAAD6////AAADAAYAAAD7////AAACAAYAAAD4/wAAAAABAAYAAAD5/wAAAAACAAYAAAD6/wAAAAADAAYAAAD7/wAAAAACAAYAAAD4/wEAAAABAAYAAAD5/wEAAAACAAYAAAD6/wEAAAACAAYAAAD7/wEAAAACAAYAAAD4/wIAAAABAAcAAAD5/wIAAAACAAcAAAD6/wIAAAACAAcAAAD7/wIAAAADAAcAAAA=")
