@@ -1233,7 +1233,7 @@ position = Vector2(727, 329)
 metadata/_edit_horizontal_guides_ = [-22.0]
 
 [node name="Banheiro" type="Node2D" parent="."]
-position = Vector2(-219, -115)
+position = Vector2(-222, -97)
 
 [node name="Floor" type="TileMapLayer" parent="Banheiro"]
 position = Vector2(-3, -2)
