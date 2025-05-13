@@ -28,7 +28,7 @@ func _on_voltar_menu_pressed() -> void:
 	scene_transition(menu_principal)
 
 func _on_iniciar_pressed() -> void:
-	scene_transition(level_selection)
+	scene_transition(prologue)
 	
 
 func _on_sair_pressed() -> void:
