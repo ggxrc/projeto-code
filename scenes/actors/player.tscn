@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3 uid="uid://cbdw2mmnv7a53"]
+
+[ext_resource type="Texture2D" uid="uid://ii3dqeb588sd" path="res://assets/character sprites/top-down characters 16x16/Blank Top Down 16x16 Character Template.png" id="1_15tap"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ru62r"]
+atlas = ExtResource("1_15tap")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktjr4"]
+atlas = ExtResource("1_15tap")
+region = Rect2(0, 112, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_ru62r")
+}, {
+"duration": 0.3,
+"texture": SubResource("AtlasTexture_ktjr4")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_15tap"]
+size = Vector2(12, 14)
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_7wueq")
+animation = &"idle"
+frame_progress = 0.896582
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_15tap")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
+zoom = Vector2(2, 2)

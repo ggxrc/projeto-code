@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2c8xm1sspjni"
-path="res://.godot/imported/Sprite prota.png-d64b4057a638f1c8f4454c9dbf707242.ctex"
+uid="uid://d3qmbbhrf04gi"
+path="res://.godot/imported/Sprits mario.png-5fa8f8c7d1e24818720c2d02cabc2b26.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sprits_personagens/Sprite prota.png"
-dest_files=["res://.godot/imported/Sprite prota.png-d64b4057a638f1c8f4454c9dbf707242.ctex"]
+source_file="res://assets/character sprites/Sprits mario.png"
+dest_files=["res://.godot/imported/Sprits mario.png-5fa8f8c7d1e24818720c2d02cabc2b26.ctex"]
 
 [params]
 

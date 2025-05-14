@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/mode=3
+window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
 
@@ -33,6 +34,13 @@ folder_colors={
 "res://Cenas/": "green",
 "res://cenas/": "green"
 }
+
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="npc"
+2d_physics/layer_3="world"
+2d_physics/layer_4="furniture"
 
 [rendering]
 

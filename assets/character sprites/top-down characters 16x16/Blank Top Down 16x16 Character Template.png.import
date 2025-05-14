@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3qmbbhrf04gi"
-path="res://.godot/imported/Sprits mario.png-6f7ffc534d635e393dd6cc66e3181249.ctex"
+uid="uid://ii3dqeb588sd"
+path="res://.godot/imported/Blank Top Down 16x16 Character Template.png-c519b04f1ccf49f7ac98f994a3805beb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sprits_personagens/Sprits mario.png"
-dest_files=["res://.godot/imported/Sprits mario.png-6f7ffc534d635e393dd6cc66e3181249.ctex"]
+source_file="res://assets/character sprites/top-down characters 16x16/Blank Top Down 16x16 Character Template.png"
+dest_files=["res://.godot/imported/Blank Top Down 16x16 Character Template.png-c519b04f1ccf49f7ac98f994a3805beb.ctex"]
 
 [params]
 
