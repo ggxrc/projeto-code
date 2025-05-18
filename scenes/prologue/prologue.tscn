@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=18 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dioe7o4s5oekm" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState2.png" id="3_loiah"]
 [ext_resource type="Texture2D" uid="uid://bbj5wlforamuk" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_DoorsAndWindows.png" id="4_gfsru"]
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/player.tscn" id="6_gfsru"]
+[ext_resource type="Script" uid="uid://w03mjmbigcsv" path="res://scenes/prologue/camera_2d.gd" id="7_k4kb1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k4kb1"]
 texture = ExtResource("2_50cnf")
@@ -1348,3 +1349,4 @@ visible = false
 position = Vector2(-358, -94)
 enabled = false
 zoom = Vector2(2, 2)
+script = ExtResource("7_k4kb1")
