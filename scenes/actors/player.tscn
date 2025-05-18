@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cbdw2mmnv7a53"]
+[gd_scene load_steps=7 format=3 uid="uid://cbdw2mmnv7a53"]
 
 [ext_resource type="Texture2D" uid="uid://ii3dqeb588sd" path="res://assets/character sprites/top-down characters 16x16/Blank Top Down 16x16 Character Template.png" id="1_15tap"]
+[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ru62r"]
 atlas = ExtResource("1_15tap")
@@ -33,6 +34,7 @@ animations = [{
 size = Vector2(12, 14)
 
 [node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_ru62r")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_7wueq")
@@ -41,7 +43,3 @@ frame_progress = 0.896582
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_15tap")
-
-[node name="Camera2D" type="Camera2D" parent="."]
-enabled = false
-zoom = Vector2(2, 2)

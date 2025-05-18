@@ -1342,3 +1342,9 @@ tile_set = SubResource("TileSet_e24q1")
 [node name="Player" parent="." instance=ExtResource("6_gfsru")]
 position = Vector2(-472.066, -138.961)
 collision_mask = 14
+
+[node name="Camera2D" type="Camera2D" parent="."]
+visible = false
+position = Vector2(-358, -94)
+enabled = false
+zoom = Vector2(2, 2)

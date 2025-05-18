@@ -7,6 +7,7 @@ extends Node
 
 var scenes: Array
 var next_scene: Node
+var current_scene: Node
 
 func _ready() -> void:
 	scenes = [
@@ -17,11 +18,13 @@ func _ready() -> void:
 
 func _hide_all_scenes() -> void:
 	for scene in scenes:
-		scene.visible = false
+		next_scene = scene
+		next_scene.queue_free()
+		next_scene = null
 	
 func scene_transition(next_scene: Node) -> void:
 	_hide_all_scenes()
-	next_scene.visible = true
+	add_child(next_scene)
 	self.next_scene = next_scene 
 
 func _on_voltar_menu_pressed() -> void:
