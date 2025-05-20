@@ -93,4 +93,7 @@ size_flags_vertical = 6
 text = "Sair"
 icon_alignment = 1
 
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
 [connection signal="visibility_changed" from="." to="AudioStreamPlayer" method="_on_menu_principal_visibility_changed"]

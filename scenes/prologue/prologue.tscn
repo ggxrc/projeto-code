@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 [gd_scene load_steps=18 format=4 uid="uid://b56m6q8lb21x4"]
 =======
 [gd_scene load_steps=30 format=4 uid="uid://b56m6q8lb21x4"]
 >>>>>>> f7e7f3c587e732b75899b06de1669d4a75cd7d4c
+=======
+[gd_scene load_steps=17 format=4 uid="uid://b56m6q8lb21x4"]
+>>>>>>> parent of 38ce580 (algumas mudanças)
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
@@ -12,10 +16,13 @@
 [ext_resource type="Texture2D" uid="uid://r2w2323wfabm" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_SmallItems.png" id="6_0d6ok"]
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/player.tscn" id="6_gfsru"]
 <<<<<<< HEAD
+<<<<<<< HEAD
 [ext_resource type="Script" uid="uid://w03mjmbigcsv" path="res://scenes/prologue/camera_2d.gd" id="7_k4kb1"]
 =======
 [ext_resource type="Texture2D" uid="uid://br6siex53jgtr" path="res://assets/textures/3129831.jpg" id="7_bxlvl"]
 >>>>>>> f7e7f3c587e732b75899b06de1669d4a75cd7d4c
+=======
+>>>>>>> parent of 38ce580 (algumas mudanças)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k4kb1"]
 texture = ExtResource("2_50cnf")
@@ -2367,4 +2374,3 @@ visible = false
 position = Vector2(-358, -94)
 enabled = false
 zoom = Vector2(2, 2)
-script = ExtResource("7_k4kb1")

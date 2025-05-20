@@ -15,11 +15,9 @@ script = ExtResource("1_vg7lu")
 
 [node name="MenuPrincipal" parent="." instance=ExtResource("3_n5i1m")]
 
-[node name="Camera2D" parent="MenuPrincipal" index="3"]
-script = null
-
 [node name="TransitionScreen" parent="." instance=ExtResource("5_l1is8")]
 
+[connection signal="pressed" from="LevelSelection/ScrollContainer/HFlowContainer/voltar_menu" to="." method="_on_voltar_menu_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Sair" to="." method="_on_sair_pressed"]
 
