@@ -14,6 +14,8 @@ func _ready() -> void:
 		level_selection,
 		prologue
 	]
+	_hide_all_scenes()
+	menu_principal.visible = true
 
 func _hide_all_scenes() -> void:
 	for scene in scenes:

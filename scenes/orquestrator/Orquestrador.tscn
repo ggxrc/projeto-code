@@ -10,6 +10,7 @@
 script = ExtResource("1_vg7lu")
 
 [node name="LevelSelection" parent="." instance=ExtResource("2_ddja5")]
+visible = false
 
 [node name="Prologue" parent="." instance=ExtResource("4_i3woc")]
 
@@ -17,9 +18,10 @@ script = ExtResource("1_vg7lu")
 
 [node name="TransitionScreen" parent="." instance=ExtResource("5_l1is8")]
 
-[connection signal="pressed" from="LevelSelection/ScrollContainer/HFlowContainer/voltar_menu" to="." method="_on_voltar_menu_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Sair" to="." method="_on_sair_pressed"]
 
 [editable path="LevelSelection"]
+[editable path="Prologue"]
+[editable path="Prologue/Player"]
 [editable path="MenuPrincipal"]

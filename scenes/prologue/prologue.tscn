@@ -2225,6 +2225,7 @@ texture = ExtResource("6_0d6ok")
 sources/0 = SubResource("TileSetAtlasSource_asecn")
 
 [node name="Prologue" type="Node2D"]
+visible = false
 position = Vector2(727, 329)
 metadata/_edit_horizontal_guides_ = [-22.0]
 
@@ -2354,8 +2355,11 @@ tile_set = SubResource("TileSet_f822g")
 position = Vector2(-472.066, -138.961)
 collision_mask = 14
 
-[node name="Camera2D" type="Camera2D" parent="."]
-visible = false
-position = Vector2(-358, -94)
+[node name="Camera2D" parent="Player" index="2"]
+anchor_mode = 1
 enabled = false
-zoom = Vector2(2, 2)
+zoom = Vector2(2.2, 2.2)
+
+[connection signal="visibility_changed" from="." to="Player/Camera2D" method="_on_prologue_visibility_changed"]
+
+[editable path="Player"]
