@@ -1,13 +1,58 @@
-[gd_scene load_steps=2 format=3 uid="uid://6kksgt7lj1ch"]
+[gd_scene load_steps=4 format=3 uid="uid://6kksgt7lj1ch"]
 
-[ext_resource type="Texture2D" uid="uid://djduosf43ktsl" path="res://icon.svg" id="1_o57xg"]
+[ext_resource type="Script" uid="uid://cvm8gr5yjhwdk" path="res://scenes/tests scenes/menu_pausa.gd" id="1_o1onv"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="1_qg45m"]
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="2_4u060"]
 
-[node name="CenaTeste" type="Node"]
+[node name="MenuPausa" type="CanvasLayer"]
+follow_viewport_enabled = true
+script = ExtResource("1_o1onv")
+menu_visible = Color(1, 1, 1, 1)
+menu_invisible = Color(1, 1, 1, 0)
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0, 0, 0, 0.341176)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_o57xg")
+
+[node name="pausado" type="Label" parent="Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_4u060")
+theme_override_font_sizes/font_size = 50
+text = "PAUSA"
+horizontal_alignment = 1
+
+[node name="Retomar" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Retomar"
+
+[node name="VoltarMenu" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Voltar ao menu principal"
+
+[node name="Sair" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+layout_mode = 2
+size_flags_vertical = 2
+text = "Sair do jogo"
+
+[connection signal="gui_input" from="Control" to="." method="_on_control_gui_input"]
+[connection signal="pressed" from="Control/ColorRect/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]

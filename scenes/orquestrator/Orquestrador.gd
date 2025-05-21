@@ -16,6 +16,7 @@ func _ready() -> void:
 	]
 	_hide_all_scenes()
 	menu_principal.visible = true
+	
 
 func _hide_all_scenes() -> void:
 	for scene in scenes:

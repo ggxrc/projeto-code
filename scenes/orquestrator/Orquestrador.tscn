@@ -1,13 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://btos0oij5qmbx"]
+[gd_scene load_steps=7 format=3 uid="uid://btos0oij5qmbx"]
 
 [ext_resource type="Script" uid="uid://cnp0oes3tqdgi" path="res://scenes/orquestrator/Orquestrador.gd" id="1_vg7lu"]
 [ext_resource type="PackedScene" uid="uid://spucj3xk1p7h" path="res://scenes/level selection/LevelSelection.tscn" id="2_ddja5"]
 [ext_resource type="PackedScene" uid="uid://iy7ihik2nwjv" path="res://scenes/main menu/MenuPrincipal.tscn" id="3_n5i1m"]
 [ext_resource type="PackedScene" uid="uid://b56m6q8lb21x4" path="res://scenes/prologue/prologue.tscn" id="4_i3woc"]
 [ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="5_l1is8"]
+[ext_resource type="PackedScene" uid="uid://6kksgt7lj1ch" path="res://scenes/tests scenes/MenuPausa.tscn" id="6_ttfme"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_vg7lu")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="LevelSelection" parent="." instance=ExtResource("2_ddja5")]
 visible = false
@@ -17,6 +26,10 @@ visible = false
 [node name="MenuPrincipal" parent="." instance=ExtResource("3_n5i1m")]
 
 [node name="TransitionScreen" parent="." instance=ExtResource("5_l1is8")]
+visible = false
+
+[node name="MenuPausa" parent="." instance=ExtResource("6_ttfme")]
+visible = false
 
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Sair" to="." method="_on_sair_pressed"]
