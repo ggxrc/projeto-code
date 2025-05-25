@@ -2,7 +2,6 @@
 extends Node
 	
 @onready var menu_principal = $MenuPrincipal
-@onready var level_selection = $LevelSelection
 @onready var prologue = $Prologue
 
 var scenes: Array
@@ -11,7 +10,6 @@ var next_scene: Node
 func _ready() -> void:
 	scenes = [
 		menu_principal,
-		level_selection,
 		prologue
 	]
 	_hide_all_scenes()
