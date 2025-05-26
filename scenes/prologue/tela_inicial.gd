@@ -3,9 +3,6 @@ extends Control
 @onready var texto_inicial : Label = $CenterContainer/Texto
 @onready var tela_preta : ColorRect = $ColorRect
 
-@onready var control = $Prologue/CanvasLayer/TelaInicial
-@onready var canvas = $Prologue/CanvasLayer
-
 var fade_in_time: float = 4 # O texto levará 1.0 segundo para aparecer
 # Se quiser que o fundo esmaeça depois, defina a duração aqui também
 var fade_out_time: float = 1.5
@@ -28,6 +25,8 @@ func change_texto(texto: String) -> void:
 	else:
 		fade_out_tela()
 
+
+
 func fade_in_texto() -> void:
 	# 3. Cria um 'Tween' para animar propriedades ao longo do tempo
 	var tween_texto = get_tree().create_tween()
@@ -43,3 +42,8 @@ func fade_out_texto() -> void:
 func fade_out_tela() -> void:
 	var tween_fundo = get_tree().create_tween()
 	tween_fundo.tween_property(tela_preta, "modulate:a", 0.0, fade_out_time)
+
+func _on_fade_out_tela_preta_completed() -> void:
+	print("Fade out da tela preta completo!")
+	tela_preta.hide()
+	# Aqui você avançaria para a próxima parte do prólogo
