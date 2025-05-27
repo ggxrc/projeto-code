@@ -1,45 +1,65 @@
-[gd_scene load_steps=7 format=3 uid="uid://cbdw2mmnv7a53"]
+[gd_scene load_steps=9 format=3 uid="uid://cbdw2mmnv7a53"]
 
-[ext_resource type="Texture2D" uid="uid://ii3dqeb588sd" path="res://assets/character sprites/top-down characters 16x16/Blank Top Down 16x16 Character Template.png" id="1_15tap"]
-[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
+[ext_resource type="Script" path="res://scenes/actors/player.gd" id="1_ru62r"]
+[ext_resource type="Texture2D" uid="uid://dlr6rquisklef" path="res://assets/character sprites/PC Computer - Stardew Valley - Farmer Base.png" id="2_jlysa"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ru62r"]
-atlas = ExtResource("1_15tap")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_2sbs3"]
+atlas = ExtResource("2_jlysa")
+region = Rect2(0, 33, 16, 33)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ktjr4"]
-atlas = ExtResource("1_15tap")
-region = Rect2(0, 112, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_u1b64"]
+atlas = ExtResource("2_jlysa")
+region = Rect2(16, 33, 16, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vqch0"]
+atlas = ExtResource("2_jlysa")
+region = Rect2(32, 33, 16, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mjof6"]
+atlas = ExtResource("2_jlysa")
+region = Rect2(80, 33, 16, 33)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2sbs3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u1b64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vqch0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mjof6")
+}],
+"loop": true,
+"name": &"Padrao",
+"speed": 4.0
+}, {
 "frames": [],
 "loop": true,
 "name": &"default",
 "speed": 5.0
 }, {
-"frames": [{
-"duration": 2.0,
-"texture": SubResource("AtlasTexture_ru62r")
-}, {
-"duration": 0.3,
-"texture": SubResource("AtlasTexture_ktjr4")
-}],
+"frames": [],
 "loop": true,
-"name": &"idle",
-"speed": 2.0
+"name": &"new_animation",
+"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_15tap"]
-size = Vector2(12, 14)
+size = Vector2(12, 27)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_ru62r")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_7wueq")
-animation = &"idle"
-frame_progress = 0.896582
+animation = &"Padrao"
+frame_progress = 0.375457
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1.5)
 shape = SubResource("RectangleShape2D_15tap")
