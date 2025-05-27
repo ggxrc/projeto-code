@@ -1,3 +1,29 @@
 [gd_scene format=3 uid="uid://bstniqeot16yf"]
 
 [node name="Config" type="Node"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(3.72304e-05, 3.72304e-05, 3.72304e-05, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/ColorRect"]
+layout_mode = 0
+offset_right = 1277.0
+offset_bottom = 717.0
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "OPÇÕES"
