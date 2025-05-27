@@ -12,7 +12,7 @@ func _ready() -> void:
 	var cor_inicial_texto = texto_inicial.modulate
 	cor_inicial_texto.a = 0.0 # 'a' é o canal alfa (transparência). 0.0 = totalmente transparente.
 	texto_inicial.modulate = cor_inicial_texto
-	change_texto("duvido kkkkkkkkkkk")
+	change_texto("veremos")
 
 func change_texto(texto: String) -> void:
 	fade_in_texto()
