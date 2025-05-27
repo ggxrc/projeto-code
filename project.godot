@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="Projeto Code"
-run/main_scene="uid://btos0oij5qmbx"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+run/main_scene="res://scenes/orquestrator/Orquestrador.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"
