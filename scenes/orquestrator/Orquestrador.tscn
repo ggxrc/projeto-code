@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://btos0oij5qmbx"]
 
-[ext_resource type="Script" uid="uid://cnp0oes3tqdgi" path="res://scenes/orquestrator/Orquestrador.gd" id="1_vg7lu"]
+[ext_resource type="Script" path="res://scenes/orquestrator/Orquestrador.gd" id="1_vg7lu"]
 [ext_resource type="PackedScene" uid="uid://iy7ihik2nwjv" path="res://scenes/main menu/MenuPrincipal.tscn" id="3_n5i1m"]
 [ext_resource type="PackedScene" uid="uid://b56m6q8lb21x4" path="res://scenes/prologue/prologue.tscn" id="4_i3woc"]
 [ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="5_l1is8"]
