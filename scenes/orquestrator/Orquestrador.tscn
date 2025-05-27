@@ -19,6 +19,12 @@ color = Color(0, 0, 0, 1)
 
 [node name="Prologue" parent="." instance=ExtResource("4_i3woc")]
 
+[node name="CanvasLayer" parent="Prologue/Player" index="1"]
+visible = false
+
+[node name="TouchScreenJoystick" parent="Prologue/Player/CanvasLayer" index="0"]
+pivot_offset = Vector2(151, 137.5)
+
 [node name="MenuPrincipal" parent="." instance=ExtResource("3_n5i1m")]
 
 [node name="TransitionScreen" parent="." instance=ExtResource("5_l1is8")]
@@ -31,6 +37,6 @@ visible = false
 [connection signal="pressed" from="MenuPrincipal/VBoxContainer/Sair" to="." method="_on_sair_pressed"]
 
 [editable path="Prologue"]
-[editable path="Prologue/Player"]
+[editable path="Prologue/Player/Body"]
 [editable path="Prologue/TelaInicial"]
 [editable path="MenuPrincipal"]

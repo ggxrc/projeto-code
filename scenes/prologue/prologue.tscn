@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=29 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://r2w2323wfabm" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_SmallItems.png" id="6_0d6ok"]
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/player.tscn" id="6_gfsru"]
 [ext_resource type="PackedScene" uid="uid://f3ms2l5g3ikb" path="res://scenes/prologue/tela_inicial.tscn" id="8_0d6ok"]
+[ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="8_bxlvl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k4kb1"]
 texture = ExtResource("2_50cnf")
@@ -2222,8 +2223,8 @@ position = Vector2(727, 329)
 metadata/_edit_horizontal_guides_ = [-22.0]
 
 [node name="Banheiro" type="Node2D" parent="."]
-position = Vector2(356, 101)
-scale = Vector2(2, 2)
+position = Vector2(309, -13)
+scale = Vector2(1.5, 1.5)
 
 [node name="Floor" type="TileMapLayer" parent="Banheiro"]
 position = Vector2(-3, -2)
@@ -2262,8 +2263,8 @@ tile_map_data = PackedByteArray("AAD/////AAAIABAAAAD//wAAAAAIABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Quarto_Casa" type="Node2D" parent="."]
-position = Vector2(-422, 14)
-scale = Vector2(2, 2)
+position = Vector2(-378, -85)
+scale = Vector2(1.5, 1.5)
 
 [node name="Floor" type="TileMapLayer" parent="Quarto_Casa"]
 position = Vector2(124, 50)
@@ -2363,18 +2364,42 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAP//AAAFAAYAAAD/////AAAEAAcAAAD+////AAAHAAcAAAA=")
 tile_set = SubResource("TileSet_f822g")
 
-[node name="Player" parent="." instance=ExtResource("6_gfsru")]
+[node name="Player" type="Node2D" parent="."]
+
+[node name="Body" parent="Player" instance=ExtResource("6_gfsru")]
 position = Vector2(-472.066, -138.961)
 scale = Vector2(2, 2)
 collision_mask = 14
 
-[node name="Sprite2D" parent="Player" index="0"]
+[node name="Sprite2D" parent="Player/Body" index="0"]
 position = Vector2(124, 50)
 scale = Vector2(2, 2)
 
-[node name="CollisionShape2D" parent="Player" index="1"]
+[node name="CollisionShape2D" parent="Player/Body" index="1"]
 position = Vector2(124, 50)
 scale = Vector2(2, 2)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Player"]
+
+[node name="TouchScreenJoystick" type="Control" parent="Player/CanvasLayer"]
+layout_mode = 3
+anchor_top = 0.618
+anchor_right = 0.236
+anchor_bottom = 1.0
+offset_top = 0.039978
+offset_right = -0.0800171
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(151, 137.5)
+size_flags_horizontal = 3
+size_flags_vertical = 2
+script = ExtResource("8_bxlvl")
+anti_aliased = true
+deadzone = 40.0
+smooth_reset = true
+smooth_speed = 15.0
+change_opacity_when_touched = true
+use_input_actions = true
 
 [node name="TelaInicial" parent="." instance=ExtResource("8_0d6ok")]
 
@@ -2383,5 +2408,5 @@ anchors_preset = 9
 anchor_right = 0.0
 grow_horizontal = 1
 
-[editable path="Player"]
+[editable path="Player/Body"]
 [editable path="TelaInicial"]
