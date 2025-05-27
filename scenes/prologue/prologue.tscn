@@ -1029,6 +1029,7 @@ texture = ExtResource("2_loiah")
 7:2/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_e24q1"]
+physics_layer_0/collision_layer = 8
 sources/0 = SubResource("TileSetAtlasSource_k4kb1")
 sources/1 = SubResource("TileSetAtlasSource_0d6ok")
 sources/2 = SubResource("TileSetAtlasSource_bxlvl")
@@ -2263,7 +2264,7 @@ tile_map_data = PackedByteArray("AAD/////AAAIABAAAAD//wAAAAAIABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Quarto_Casa" type="Node2D" parent="."]
-position = Vector2(-378, -85)
+position = Vector2(-373, -62)
 scale = Vector2(1.2, 1.2)
 
 [node name="Floor" type="TileMapLayer" parent="Quarto_Casa"]
@@ -2395,7 +2396,6 @@ change_opacity_when_touched = true
 use_input_actions = true
 
 [node name="TelaInicial" parent="." instance=ExtResource("8_0d6ok")]
-visible = false
 
 [node name="ColorRect" parent="TelaInicial" index="0"]
 anchors_preset = 9
