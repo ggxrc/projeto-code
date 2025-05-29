@@ -1,38 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://cbdw2mmnv7a53"]
+[gd_scene load_steps=5 format=3 uid="uid://cbdw2mmnv7a53"]
 
-[ext_resource type="Script" path="res://scenes/actors/player.gd" id="1_ru62r"]
-[ext_resource type="Texture2D" uid="uid://dlr6rquisklef" path="res://assets/character sprites/PC Computer - Stardew Valley - Farmer Base.png" id="2_jlysa"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2sbs3"]
-atlas = ExtResource("2_jlysa")
-region = Rect2(0, 33, 16, 33)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u1b64"]
-atlas = ExtResource("2_jlysa")
-region = Rect2(16, 33, 16, 33)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vqch0"]
-atlas = ExtResource("2_jlysa")
-region = Rect2(32, 33, 16, 33)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mjof6"]
-atlas = ExtResource("2_jlysa")
-region = Rect2(80, 33, 16, 33)
+[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
+[ext_resource type="Texture2D" uid="uid://ql6bio66jveb" path="res://assets/character sprites/personagem-sprite-sheet-jogoveio-234x350.png" id="2_ru62r"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2sbs3")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u1b64")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vqch0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mjof6")
+"texture": ExtResource("2_ru62r")
 }],
 "loop": true,
 "name": &"Padrao",
@@ -58,7 +33,6 @@ script = ExtResource("1_ru62r")
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_7wueq")
 animation = &"Padrao"
-frame_progress = 0.375457
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1.5)
