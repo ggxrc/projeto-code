@@ -46,8 +46,9 @@ label_settings = SubResource("LabelSettings_627t8")
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 10
-text = "Voltar"
+text = ""
 icon = ExtResource("3_klxni")
+flat = true
 icon_alignment = 1
 
 [node name="Volume" type="Label" parent="CanvasLayer/Control/ColorRect"]
