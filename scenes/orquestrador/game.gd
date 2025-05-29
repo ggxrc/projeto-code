@@ -1,220 +1,382 @@
-# Game.gd - Node principal que contém todas as cenas
 extends Node
 
-# Referencias para as cenas filhas
-@onready var menu_principal = $MenuPrincipal
-@onready var prologue = $Prologue
-@onready var menu_opcoes = $MenuOpcoes  # se tiver
-@onready var gameplay = $Gameplay      # se tiver
-# Adicione outras cenas conforme necessário
+@onready var menu_principal: Node = $MenuPrincipal
+@onready var prologue: Node = $Prologue
+@onready var gameplay: Node = $Gameplay
+@onready var menu_opcoes: Node = $MenuOpcoes
+@onready var menu_pausa = $Effects/MenuPausa
+@onready var config: CanvasLayer = $Config/CanvasLayer
 
 var scenes: Array[Node]
 var current_scene: Node
 var is_transitioning: bool = false
 
-# Sistema de estados para melhor controle
 enum GameState {
+	NONE,
 	MENU,
 	PROLOGUE,
 	PLAYING,
 	PAUSED,
-	OPTIONS
+	OPTIONS,
+	CONFIG_FROM_PAUSE 
 }
-
 var current_state: GameState = GameState.MENU
+var previous_state_before_pause: GameState = GameState.NONE
+var previous_state_before_options_pause: GameState = GameState.NONE
 
 func _ready() -> void:
-	_setup_scenes()
-	_setup_initial_state()
-	_connect_scene_signals()
+	_setup_scenes_array()
+	_initialize_game_state_and_scenes()
+	_connect_all_scene_signals()
 
-# ============ CONFIGURAÇÃO INICIAL ============
-
-func _setup_scenes() -> void:
+func _setup_scenes_array() -> void:
 	scenes = [
 		menu_principal,
 		prologue,
-		# Adicione outras cenas aqui
+		gameplay,
+		menu_opcoes
 	]
-	
-	# Remove cenas nulas (caso alguma não exista)
-	scenes = scenes.filter(func(scene): return scene != null)
+	scenes = scenes.filter(func(scene: Node) -> bool: return scene != null)
 
-func _setup_initial_state() -> void:
-	_deactivate_all_scenes()
+func _initialize_game_state_and_scenes() -> void:
+	_deactivate_all_main_scenes()
+
+	if menu_pausa:
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	if config:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+	
 	_activate_scene(menu_principal, GameState.MENU)
 
-func _connect_scene_signals() -> void:
-	# Conecta sinais dos botões de cada cena
-	_connect_menu_signals()
+func _connect_all_scene_signals() -> void:
+	_connect_menu_principal_signals()
 	_connect_prologue_signals()
-	# Adicione outras conexões conforme necessário
+	_connect_menu_pausa_signals()
+	_connect_config_signals()
 
-func _connect_menu_signals() -> void:
-	if menu_principal:
-		# Conecta botões do menu principal
-		var iniciar_btn = menu_principal.get_node_or_null("IniciarButton")
-		var opcoes_btn = menu_principal.get_node_or_null("OpcoesButton")
-		var sair_btn = menu_principal.get_node_or_null("SairButton")
-		
-		if iniciar_btn and not iniciar_btn.pressed.is_connected(_on_iniciar_pressed):
-			iniciar_btn.pressed.connect(_on_iniciar_pressed)
-		if opcoes_btn and not opcoes_btn.pressed.is_connected(_on_opcoes_pressed):
-			opcoes_btn.pressed.connect(_on_opcoes_pressed)
-		if sair_btn and not sair_btn.pressed.is_connected(_on_sair_pressed):
-			sair_btn.pressed.connect(_on_sair_pressed)
+func _connect_menu_principal_signals() -> void:
+	if not menu_principal: return
+
+	var iniciar_btn: Button = menu_principal.get_node_or_null("IniciarButton")
+	var opcoes_btn: Button = menu_principal.get_node_or_null("OpcoesButton")
+	var sair_btn: Button = menu_principal.get_node_or_null("SairButton")
+	
+	if iniciar_btn and not iniciar_btn.pressed.is_connected(_on_iniciar_pressed):
+		iniciar_btn.pressed.connect(_on_iniciar_pressed)
+	if opcoes_btn and not opcoes_btn.pressed.is_connected(_on_opcoes_pressed):
+		opcoes_btn.pressed.connect(_on_opcoes_pressed)
+	if sair_btn and not sair_btn.pressed.is_connected(_on_sair_pressed):
+		sair_btn.pressed.connect(_on_sair_pressed)
 
 func _connect_prologue_signals() -> void:
-	if prologue:
-		var voltar_btn = prologue.get_node_or_null("VoltarButton")
-		var pular_btn = prologue.get_node_or_null("PularButton")
-		
-		if voltar_btn and not voltar_btn.pressed.is_connected(_on_voltar_menu_pressed):
-			voltar_btn.pressed.connect(_on_voltar_menu_pressed)
-		if pular_btn and not pular_btn.pressed.is_connected(_on_pular_prologue_pressed):
-			pular_btn.pressed.connect(_on_pular_prologue_pressed)
+	if not prologue: return
 
-# ============ SISTEMA DE CENAS ============
+	var voltar_btn: Button = prologue.get_node_or_null("VoltarButton")
+	var pular_btn: Button = prologue.get_node_or_null("PularButton")
+	
+	if voltar_btn and not voltar_btn.pressed.is_connected(_on_voltar_menu_pressed):
+		voltar_btn.pressed.connect(_on_voltar_menu_pressed)
+	if pular_btn and not pular_btn.pressed.is_connected(_on_pular_prologue_pressed):
+		pular_btn.pressed.connect(_on_pular_prologue_pressed)
 
-func _deactivate_all_scenes() -> void:
+func _connect_menu_pausa_signals() -> void:
+	if not menu_pausa: return
+
+	var retomar_btn: Button = menu_pausa.get_node_or_null("Retomar")
+	var config_btn: Button = menu_pausa.get_node_or_null("Config") 
+	var voltar_menu_btn: Button = menu_pausa.get_node_or_null("VoltarMenu")
+	var sair_jogo_btn: Button = menu_pausa.get_node_or_null("SairJogoButton")
+
+	if retomar_btn and not retomar_btn.pressed.is_connected(_on_retomar_pressed):
+		retomar_btn.pressed.connect(_on_retomar_pressed)
+	if config_btn and not config_btn.pressed.is_connected(_on_config_pressed):
+		config_btn.pressed.connect(_on_config_pressed)
+	if voltar_menu_btn and not voltar_menu_btn.pressed.is_connected(_on_voltar_menu_from_pause_pressed):
+		voltar_menu_btn.pressed.connect(_on_voltar_menu_from_pause_pressed)
+	if sair_jogo_btn and not sair_jogo_btn.pressed.is_connected(_on_sair_pause_pressed):
+		sair_jogo_btn.pressed.connect(_on_sair_pause_pressed)
+
+func _connect_config_signals() -> void:
+	if not config: return
+	var voltar_config_btn: Button = config.get_node_or_null("VoltarConfigButton") 
+	if voltar_config_btn and not voltar_config_btn.pressed.is_connected(_on_voltar_from_config_pressed):
+		voltar_config_btn.pressed.connect(_on_voltar_from_config_pressed)
+
+func _deactivate_all_main_scenes() -> void:
 	for scene in scenes:
 		if scene:
 			scene.visible = false
 			scene.process_mode = Node.PROCESS_MODE_DISABLED
-			
-			# Desativa input para evitar bugs de toque
 			if scene.has_method("set_process_input"):
 				scene.set_process_input(false)
 			if scene.has_method("set_process_unhandled_input"):
 				scene.set_process_unhandled_input(false)
 
-func _activate_scene(scene: Node, state: GameState) -> void:
-	if not scene or scene == current_scene:
-		return
-	
-	scene.visible = true
-	scene.process_mode = Node.PROCESS_MODE_INHERIT
-	
-	# Reativa input
-	if scene.has_method("set_process_input"):
-		scene.set_process_input(true)
-	if scene.has_method("set_process_unhandled_input"):
-		scene.set_process_unhandled_input(true)
-	
-	# Chama método de ativação se existir na cena
-	if scene.has_method("_on_scene_activated"):
-		scene._on_scene_activated()
-	
-	current_scene = scene
-	current_state = state
-	
-	print("Cena ativada: ", scene.name, " | Estado: ", GameState.keys()[state])
+func _activate_scene(scene_node: Node, target_state: GameState) -> void:
+	if not scene_node or (scene_node == current_scene and current_state == target_state and not is_transitioning):
+		if scene_node == current_scene and current_state != target_state:
+			pass
+		elif scene_node == current_scene and current_state == target_state:
+			return
 
-# ============ TRANSIÇÕES ============
+	if get_tree().paused:
+		get_tree().paused = false
+	
+	if menu_pausa and menu_pausa.visible:
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	if config and config.visible:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	if current_scene and current_scene != scene_node:
+		current_scene.visible = false
+		current_scene.process_mode = Node.PROCESS_MODE_DISABLED
+		if current_scene.has_method("set_process_input"):
+			current_scene.set_process_input(false)
+		if current_scene.has_method("set_process_unhandled_input"):
+			current_scene.set_process_unhandled_input(false)
+		if current_scene.has_method("_on_scene_deactivating"):
+			current_scene._on_scene_deactivating()
 
-func change_scene_with_transition(next_scene: Node, next_state: GameState, transition_type: String = "fade") -> void:
-	if is_transitioning or next_scene == current_scene:
+	scene_node.visible = true
+	scene_node.process_mode = Node.PROCESS_MODE_INHERIT
+	if scene_node.has_method("set_process_input"):
+		scene_node.set_process_input(true)
+	if scene_node.has_method("set_process_unhandled_input"):
+		scene_node.set_process_unhandled_input(true)
+	
+	if scene_node.has_method("_on_scene_activated"):
+		scene_node._on_scene_activated()
+	
+	current_scene = scene_node
+	current_state = target_state
+	
+	print("Cena ativada: ", scene_node.name, " | Estado: ", GameState.keys()[target_state])
+
+func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transition_effect_type: String = "fade") -> void:
+	if is_transitioning or (next_scene_node == current_scene and current_state == next_game_state):
 		return
 	
 	is_transitioning = true
 	
-	match transition_type:
-		"fade":
-			await _transition_with_fade(next_scene, next_state)
-		"quick_fade":
-			await _transition_with_fade(next_scene, next_state, 0.2)
-		"slow_fade":
-			await _transition_with_fade(next_scene, next_state, 1.0)
+	if get_tree().paused:
+		get_tree().paused = false
+	if menu_pausa and menu_pausa.visible:
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	if config and config.visible:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+
+	var effect_duration: float = -1.0
+	match transition_effect_type:
+		"quick_fade": effect_duration = 0.2
+		"slow_fade": effect_duration = 1.0
+
+	match transition_effect_type:
+		"fade", "quick_fade", "slow_fade":
+			await _perform_fade_transition(next_scene_node, next_game_state, effect_duration)
 		"instant":
-			_instant_transition(next_scene, next_state)
+			_perform_instant_transition(next_scene_node, next_game_state)
 		_:
-			await _transition_with_fade(next_scene, next_state)
-	
+			await _perform_fade_transition(next_scene_node, next_game_state, -1.0)
+
 	is_transitioning = false
 
-func _transition_with_fade(next_scene: Node, next_state: GameState, duration: float = -1) -> void:
-	# Chama método antes da transição se existir na cena atual
+func _perform_fade_transition(next_scene: Node, next_state: GameState, duration: float = -1.0) -> void:
 	if current_scene and current_scene.has_method("_on_scene_deactivating"):
 		current_scene._on_scene_deactivating()
 	
-	# Fade out usando TransitionScreen
-	if duration > 0:
-		await TransitionScreen.fade_out(duration)
-	else:
-		await TransitionScreen.fade_out()
+	if TransitionScreen.has_method("fade_out"):
+		await TransitionScreen.fade_out(duration if duration > 0 else -1)
 	
-	# Troca cena
-	_deactivate_all_scenes()
+	_deactivate_all_main_scenes()
 	_activate_scene(next_scene, next_state)
 	
-	# Fade in
-	if duration > 0:
-		await TransitionScreen.fade_in(duration)
-	else:
-		await TransitionScreen.fade_in()
+	if TransitionScreen.has_method("fade_in"):
+		await TransitionScreen.fade_in(duration if duration > 0 else -1)
 
-func _instant_transition(next_scene: Node, next_state: GameState) -> void:
-	_deactivate_all_scenes()
+func _perform_instant_transition(next_scene: Node, next_state: GameState) -> void:
+	if current_scene and current_scene.has_method("_on_scene_deactivating"):
+		current_scene._on_scene_deactivating()
+	_deactivate_all_main_scenes()
 	_activate_scene(next_scene, next_state)
 
-# ============ MÉTODOS PÚBLICOS DE NAVEGAÇÃO ============
+func navigate_to_main_menu(transition_effect: String = "fade") -> void:
+	if menu_principal:
+		switch_to_scene(menu_principal, GameState.MENU, transition_effect)
+	else:
+		printerr("Tentativa de ir para Menu Principal, mas a cena não está definida.")
 
-func go_to_menu(transition: String = "fade") -> void:
-	change_scene_with_transition(menu_principal, GameState.MENU, transition)
+func navigate_to_prologue(transition_effect: String = "fade") -> void:
+	if prologue:
+		switch_to_scene(prologue, GameState.PROLOGUE, transition_effect)
+	else:
+		printerr("Tentativa de ir para Prólogo, mas a cena não está definida.")
 
-func start_prologue(transition: String = "fade") -> void:
-	change_scene_with_transition(prologue, GameState.PROLOGUE, transition)
-
-func start_gameplay(transition: String = "fade") -> void:
+func navigate_to_gameplay(transition_effect: String = "fade") -> void:
 	if gameplay:
-		change_scene_with_transition(gameplay, GameState.PLAYING, transition)
+		switch_to_scene(gameplay, GameState.PLAYING, transition_effect)
+	else:
+		printerr("Tentativa de iniciar Gameplay, mas a cena não está definida.")
 
-func open_options(transition: String = "quick_fade") -> void:
+func navigate_to_options_from_main_menu(transition_effect: String = "quick_fade") -> void:
 	if menu_opcoes:
-		change_scene_with_transition(menu_opcoes, GameState.OPTIONS, transition)
+		switch_to_scene(menu_opcoes, GameState.OPTIONS, transition_effect) # Usa GameState.OPTIONS
+	else:
+		printerr("Tentativa de abrir Opções (Menu Principal), mas a cena não está definida.")
 
-func quit_game() -> void:
-	await TransitionScreen.fade_out()
+func trigger_quit_game() -> void:
+	if TransitionScreen.has_method("fade_out"):
+		await TransitionScreen.fade_out()
 	get_tree().quit()
 
-# ============ HANDLERS DE BOTÕES ============
+func get_current_active_scene_name() -> String:
+	return current_scene.name if current_scene else "Nenhuma"
 
-func _on_iniciar_pressed() -> void:
-	start_prologue()
-
-func _on_opcoes_pressed() -> void:
-	open_options()
-
-func _on_sair_pressed() -> void:
-	quit_game()
-
-func _on_voltar_menu_pressed() -> void:
-	go_to_menu("slide_right")  # Efeito diferente para voltar
-
-func _on_pular_prologue_pressed() -> void:
-	start_gameplay()
-
-# ============ MÉTODOS UTILITÁRIOS ============
-
-func get_current_scene_name() -> String:
-	return current_scene.name if current_scene else "None"
-
-func get_current_state() -> GameState:
+func get_current_game_state() -> GameState:
 	return current_state
 
-func is_in_state(state: GameState) -> bool:
-	return current_state == state
+func is_game_in_state(state_to_check: GameState) -> bool:
+	return current_state == state_to_check
 
-# Método para pausar/despausar
-func toggle_pause() -> void:
-	if current_state == GameState.PLAYING:
-		get_tree().paused = !get_tree().paused
+func print_debug_info() -> void:
+	print("=== INFORMAÇÕES DE DEBUG DO JOGO ===")
+	print("Cena Atual: ", get_current_active_scene_name())
+	print("Estado Atual: ", GameState.keys()[current_state] if current_state != GameState.NONE else "NONE")
+	print("Em Transição: ", is_transitioning)
+	print("Engine Pausada: ", get_tree().paused)
+	if menu_pausa:
+		print("Menu Pausa Visível: ", menu_pausa.visible)
+	if config:
+		print("Config Visível: ", config.visible)
+	print("====================================")
 
-# Debug
-func debug_info() -> void:
-	print("=== GAME DEBUG INFO ===")
-	print("Cena atual: ", get_current_scene_name())
-	print("Estado atual: ", GameState.keys()[current_state])
-	print("Em transição: ", is_transitioning)
-	print("TransitionScreen ativo: ", TransitionScreen.is_transitioning)
-	print("========================")
+func _on_iniciar_pressed() -> void:
+	navigate_to_prologue()
+
+func _on_opcoes_pressed() -> void:
+	navigate_to_options_from_main_menu()
+
+func _on_sair_pressed() -> void:
+	trigger_quit_game()
+
+func _on_voltar_menu_pressed() -> void:
+	navigate_to_main_menu("fade")
+
+func _on_pular_prologue_pressed() -> void:
+	navigate_to_gameplay()
+
+func _on_pause_button_pressed() -> void:
+	if not menu_pausa:
+		printerr("Menu de Pausa não encontrado!")
+		return
+
+	if current_state == GameState.PLAYING or current_state == GameState.PROLOGUE:
+		if current_state != GameState.NONE:
+			previous_state_before_pause = current_state
+		else:
+			previous_state_before_pause = GameState.PLAYING
+		
+		get_tree().paused = true
+		
+		menu_pausa.visible = true
+		menu_pausa.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+		
+		current_state = GameState.PAUSED
+		print("Jogo Pausado. Menu de Pausa ativado.")
+		
+		if menu_pausa.has_method("_on_scene_activated"):
+			menu_pausa._on_scene_activated()
+
+	elif current_state == GameState.PAUSED:
+		_on_retomar_pressed()
+
+func _on_retomar_pressed() -> void:
+	if not menu_pausa or not get_tree().paused:
+		return
+
+	get_tree().paused = false
+	
+	menu_pausa.visible = false
+	menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	if previous_state_before_pause != GameState.NONE:
+		current_state = previous_state_before_pause
+		previous_state_before_pause = GameState.NONE
+	else:
+		current_state = GameState.PLAYING
+	
+	print("Jogo Retomado. Estado: ", GameState.keys()[current_state])
+	
+	if menu_pausa.has_method("_on_scene_deactivating"):
+		menu_pausa._on_scene_deactivating()
+
+func _on_config_pressed() -> void:
+	if not config or not menu_pausa:
+		printerr("Cena de Configuração ou Menu de Pausa não encontrado!")
+		return
+
+	if current_state == GameState.PAUSED:
+		previous_state_before_options_pause = GameState.PAUSED 
+		
+		menu_pausa.visible = false
+
+		config.visible = true
+		config.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+		
+		current_state = GameState.CONFIG_FROM_PAUSE 
+		print("Menu de Configuração (via Pausa) ativado.")
+		
+		if config.has_method("_on_scene_activated"):
+			config._on_scene_activated()
+
+func _on_voltar_menu_from_pause_pressed() -> void:
+	if get_tree().paused:
+		get_tree().paused = false
+	
+	if menu_pausa and menu_pausa.visible:
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	if config and config.visible:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+
+	navigate_to_main_menu("fade")
+
+func _on_sair_pause_pressed() -> void:
+	if get_tree().paused:
+		get_tree().paused = false
+	
+	if menu_pausa and menu_pausa.visible:
+		menu_pausa.visible = false
+	if config and config.visible:
+		config.visible = false
+
+	if TransitionScreen.has_method("fade_out"):
+		await TransitionScreen.fade_out(1.5)
+	get_tree().quit()
+
+func _on_voltar_from_config_pressed() -> void:
+	if not config or not menu_pausa:
+		printerr("Cena de Configuração ou Menu de Pausa não encontrado!")
+		return
+
+	if current_state == GameState.CONFIG_FROM_PAUSE:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+		if config.has_method("_on_scene_deactivating"):
+			config._on_scene_deactivating()
+
+		menu_pausa.visible = true 
+		menu_pausa.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+		
+		current_state = GameState.PAUSED 
+		print("Retornou para o Menu de Pausa.")
+		
+		if menu_pausa.has_method("_on_scene_activated"):
+			menu_pausa._on_scene_activated()

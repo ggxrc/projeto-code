@@ -1,14 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://6kksgt7lj1ch"]
+[gd_scene load_steps=3 format=3 uid="uid://6kksgt7lj1ch"]
 
-[ext_resource type="Script" path="res://scenes/menu pausa/menu_pausa.gd" id="1_o1onv"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="1_qg45m"]
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="2_4u060"]
 
 [node name="MenuPausa" type="CanvasLayer"]
 follow_viewport_enabled = true
-script = ExtResource("1_o1onv")
-menu_visible = Color(1, 1, 1, 1)
-menu_invisible = Color(1, 1, 1, 0)
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -17,42 +13,55 @@ offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Control"]
+[node name="Background" type="ColorRect" parent="Control"]
 layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 720.0
 color = Color(0, 0, 0, 0.341176)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="pausado" type="Label" parent="Control/ColorRect/VBoxContainer"]
+[node name="pausado" type="Label" parent="Control/Background"]
 layout_mode = 2
+offset_left = 560.0
+offset_top = 16.0
+offset_right = 720.0
+offset_bottom = 64.0
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("2_4u060")
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 48
 text = "PAUSA"
 horizontal_alignment = 1
 
-[node name="Retomar" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.502437
+anchor_top = 0.177778
+anchor_right = 0.502437
+anchor_bottom = 1.05
+offset_left = -320.12
+offset_right = 319.88
+offset_bottom = -180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = -65
+metadata/_edit_use_anchors_ = true
+
+[node name="Retomar" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
 layout_mode = 2
-size_flags_vertical = 10
+size_flags_vertical = 6
 text = "Retomar"
 
-[node name="VoltarMenu" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+[node name="Config" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Configurações"
+
+[node name="VoltarMenu" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
 layout_mode = 2
 size_flags_vertical = 6
 text = "Voltar ao menu principal"
 
-[node name="Sair" parent="Control/ColorRect/VBoxContainer" instance=ExtResource("1_qg45m")]
+[node name="SairPause" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 6
 text = "Sair do jogo"
-
-[connection signal="gui_input" from="Control" to="." method="_on_control_gui_input"]
-[connection signal="pressed" from="Control/ColorRect/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]

@@ -77,19 +77,12 @@ horizontal_alignment = 1
 
 [node name="Iniciar" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 2
 text = "Iniciar"
-
-[node name="Config" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
-layout_mode = 2
-size_flags_vertical = 6
-disabled = true
-text = "Configurações"
-icon_alignment = 1
 
 [node name="Sair" parent="VBoxContainer" instance=ExtResource("2_r2p0k")]
 layout_mode = 2
-size_flags_vertical = 6
+size_flags_vertical = 2
 text = "Sair"
 icon_alignment = 1
 

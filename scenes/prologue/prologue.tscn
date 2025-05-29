@@ -2375,33 +2375,36 @@ position = Vector2(-3.8147e-06, -1.90735e-06)
 scale = Vector2(2, 2)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Player"]
+visible = false
 
 [node name="TouchScreenJoystick" type="Control" parent="Player/CanvasLayer"]
 layout_mode = 3
-anchor_top = 0.618
-anchor_right = 0.236
+anchor_top = 0.729
+anchor_right = 0.169
 anchor_bottom = 1.0
-offset_top = 0.039978
-offset_right = -0.0800171
+offset_left = 3.0
+offset_top = 0.119995
+offset_right = -0.320023
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(151, 137.5)
+pivot_offset = Vector2(106.5, 98)
 size_flags_horizontal = 3
 size_flags_vertical = 2
 script = ExtResource("8_bxlvl")
+base_radius = 100.0
+knob_radius = 50.0
 anti_aliased = true
-deadzone = 40.0
 smooth_reset = true
 smooth_speed = 15.0
 change_opacity_when_touched = true
 use_input_actions = true
+metadata/_edit_use_anchors_ = true
 
 [node name="TelaInicial" parent="." instance=ExtResource("8_0d6ok")]
 
-[node name="ColorRect" parent="TelaInicial" index="0"]
-anchors_preset = 9
-anchor_right = 0.0
-grow_horizontal = 1
+[node name="CanvasLayer" parent="TelaInicial" index="0"]
+visible = false
 
 [editable path="Player/Body"]
 [editable path="TelaInicial"]
