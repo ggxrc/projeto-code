@@ -25,6 +25,7 @@ var previous_state_before_pause: GameState = GameState.NONE
 var previous_state_before_options_pause: GameState = GameState.NONE
 
 func _ready() -> void:
+	get_tree().paused = true
 	_setup_scenes_array()
 	_initialize_game_state_and_scenes()
 	_connect_all_scene_signals()
