@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bstniqeot16yf"]
+[gd_scene load_steps=7 format=3 uid="uid://bstniqeot16yf"]
 
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="1_5roa2"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="1_rvri7"]
+[ext_resource type="Texture2D" uid="uid://i6x4lwpvdkfk" path="res://assets/interface/icons/volta.png" id="3_klxni"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="3_lhnvv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_627t8"]
@@ -46,6 +47,8 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 10
 text = "Voltar"
+icon = ExtResource("3_klxni")
+icon_alignment = 1
 
 [node name="Volume" type="Label" parent="CanvasLayer/Control/ColorRect"]
 layout_mode = 1
