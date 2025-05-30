@@ -1,6 +1,7 @@
-[gd_scene load_steps=29 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=30 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
+[ext_resource type="Script" uid="uid://jcnxox6jfobe" path="res://scenes/prologue/prologue.gd" id="1_e24q1"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
 [ext_resource type="Texture2D" uid="uid://3uifcabe7tf5" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FloorsAndWalls_OpenDoors.png" id="2_loiah"]
 [ext_resource type="Texture2D" uid="uid://dioe7o4s5oekm" path="res://assets/Top-Down_Retro_Interior/TopDownHouse_FurnitureState2.png" id="3_loiah"]
@@ -2221,6 +2222,7 @@ sources/0 = SubResource("TileSetAtlasSource_asecn")
 
 [node name="Prologue" type="Node2D"]
 position = Vector2(727, 329)
+script = ExtResource("1_e24q1")
 metadata/_edit_horizontal_guides_ = [-22.0]
 
 [node name="Banheiro" type="Node2D" parent="."]

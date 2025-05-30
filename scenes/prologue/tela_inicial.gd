@@ -1,49 +1,82 @@
 extends Control
 
-@onready var texto_inicial : Label = $CenterContainer/Texto
-@onready var tela_preta : ColorRect = $ColorRect
+@onready var texto_label: Label = $CenterContainer/Texto
+@onready var fundo_preto: ColorRect = $ColorRect
 
-var fade_in_time: float = 4 # O texto levará 1.0 segundo para aparecer
-# Se quiser que o fundo esmaeça depois, defina a duração aqui também
-var fade_out_time: float = 1.5
+signal linha_exibida_completamente
+
+var _tween_ativo: Tween = null
+var _esta_exibindo: bool = false
 
 func _ready() -> void:
-	# 1. Configura o texto para começar transparente
-	var cor_inicial_texto = texto_inicial.modulate
-	cor_inicial_texto.a = 0.0 # 'a' é o canal alfa (transparência). 0.0 = totalmente transparente.
-	texto_inicial.modulate = cor_inicial_texto
-	change_texto("veremos")
+	if texto_label:
+		texto_label.modulate.a = 0.0
+	if fundo_preto:
+		fundo_preto.modulate.a = 0.0
+		fundo_preto.visible = false
 
-func change_texto(texto: String) -> void:
-	fade_in_texto()
-	await fade_in_texto()
-	fade_out_texto()
-	await fade_out_texto()
-	if texto_inicial.text != texto:
-		texto_inicial.text = texto
-		change_texto(texto)
-	else:
-		fade_out_tela()
+func mostrar_fundo(fade_duracao: float = 0.5) -> void:
+	if not is_instance_valid(fundo_preto): return
+	
+	if _tween_ativo and _tween_ativo.is_valid():
+		_tween_ativo.kill()
 
+	fundo_preto.modulate.a = 0.0
+	fundo_preto.visible = true
+	
+	_tween_ativo = create_tween()
+	_tween_ativo.tween_property(fundo_preto, "modulate:a", 1.0, fade_duracao)
+	await _tween_ativo.finished
 
+func exibir_linha_dialogo(texto: String, tempo_fade: float = 0.75, tempo_leitura: float = 2.0) -> void:
+	if not is_instance_valid(texto_label):
+		printerr("Nó 'texto_label' não encontrado em TelaInicial!")
+		return
+	if _esta_exibindo:
+		parar_e_limpar_linha_atual()
 
-func fade_in_texto() -> void:
-	# 3. Cria um 'Tween' para animar propriedades ao longo do tempo
-	var tween_texto = get_tree().create_tween()
+	_esta_exibindo = true
+	texto_label.text = texto
+	texto_label.modulate.a = 0.0
 
-	tween_texto.tween_property(texto_inicial, "modulate:a", 1.0, fade_in_time)
-	await tween_texto.finished
+	_tween_ativo = create_tween()
+	_tween_ativo.set_parallel(false)
+	_tween_ativo.set_trans(Tween.TRANS_SINE)
+	_tween_ativo.set_ease(Tween.EASE_IN_OUT)
 
-func fade_out_texto() -> void:
-	var tween_texto = get_tree().create_tween()
-	tween_texto.tween_property(texto_inicial, "modulate:a", 0.0, fade_out_time)
-	await tween_texto.finished
+	_tween_ativo.tween_property(texto_label, "modulate:a", 1.0, tempo_fade)
+	_tween_ativo.tween_interval(tempo_leitura)
+	_tween_ativo.tween_property(texto_label, "modulate:a", 0.0, tempo_fade)
+	_tween_ativo.tween_callback(_on_sequencia_linha_finalizada)
+	
+	_tween_ativo.play()
 
-func fade_out_tela() -> void:
-	var tween_fundo = get_tree().create_tween()
-	tween_fundo.tween_property(tela_preta, "modulate:a", 0.0, fade_out_time)
+func _on_sequencia_linha_finalizada() -> void:
+	_esta_exibindo = false
+	_tween_ativo = null
+	linha_exibida_completamente.emit()
 
-func _on_fade_out_tela_preta_completed() -> void:
-	print("Fade out da tela preta completo!")
-	tela_preta.hide()
-	# Aqui você avançaria para a próxima parte do prólogo
+func esconder_fundo(fade_duracao: float = 1.0) -> void:
+	if not is_instance_valid(fundo_preto): return
+
+	if _tween_ativo and _tween_ativo.is_valid():
+		_tween_ativo.kill()
+		
+	if is_instance_valid(texto_label) and texto_label.modulate.a > 0.0:
+		var texto_fade_tween = create_tween()
+		texto_fade_tween.tween_property(texto_label, "modulate:a", 0.0, fade_duracao * 0.5)
+
+	_tween_ativo = create_tween()
+	_tween_ativo.tween_property(fundo_preto, "modulate:a", 0.0, fade_duracao)
+	await _tween_ativo.finished
+	if is_instance_valid(fundo_preto):
+		fundo_preto.visible = false
+
+func parar_e_limpar_linha_atual() -> void:
+	_esta_exibindo = false
+	if _tween_ativo and _tween_ativo.is_valid():
+		_tween_ativo.kill()
+	_tween_ativo = null
+	if is_instance_valid(texto_label):
+		texto_label.text = ""
+		texto_label.modulate.a = 0.0

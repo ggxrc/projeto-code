@@ -6,6 +6,7 @@ extends Node
 @onready var menu_opcoes: Node = $MenuOpcoes
 @onready var menu_pausa = $Effects/MenuPausa
 @onready var config: CanvasLayer = $Config/CanvasLayer
+var prologo_introducao_concluida: bool = false
 
 var scenes: Array[Node]
 var current_scene: Node
