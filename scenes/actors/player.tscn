@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cbdw2mmnv7a53"]
 
 [ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
-[ext_resource type="Texture2D" uid="uid://djduosf43ktsl" path="res://icon.svg" id="2_ru62r"]
+[ext_resource type="Texture2D" uid="uid://djduosf43ktsl" path="res://bregueça/icon.svg" id="2_ru62r"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
 animations = [{
@@ -20,7 +20,17 @@ animations = [{
 }, {
 "frames": [],
 "loop": true,
-"name": &"new_animation",
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"sleeping",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walking",
 "speed": 5.0
 }]
 
@@ -34,7 +44,7 @@ script = ExtResource("1_ru62r")
 position = Vector2(-9.53674e-07, 1)
 scale = Vector2(0.101563, 0.195313)
 sprite_frames = SubResource("SpriteFrames_7wueq")
-animation = &"Padrao"
+animation = &"sleeping"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1.5)
