@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dr4rdv0daatyp"]
+[gd_scene load_steps=3 format=3 uid="uid://clnrhrasxrueq"]
 
-[ext_resource type="PackedScene" uid="uid://dgfgwq5u0wkly" path="res://scenes/player.tscn" id="1_fjjpo"]
+[ext_resource type="PackedScene" uid="uid://jaj4jn61o0dg" path="res://scenes/player.tscn" id="1_fjjpo"]
 [ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="2_duapw"]
 
 [node name="Main" type="Node2D"]

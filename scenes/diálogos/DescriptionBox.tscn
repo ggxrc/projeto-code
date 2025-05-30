@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://b34vsfg8xybqv"]
+
+[ext_resource type="Script" uid="uid://bskhlwb3cdbhq" path="res://scenes/diálogos/description_box.gd" id="1_06hii"]
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="2_o4rf4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iuvhp"]
+bg_color = Color(0.0338533, 0.0338533, 0.0338532, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_yvre8"]
+font = ExtResource("2_o4rf4")
+font_size = 32
+shadow_size = 0
+
+[node name="DescriptionBoxUI" type="CanvasLayer"]
+script = ExtResource("1_06hii")
+
+[node name="BackgroundBoxDescription" type="PanelContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_styles/panel = SubResource("StyleBoxFlat_iuvhp")
+
+[node name="DescriptionTextLabel" type="Label" parent="BackgroundBoxDescription"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 1
+label_settings = SubResource("LabelSettings_yvre8")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
