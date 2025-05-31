@@ -34,7 +34,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_15tap"]
-size = Vector2(20, 18)
+size = Vector2(13.3333, 16.3333)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_ru62r")
@@ -43,6 +43,7 @@ script = ExtResource("1_ru62r")
 position = Vector2(-1, -0.874976)
 scale = Vector2(0.0898438, 0.0683595)
 sprite_frames = SubResource("SpriteFrames_7wueq")
+frame_progress = 0.268878
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 0)
