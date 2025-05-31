@@ -1,19 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbdw2mmnv7a53"]
+[gd_scene load_steps=6 format=3 uid="uid://cbdw2mmnv7a53"]
 
 [ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
-[ext_resource type="Texture2D" uid="uid://djduosf43ktsl" path="res://bregueça/icon.svg" id="2_ru62r"]
+[ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/Sprite Prota.png" id="3_ktjr4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7wueq"]
+atlas = ExtResource("3_ktjr4")
+region = Rect2(0, 0, 256, 384)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_ru62r")
+"texture": SubResource("AtlasTexture_7wueq")
 }],
-"loop": true,
-"name": &"Padrao",
-"speed": 4.0
-}, {
-"frames": [],
 "loop": true,
 "name": &"default",
 "speed": 5.0
@@ -35,17 +34,18 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_15tap"]
-size = Vector2(12, 27)
+size = Vector2(20, 18)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_ru62r")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(-9.53674e-07, 1)
-scale = Vector2(0.101563, 0.195313)
+position = Vector2(-1, -0.874976)
+scale = Vector2(0.0898438, 0.0683595)
 sprite_frames = SubResource("SpriteFrames_7wueq")
-animation = &"sleeping"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 1.5)
+position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_15tap")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
