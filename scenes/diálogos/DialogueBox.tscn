@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://mxffm6n8wfjk"]
 
 [ext_resource type="Script" uid="uid://eucwgtqtxii0" path="res://scenes/diálogos/dialogue_box.gd" id="1_qqkfp"]
-[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="2_tgp6o"]
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="2_tgp6o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lx2rt"]
 bg_color = Color(0.0338533, 0.0338533, 0.0338532, 1)

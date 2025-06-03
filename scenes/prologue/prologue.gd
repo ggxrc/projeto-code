@@ -4,8 +4,7 @@ extends Node
 
 var linhas_dialogo: Array[String] = [
 	"Seja bem vindo(a), vejo que você é novo por aqui.",
-	"Você pode achar que o começo é fácil, mas você sabe o que fazer?",
-	"O teste final..."
+	"Você pode achar que o começo é fácil, mas você sabe o que fazer?"
 ]
 var indice_linha_atual: int = 0
 var game_manager: Node = null 

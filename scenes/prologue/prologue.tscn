@@ -1,7 +1,7 @@
 [gd_scene load_steps=34 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
-[ext_resource type="Script" path="res://scenes/prologue/prologue.gd" id="1_e24q1"]
+[ext_resource type="Script" uid="uid://jcnxox6jfobe" path="res://scenes/prologue/prologue.gd" id="1_e24q1"]
 [ext_resource type="Texture2D" uid="uid://bpe0l4u2evctd" path="res://assets/textures/sprites interior/TopDownHouse_FurnitureState1.png" id="2_50cnf"]
 [ext_resource type="Texture2D" uid="uid://3uifcabe7tf5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls_OpenDoors.png" id="2_loiah"]
 [ext_resource type="Texture2D" uid="uid://dioe7o4s5oekm" path="res://assets/textures/sprites interior/TopDownHouse_FurnitureState2.png" id="3_loiah"]
@@ -2859,95 +2859,95 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAAIABAAAAD//wAAAAAIABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Quarto_Casa" type="Node2D" parent="."]
+[node name="QuartoCasa" type="Node2D" parent="."]
 position = Vector2(-373, -62)
 scale = Vector2(1.2, 1.2)
 
-[node name="ParedeChao" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="ParedeChao" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(124, 50)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAP3/AAACAAYAAAAAAP7/AAACAAYAAAAAAP//AAACAAYAAAABAP3/AAADAAYAAAABAP7/AAADAAYAAAABAP//AAADAAYAAAACAP3/AAACAAYAAAACAP7/AAACAAYAAAACAP//AAACAAYAAAADAP3/AAAEAAYAAAADAP7/AAAEAAYAAAADAP//AAAEAAYAAAD8//3/AAADAAYAAAD8//7/AAADAAYAAAD8////AAADAAYAAAD9//3/AAADAAYAAAD9//7/AAADAAYAAAD9////AAADAAYAAAD+////AAACAAYAAAD/////AAADAAYAAAD8/wAAAAADAAYAAAD8/wEAAAADAAYAAAD8/wIAAAACAAcAAAD9/wAAAAADAAYAAAD9/wEAAAADAAYAAAD9/wIAAAADAAcAAAD+/wAAAAACAAYAAAD+/wEAAAACAAYAAAD+/wIAAAACAAcAAAD//wAAAAADAAYAAAD//wEAAAADAAYAAAD//wIAAAADAAcAAAAAAAAAAAACAAYAAAAAAAEAAAACAAYAAAAAAAIAAAADAAcAAAABAAAAAAADAAYAAAABAAEAAAADAAYAAAABAAIAAAACAAcAAAACAAAAAAACAAYAAAACAAEAAAACAAYAAAACAAIAAAADAAcAAAADAAAAAAAEAAYAAAADAAEAAAAEAAYAAAADAAIAAAAEAAcAAAD8//z/AAADAAUAAAD9//z/AAACAAUAAAD+//z/AAADAAUAAAD///z/AAACAAUAAAAAAPz/AAADAAUAAAABAPz/AAACAAUAAAACAPz/AAADAAUAAAADAPz/AAAEAAUAAAD4//z/AAABAAUAAAD5//z/AAACAAUAAAD6//z/AAADAAUAAAD7//z/AAACAAUAAAD4//3/AAABAAYAAAD5//3/AAACAAYAAAD6//3/AAADAAYAAAD7//3/AAACAAYAAAD4//7/AAABAAYAAAD5//7/AAACAAYAAAD6//7/AAADAAYAAAD7//7/AAACAAYAAAD4////AAABAAYAAAD5////AAACAAYAAAD6////AAADAAYAAAD7////AAACAAYAAAD4/wAAAAABAAYAAAD5/wAAAAACAAYAAAD6/wAAAAADAAYAAAD7/wAAAAACAAYAAAD4/wEAAAABAAYAAAD5/wEAAAACAAYAAAD6/wEAAAACAAYAAAD7/wEAAAACAAYAAAD4/wIAAAABAAcAAAD5/wIAAAACAAcAAAD6/wIAAAACAAcAAAD7/wIAAAADAAcAAAD4//v/AAACAAQAAAD5//v/AAADAAQAAAD4//r/AAACAAIAAAD5//r/AAADAAIAAAD4//n/AAACAAIAAAD5//n/AAADAAIAAAD6//n/AAACAAIAAAD7//n/AAACAAIAAAD6//r/AAACAAIAAAD7//r/AAACAAIAAAD6//v/AAACAAQAAAD7//v/AAADAAQAAAD8//n/AAACAAIAAAD8//r/AAACAAIAAAD8//v/AAACAAQAAAD4//j/AAACAAIAAAD5//j/AAADAAIAAAD6//j/AAACAAIAAAD7//j/AAADAAIAAAD8//j/AAACAAIAAAD9//j/AAADAAIAAAD+//j/AAACAAIAAAD///j/AAADAAIAAAAAAPj/AAACAAIAAAABAPj/AAADAAIAAAD+//n/AAACAAIAAAD///n/AAADAAIAAAD+//r/AAACAAIAAAD///r/AAADAAIAAAD+//v/AAACAAQAAAD///v/AAADAAQAAAD9//r/AAADAAIAAAD9//n/AAADAAIAAAD9//v/AAADAAQAAAAAAPn/AAACAAIAAAABAPn/AAADAAIAAAACAPn/AAACAAIAAAADAPn/AAADAAIAAAACAPj/AAACAAIAAAADAPj/AAADAAIAAAACAPr/AAACAAIAAAADAPr/AAADAAIAAAAAAPr/AAACAAIAAAABAPr/AAADAAIAAAAAAPv/AAACAAQAAAABAPv/AAADAAQAAAACAPv/AAACAAQAAAADAPv/AAADAAQAAAD4//f/AAABAAAAAAD5//f/AAADAAAAAAD6//f/AAACAAAAAAD7//f/AAADAAAAAAD8//f/AAACAAAAAAD9//f/AAADAAAAAAD+//f/AAACAAAAAAD///f/AAADAAAAAAAAAPf/AAACAAAAAAABAPf/AAADAAAAAAACAPf/AAACAAAAAAADAPf/AAADAAAAAAD3//f/AAAAAAAAAAD3//j/AAAAAAEAAAD3//n/AAADAAAAAGD3//r/AAACAAAAAGAEAPj/AAACAAAAAFAEAPn/AAADAAAAAFAEAPr/AAACAAAAAFAEAPv/AAADAAAAAFAEAPf/AAAAAAAAAFD3//v/AAACAAAAAGAEAPz/AAACAAAAAFAEAP3/AAADAAgAAGAEAP7/AAACAAgAAGAEAP//AAADAAAAAFAEAAAAAAACAAAAAFAEAAEAAAACAAAAAFD3//z/AAADAAAAAGD3//3/AAACAAAAAGD3//7/AAADAAAAAGD3////AAACAAAAAGD3/wAAAAADAAAAAGD3/wEAAAADAAAAAGD5/wMAAAACAAAAADD4/wMAAAADAAAAADD7/wMAAAACAAAAADD6/wMAAAADAAAAADD9/wMAAAACAAAAADD8/wMAAAADAAAAADD//wMAAAACAAAAADD+/wMAAAADAAAAADABAAMAAAACAAAAADAAAAMAAAADAAAAADADAAMAAAACAAAAADACAAMAAAADAAAAADAEAAIAAAADAAAAAFD3/wIAAAACAAAAAGD3/wMAAAAAAAAAAGAEAAMAAAAAAAAAADD+//3/AAACAAYAAAD+//7/AAACAAYAAAD///3/AAADAAYAAAD///7/AAADAAYAAAA=")
 tile_set = SubResource("TileSet_tix82")
 
-[node name="Geladeira" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Geladeira" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(142, -88.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD///7/AAACAAwAAAD/////AAACAA0AAAD//wAAAAACAA4AAAD//wEAAAACAA8AAAAAAP7/AAADAAwAAAAAAP//AAADAA0AAAAAAAAAAAADAA4AAAAAAAEAAAADAA8AAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Fogo" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Fogo" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(202.5, -55.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD///7/AAAEAAwAAAD/////AAAEAA0AAAD//wAAAAAEAA4AAAAAAP7/AAAFAAwAAAAAAP//AAAFAA0AAAAAAAAAAAAFAA4AAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Ferro de passar" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Ferro de passar" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-53.5, 68)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAADABAAAAD//wAAAAADABEAAAAAAP//AAAEABAAAAAAAAAAAAAEABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Armario" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Armario" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-88.3333, 16.6667)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AQACAAcAAAD//wAAAQACAAgAAAD//wEAAQACAAkAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Tapete" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Tapete" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(77, 42)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AQAKAAIAAAD//wAAAQAKAAMAAAAAAP//AQALAAIAAAAAAAAAAQALAAMAAAABAP//AQAMAAIAAAABAAAAAQAMAAMAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Sofa" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Sofa" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(205, 79.1667)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAP7/AQAAAAwAABD///7/AQABAAwAABAAAP//AQAAAA0AABD/////AQABAA0AABAAAAAAAQAAAA4AABD//wAAAQABAA4AABAAAAEAAQAAAA8AABD//wEAAQABAA8AABA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Porta" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Porta" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(58, -102.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD///7/AgAIAAAAAAD/////AgAIAAEAAAD//wAAAgAIAAIAAAAAAP7/AgAJAAAAAAAAAP//AgAJAAEAAAAAAAAAAgAJAAIAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Tapete2" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Tapete2" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(58.5, -41)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAAIAAMAAAAAAP//AAAJAAMAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Cadeira" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Cadeira" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-1, 16.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD9//3/AQAHAAAAAAD9//7/AQAHAAEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Mesa" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Mesa" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-13.5, 3.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD9//3/AQAAAAIAAAD9//7/AQAAAAMAAAD+//3/AQACAAIAAAD+//7/AQACAAMAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Musica" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Musica" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-11, 110)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAALABAAAAD//wAAAAALABEAAAAAAP//AAAMABAAAAAAAAAAAAAMABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Janela" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Janela" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-30.5, -119.5)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AQAGAAMAAAD//wAAAQAGAAQAAAAAAP//AQAHAAMAAAAAAAAAAQAHAAQAAAA=")
 tile_set = SubResource("TileSet_ue5l7")
 
-[node name="Café" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Café" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(19.5, -3)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD9//3/AAAEAAcAAAD8//3/AAAFAAYAAAA=")
 tile_set = SubResource("TileSet_f822g")
 
-[node name="Buly" type="TileMapLayer" parent="Quarto_Casa"]
+[node name="Buly" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(225, -99.1667)
 scale = Vector2(1.5, 1.5)
 tile_map_data = PackedByteArray("AAD/////AgAHAAcAAAA=")
