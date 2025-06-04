@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 TransitionScreen="*res://scenes/global/effects/transition_screen.tscn"
+LoadingScreen="*res://scenes/global/effects/loading_screen.tscn"
 
 [display]
 

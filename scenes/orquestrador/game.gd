@@ -1,11 +1,16 @@
 extends Node
 
+# Referências para as cenas principais
 @onready var menu_principal: Node = $MenuPrincipal
 @onready var prologue: Node = $Prologue
 @onready var gameplay: Node = $Gameplay
 @onready var menu_opcoes: Node = $MenuOpcoes
 @onready var menu_pausa = $Effects/MenuPausa
 @onready var config: CanvasLayer = $Config/CanvasLayer
+
+# Referências para os nodes autoload
+@onready var loading_screen = $Effects/LoadingScreen
+
 var prologo_introducao_concluida: bool = false
 
 var scenes: Array[Node]
@@ -30,6 +35,25 @@ func _ready() -> void:
 	_setup_scenes_array()
 	_initialize_game_state_and_scenes()
 	_connect_all_scene_signals()
+	_verify_autoload_nodes()
+
+func _verify_autoload_nodes() -> void:
+	# Verifica se os AutoLoad estão funcionando corretamente
+	if not TransitionScreen:
+		push_error("TransitionScreen não está disponível como AutoLoad!")
+	
+	# Verifica o LoadingScreen (que é um nó local, não um AutoLoad)
+	if not loading_screen:
+		loading_screen = $Effects/LoadingScreen
+		
+	if not loading_screen:
+		push_error("LoadingScreen não encontrado como nó filho em $Effects!")
+	else:
+		# Verifique se o script está correto, tentando acessar uma propriedade
+		if not loading_screen.has_method("start_loading"):
+			push_error("LoadingScreen não tem o método start_loading!")
+		else:
+			print("LoadingScreen encontrado e configurado corretamente.")
 
 func _setup_scenes_array() -> void:
 	scenes = [
@@ -159,7 +183,7 @@ func _activate_scene(scene_node: Node, target_state: GameState) -> void:
 	
 	print("Cena ativada: ", scene_node.name, " | Estado: ", GameState.keys()[target_state])
 
-func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transition_effect_type: String = "fade") -> void:
+func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transition_effect_type: String = "loading") -> void:
 	if is_transitioning or (next_scene_node == current_scene and current_state == next_game_state):
 		return
 	
@@ -173,19 +197,12 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 	if config and config.visible:
 		config.visible = false
 		config.process_mode = Node.PROCESS_MODE_DISABLED
-
-	var effect_duration: float = -1.0
-	match transition_effect_type:
-		"quick_fade": effect_duration = 0.2
-		"slow_fade": effect_duration = 1.0
-
-	match transition_effect_type:
-		"fade", "quick_fade", "slow_fade":
-			await _perform_fade_transition(next_scene_node, next_game_state, effect_duration)
-		"instant":
-			_perform_instant_transition(next_scene_node, next_game_state)
-		_:
-			await _perform_fade_transition(next_scene_node, next_game_state, -1.0)
+		
+	# Usa loading screen para todas as transições exceto 'instant'
+	if transition_effect_type == "instant":
+		_perform_instant_transition(next_scene_node, next_game_state)
+	else:
+		await _perform_loading_transition(next_scene_node, next_game_state)
 
 	is_transitioning = false
 
@@ -194,13 +211,52 @@ func _perform_fade_transition(next_scene: Node, next_state: GameState, duration:
 		current_scene._on_scene_deactivating()
 	
 	if TransitionScreen.has_method("fade_out"):
-		await TransitionScreen.fade_out(duration if duration > 0 else -1)
+		if duration > 0:
+			await TransitionScreen.fade_out(duration)
+		else:
+			await TransitionScreen.fade_out()
 	
 	_deactivate_all_main_scenes()
 	_activate_scene(next_scene, next_state)
 	
 	if TransitionScreen.has_method("fade_in"):
-		await TransitionScreen.fade_in(duration if duration > 0 else -1)
+		if duration > 0:
+			await TransitionScreen.fade_in(duration)
+		else:
+			await TransitionScreen.fade_in()
+
+func _perform_loading_transition(next_scene: Node, next_state: GameState) -> void:
+	if current_scene and current_scene.has_method("_on_scene_deactivating"):
+		current_scene._on_scene_deactivating()
+	
+	# Fade out com TransitionScreen
+	if TransitionScreen and TransitionScreen.has_method("fade_out"):
+		await TransitionScreen.fade_out()
+	
+	_deactivate_all_main_scenes()
+	
+	# Verificar loading_screen
+	if not loading_screen:
+		# Tenta obter diretamente como nó filho
+		loading_screen = $Effects/LoadingScreen
+	
+	# Mostrar tela de loading
+	if loading_screen:
+		print("LoadingScreen encontrado, iniciando...")
+		loading_screen.start_loading(false) # Sem transições internas
+		await loading_screen.loading_finished
+	else:
+		print("ERRO: LoadingScreen não encontrado!")
+	
+	_activate_scene(next_scene, next_state)
+	
+	# Fade in para revelar a cena
+	if TransitionScreen and TransitionScreen.has_method("fade_in"):
+		await TransitionScreen.fade_in()
+	
+	# Fade in para revelar a cena
+	if TransitionScreen.has_method("fade_in"):
+		await TransitionScreen.fade_in()
 
 func _perform_instant_transition(next_scene: Node, next_state: GameState) -> void:
 	if current_scene and current_scene.has_method("_on_scene_deactivating"):
@@ -208,25 +264,25 @@ func _perform_instant_transition(next_scene: Node, next_state: GameState) -> voi
 	_deactivate_all_main_scenes()
 	_activate_scene(next_scene, next_state)
 
-func navigate_to_main_menu(transition_effect: String = "fade") -> void:
+func navigate_to_main_menu(transition_effect: String = "loading") -> void:
 	if menu_principal:
 		switch_to_scene(menu_principal, GameState.MENU, transition_effect)
 	else:
 		printerr("Tentativa de ir para Menu Principal, mas a cena não está definida.")
 
-func navigate_to_prologue(transition_effect: String = "fade") -> void:
+func navigate_to_prologue(transition_effect: String = "loading") -> void:
 	if prologue:
 		switch_to_scene(prologue, GameState.PROLOGUE, transition_effect)
 	else:
 		printerr("Tentativa de ir para Prólogo, mas a cena não está definida.")
 
-func navigate_to_gameplay(transition_effect: String = "fade") -> void:
+func navigate_to_gameplay(transition_effect: String = "loading") -> void:
 	if gameplay:
 		switch_to_scene(gameplay, GameState.PLAYING, transition_effect)
 	else:
 		printerr("Tentativa de iniciar Gameplay, mas a cena não está definida.")
 
-func navigate_to_options_from_main_menu(transition_effect: String = "quick_fade") -> void:
+func navigate_to_options_from_main_menu(transition_effect: String = "loading") -> void:
 	if menu_opcoes:
 		switch_to_scene(menu_opcoes, GameState.OPTIONS, transition_effect) # Usa GameState.OPTIONS
 	else:
@@ -238,7 +294,9 @@ func trigger_quit_game() -> void:
 	get_tree().quit()
 
 func get_current_active_scene_name() -> String:
-	return current_scene.name if current_scene else "Nenhuma"
+	if current_scene:
+		return current_scene.name
+	return "Nenhuma"
 
 func get_current_game_state() -> GameState:
 	return current_state
@@ -259,7 +317,8 @@ func print_debug_info() -> void:
 	print("====================================")
 
 func _on_iniciar_pressed() -> void:
-	navigate_to_prologue()
+	print("Botão 'Iniciar' pressionado")
+	start_prologue()
 
 func _on_opcoes_pressed() -> void:
 	navigate_to_options_from_main_menu()
@@ -382,3 +441,20 @@ func _on_voltar_from_config_pressed() -> void:
 		
 		if menu_pausa.has_method("_on_scene_activated"):
 			menu_pausa._on_scene_activated()
+
+func start_prologue() -> void:
+	navigate_to_prologue()
+
+func test_loading_screen() -> void:
+	# Este método apenas demonstra o uso da tela de loading
+	if not loading_screen:
+		# Tenta obter diretamente do caminho de nó filho
+		loading_screen = $Effects/LoadingScreen
+		
+	if loading_screen:
+		print("Iniciando teste da tela de loading...")
+		loading_screen.start_loading()
+		await loading_screen.loading_finished
+		print("Loading concluído!")
+	else:
+		print("LoadingScreen não encontrado!")

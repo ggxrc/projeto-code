@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://btos0oij5qmbx"]
+[gd_scene load_steps=9 format=3 uid="uid://btos0oij5qmbx"]
 
 [ext_resource type="Script" uid="uid://c4h8pg1j3frv3" path="res://scenes/orquestrador/game.gd" id="1_irio1"]
 [ext_resource type="PackedScene" uid="uid://b56m6q8lb21x4" path="res://scenes/prologue/prologue.tscn" id="1_mhhmh"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="3_yf6qs"]
 [ext_resource type="PackedScene" uid="uid://6kksgt7lj1ch" path="res://scenes/menu pausa/MenuPausa.tscn" id="4_31066"]
 [ext_resource type="PackedScene" uid="uid://bstniqeot16yf" path="res://scenes/configurações/config.tscn" id="4_v6o4w"]
+[ext_resource type="PackedScene" uid="uid://de0m62clh51a2" path="res://scenes/global/effects/loading_screen.tscn" id="8_hcj47"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_irio1")
@@ -35,6 +36,9 @@ expand_icon = true
 
 [node name="Prologue" parent="." instance=ExtResource("1_mhhmh")]
 
+[node name="TouchScreenJoystick" parent="Prologue/Player/CanvasLayer" index="0"]
+pivot_offset = Vector2(106.5, 98)
+
 [node name="Config" parent="." instance=ExtResource("4_v6o4w")]
 
 [node name="CanvasLayer" parent="Config" index="0"]
@@ -48,6 +52,8 @@ visible = false
 visible = false
 
 [node name="TransitionScreen" parent="Effects" instance=ExtResource("3_yf6qs")]
+
+[node name="LoadingScreen" parent="Effects" instance=ExtResource("8_hcj47")]
 
 [connection signal="pressed" from="Background/PauseButton" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="Config/CanvasLayer/Control/ColorRect/VBoxContainer/VoltarFromConfig" to="." method="_on_voltar_from_config_pressed"]

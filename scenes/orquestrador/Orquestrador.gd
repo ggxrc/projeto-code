@@ -8,6 +8,9 @@ extends Node
 @onready var menu_principal = $"../MenuPrincipal"
 @onready var prologue = $"../Prologue"
 
+# Referência aos autoloads
+@onready var loading_screen = get_node_or_null("/root/LoadingScreen")
+
 var scenes: Array[Node]
 var current_scene: Node
 
@@ -62,6 +65,28 @@ func scene_transition_with_fade(next_scene: Node) -> void:
 func _change_scene_callback(next_scene: Node) -> void:
 	_hide_all_scenes()
 	_show_scene(next_scene)
+
+func scene_transition_with_loading(next_scene: Node) -> void:
+	# Versão com tela de loading
+	if not TransitionScreen or not loading_screen:
+		scene_transition(next_scene)
+		return
+	
+	# Primeiro usa TransitionScreen para fade out
+	await TransitionScreen.fade_out()
+	
+	# Esconde todas as cenas
+	_hide_all_scenes()
+	
+	# Mostra a tela de loading com tempo aleatório
+	loading_screen.start_loading(false) # false = não usar transições internas
+	await loading_screen.loading_finished
+	
+	# Mostra a próxima cena
+	_show_scene(next_scene)
+	
+	# Faz fade in para revelar a cena
+	await TransitionScreen.fade_in()
 
 # ============ MÉTODOS DE CONVENIÊNCIA ============
 

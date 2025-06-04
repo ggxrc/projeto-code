@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://iy7ihik2nwjv"]
+[gd_scene load_steps=9 format=3 uid="uid://iy7ihik2nwjv"]
 
 [ext_resource type="Texture2D" uid="uid://bso2xkhqrxvt3" path="res://scenes/main menu/Background/Tela inicial fundo.png" id="1_4d5ee"]
 [ext_resource type="AudioStream" uid="uid://0to2fgqd3cgp" path="res://scenes/main menu/sfx/songs/ADS.mp3" id="1_qerp7"]
+[ext_resource type="Script" uid="uid://ql5yxjycqej" path="res://scenes/main menu/menu_principal.gd" id="1_qmmwj"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_5dpk2"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="2_r2p0k"]
 [ext_resource type="Script" uid="uid://rsilvaybvcp4" path="res://scenes/main menu/script/audio_stream_player.gd" id="3_vju2w"]
@@ -28,6 +29,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_4d5ee")
 expand_mode = 2
+script = ExtResource("1_qmmwj")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_qerp7")
@@ -87,3 +89,5 @@ text = "Sair"
 icon_alignment = 1
 
 [connection signal="visibility_changed" from="." to="AudioStreamPlayer" method="_on_menu_principal_visibility_changed"]
+[connection signal="pressed" from="VBoxContainer/Iniciar" to="." method="_on_iniciar_pressed"]
+[connection signal="pressed" from="VBoxContainer/Sair" to="." method="_on_sair_pressed"]
