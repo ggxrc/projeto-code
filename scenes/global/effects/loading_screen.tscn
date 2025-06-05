@@ -113,7 +113,7 @@ position = Vector2(0, -40)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_gwk4u")
 autoplay = "default"
-frame_progress = 0.213227
+frame_progress = 0.144106
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
