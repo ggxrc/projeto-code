@@ -3,7 +3,13 @@ extends CanvasLayer
 @onready var description_label: Label = $BackgroundBoxDescription/DescriptionTextLabel
 @onready var background_box: Control = $BackgroundBoxDescription # Referência ao PanelContainer/ColorRect
 
+signal dialogue_line_finished
+
 var _current_tween: Tween = null
+
+# Verifica se o texto está sendo digitado (efeito de typewriter ativo)
+func is_typewriting() -> bool:
+	return _current_tween != null and _current_tween.is_valid() and _current_tween.is_running()
 
 func _ready() -> void:
 	self.visible = false # Começa invisível
@@ -30,17 +36,15 @@ func show_description(text_content: String, speed: float = 0.03) -> void:
 		description_label.visible_ratio = 0.0
 		_current_tween = create_tween()
 		_current_tween.tween_property(description_label, "visible_ratio", 1.0, len(text_content) * speed)
-		# Se você adicionou o sinal:
-		# _current_tween.tween_callback(_on_typewriter_finished)
+		_current_tween.tween_callback(_on_typewriter_finished)
 		_current_tween.play()
 	else: # Mostrar instantaneamente
 		description_label.visible_ratio = 1.0
-		# Se você adicionou o sinal:
-		# _on_typewriter_finished()
+		_on_typewriter_finished()
 
-# func _on_typewriter_finished() -> void:
-#	_current_tween = null
-#	description_shown_completely.emit()
+func _on_typewriter_finished() -> void:
+	_current_tween = null
+	dialogue_line_finished.emit()
 
 func hide_box() -> void:
 	if _current_tween and _current_tween.is_valid():

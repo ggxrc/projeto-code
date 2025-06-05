@@ -253,10 +253,6 @@ func _perform_loading_transition(next_scene: Node, next_state: GameState) -> voi
 	# Fade in para revelar a cena
 	if TransitionScreen and TransitionScreen.has_method("fade_in"):
 		await TransitionScreen.fade_in()
-	
-	# Fade in para revelar a cena
-	if TransitionScreen.has_method("fade_in"):
-		await TransitionScreen.fade_in()
 
 func _perform_instant_transition(next_scene: Node, next_state: GameState) -> void:
 	if current_scene and current_scene.has_method("_on_scene_deactivating"):
@@ -327,7 +323,7 @@ func _on_sair_pressed() -> void:
 	trigger_quit_game()
 
 func _on_voltar_menu_pressed() -> void:
-	navigate_to_main_menu("fade")
+	navigate_to_main_menu("loading")
 
 func _on_pular_prologue_pressed() -> void:
 	navigate_to_gameplay()
@@ -407,7 +403,7 @@ func _on_voltar_menu_from_pause_pressed() -> void:
 		config.visible = false
 		config.process_mode = Node.PROCESS_MODE_DISABLED
 
-	navigate_to_main_menu("fade")
+	navigate_to_main_menu("loading")
 
 func _on_sair_pause_pressed() -> void:
 	if get_tree().paused:

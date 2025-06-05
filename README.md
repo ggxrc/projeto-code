@@ -49,6 +49,21 @@ O jogo utiliza um sistema de estados para controlar o fluxo do jogo:
 
 O jogo implementa um sistema de diálogos para narrativa, com os seguintes componentes:
 
+#### Componentes do Sistema de Diálogo:
+- `DialogueBox.tscn` e `dialogue_box.gd` - Exibição de textos narrativos e conversas
+- `DescriptionBox.tscn` e `description_box.gd` - Variante para exibição de descrições
+- `ChoiceDialogueBox.tscn` e `choice_dialogue_box.gd` - Sistema de escolhas interativas
+
+#### Recursos do Sistema de Diálogo:
+- **Efeito de Digitação** - Texto é exibido caractere por caractere
+- **Ramificação de Diálogos** - Suporte para múltiplos caminhos de história
+- **Sistema de Escolhas** - Opções interativas que afetam o curso do diálogo
+- **Textos de Contexto** - Processamento especial para textos marcados com asteriscos
+- **Interação por Clique** - Sistema que requer cliques/toques para avançar o diálogo
+
+>[!IMPORTANTE]
+>O sistema de diálogos foi recentemente atualizado com sistemas de ramificação e escolhas. Para detalhes, consulte [docs/updates/atualizacao_sistema_dialogo.md](/docs/updates/atualizacao_sistema_dialogo.md)
+
 1. `dialogue_box.gd` - Exibe caixas de diálogo com efeito de digitação.
 2. `description_box.gd` - Fornece descrições de elementos do jogo.
 

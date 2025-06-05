@@ -131,54 +131,9 @@ func mark_option_as_incorrect(option_text: String, choices_array: Array, incorre
     # Retorna a lista atualizada de escolhas
 ```
 
-## Como Usar o Sistema de Diálogos
+## Como Usar o Sistema de Escolhas em Diálogos
 
-### Exemplo de Uso Básico:
-
-```gdscript
-# 1. Obter referência ao sistema de diálogos
-@onready var dialogue_box = $DialogueBox
-
-# 2. Exibir uma linha de diálogo
-dialogue_box.show_line("Olá, jogador! Bem-vindo ao mundo de Projeto Code.", 0.05)
-
-# 3. Conectar ao sinal de conclusão do diálogo
-dialogue_box.dialogue_line_finished.connect(_on_dialogue_finished)
-
-# 4. Função chamada quando o diálogo termina
-func _on_dialogue_finished() -> void:
-    # Lógica para após o diálogo ser concluído
-    print("Diálogo concluído!")
-```
-
-### Exemplo de Sequência de Diálogos:
-
-```gdscript
-var dialogos = [
-    "Esta é a primeira linha do diálogo.",
-    "Esta é a segunda linha do diálogo.",
-    "Esta é a linha final do diálogo."
-]
-var indice_atual = 0
-
-func iniciar_conversa() -> void:
-    dialogue_box.dialogue_line_finished.connect(_proxima_linha)
-    _exibir_proxima_linha()
-
-func _exibir_proxima_linha() -> void:
-    if indice_atual < dialogos.size():
-        dialogue_box.show_line(dialogos[indice_atual])
-        indice_atual += 1
-    else:
-        _finalizar_conversa()
-
-func _finalizar_conversa() -> void:
-    dialogue_box.dialogue_line_finished.disconnect(_proxima_linha)
-    dialogue_box.hide_box()
-    # Continuar com o jogo
-```
-
-### Exemplo de Diálogo com Escolhas:
+### Exemplo de Configuração de Escolhas:
 
 ```gdscript
 # 1. Definir as opções de escolha
@@ -262,12 +217,16 @@ func on_choice_made(choice_index):
     process_next()
 ```
 
-## Personalização
+## Próximas Melhorias Planejadas
 
-Para personalizar a aparência da caixa de diálogo:
-1. Abra a cena `DialogueBox.tscn` no editor Godot
-2. Ajuste as propriedades visuais do nó `BackgroundBox`
-3. Modifique a fonte e estilo do texto no nó `TextLabel`
+- ✓ ~~Sistema de escolhas para diálogos interativos~~ (Implementado!)
+- ✓ ~~Sistema de ramificação de diálogos~~ (Implementado!)
+- ✓ ~~Sistema para processar instruções de contexto~~ (Implementado!)
+- ✓ ~~Sistema de clique para avançar diálogos~~ (Implementado!)
+- Suporte para exibir nome e avatar do personagem que está falando
+- Efeitos de emoção no texto (tremer, ondular, cores diferentes)
+- Sistema de salvamento do progresso do diálogo (base implementada)
+- Internacionalização (i18n) para facilitar traduções
 
 ## Modo de Depuração
 
@@ -284,34 +243,3 @@ Quando ativado, o sistema registra:
 - Caminhos seguidos durante a conversa
 
 Este modo é útil para identificar problemas no fluxo de diálogo durante o desenvolvimento.
-
-## Melhores Práticas
-
-- Mantenha os textos de diálogo em arrays ou recursos separados para facilitar edição e tradução
-- Use velocidades diferentes de digitação para transmitir emoções diferentes
-- Implemente um sistema para pular diálogos para jogadores que já viram o texto
-- Considere adicionar efeitos de som para a digitação do texto
-- Use o modo de depuração (`DEBUG_DIALOGUE = true`) durante o desenvolvimento para identificar problemas
-- Para textos de contexto, use asteriscos (ex: `*Descrição da ação*`)
-- Separe os diálogos em caminhos diferentes para maior variedade na narrativa
-
-## Limitações Atuais
-
-- O sistema de fonte não suporta estilos diferentes em uma mesma caixa
-- A detecção de textos de contexto é baseada em padrões específicos
-
-## Recursos Implementados
-
-- ✓ Sistema de escolhas para diálogos interativos
-- ✓ Sistema de ramificação de diálogos
-- ✓ Sistema para processar instruções de contexto
-- ✓ Sistema de clique para avançar diálogos
-- ✓ Remoção dinâmica de opções incorretas
-- ✓ Indicação visual para clique/continuação
-
-## Futuras Melhorias Planejadas
-
-- Suporte para exibir nome e avatar do personagem que está falando
-- Efeitos de emoção no texto (tremer, ondular, cores diferentes)
-- Expansão do sistema de salvamento do progresso do diálogo
-- Internacionalização (i18n) para facilitar traduções

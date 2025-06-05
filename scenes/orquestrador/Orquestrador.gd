@@ -94,7 +94,7 @@ func go_to_menu(with_transition: bool = true) -> void:
 	if game_node and game_node.has_method("go_to_menu"):
 		game_node.go_to_menu()
 	elif with_transition:
-		scene_transition_with_fade(menu_principal)
+		scene_transition_with_loading(menu_principal)
 	else:
 		scene_transition(menu_principal)
 
@@ -102,7 +102,7 @@ func start_prologue(with_transition: bool = true) -> void:
 	if game_node and game_node.has_method("start_prologue"):
 		game_node.start_prologue()
 	elif with_transition:
-		scene_transition_with_fade(prologue)  
+		scene_transition_with_loading(prologue)  
 	else:
 		scene_transition(prologue)
 

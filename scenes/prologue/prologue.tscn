@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=37 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Script" uid="uid://jcnxox6jfobe" path="res://scenes/prologue/prologue.gd" id="1_e24q1"]
@@ -10,6 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/player.tscn" id="6_gfsru"]
 [ext_resource type="PackedScene" uid="uid://f3ms2l5g3ikb" path="res://scenes/prologue/tela_inicial.tscn" id="8_0d6ok"]
 [ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="8_bxlvl"]
+[ext_resource type="PackedScene" uid="uid://c1xyube487q1w" path="res://scenes/diálogos/ChoiceDialogueBox.tscn" id="11_mas3y"]
+[ext_resource type="PackedScene" uid="uid://mxffm6n8wfjk" path="res://scenes/diálogos/DialogueBox.tscn" id="12_k0wf4"]
+[ext_resource type="PackedScene" uid="uid://b34vsfg8xybqv" path="res://scenes/diálogos/DescriptionBox.tscn" id="13_omauq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k4kb1"]
 texture = ExtResource("2_50cnf")
@@ -2954,15 +2957,17 @@ tile_map_data = PackedByteArray("AAD/////AgAHAAcAAAA=")
 tile_set = SubResource("TileSet_asecn")
 
 [node name="Player" type="Node2D" parent="."]
+position = Vector2(-12, 136)
 
 [node name="Body" parent="Player" instance=ExtResource("6_gfsru")]
-position = Vector2(-267, -61)
-scale = Vector2(1.5, 1.5)
+position = Vector2(-105, -105)
+scale = Vector2(1.2, 1.2)
 collision_mask = 14
 
 [node name="Sprite2D" parent="Player/Body" index="0"]
 position = Vector2(-4.66666, -5.33334)
 scale = Vector2(0.140625, 0.127604)
+animation = &"idle"
 autoplay = "Padrao"
 
 [node name="CollisionShape2D" parent="Player/Body" index="1"]
@@ -3019,6 +3024,15 @@ offset_bottom = 62.0
 grow_horizontal = 1
 grow_vertical = 1
 metadata/_edit_use_anchors_ = true
+
+[node name="ChoiceDialogueBox" parent="." instance=ExtResource("11_mas3y")]
+visible = false
+
+[node name="DialogueBoxUI" parent="." instance=ExtResource("12_k0wf4")]
+visible = false
+
+[node name="DescriptionBoxUI" parent="." instance=ExtResource("13_omauq")]
+visible = false
 
 [editable path="Player/Body"]
 [editable path="TelaInicial"]

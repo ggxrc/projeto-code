@@ -36,9 +36,6 @@ expand_icon = true
 
 [node name="Prologue" parent="." instance=ExtResource("1_mhhmh")]
 
-[node name="TouchScreenJoystick" parent="Prologue/Player/CanvasLayer" index="0"]
-pivot_offset = Vector2(106.5, 98)
-
 [node name="Config" parent="." instance=ExtResource("4_v6o4w")]
 
 [node name="CanvasLayer" parent="Config" index="0"]
@@ -54,6 +51,7 @@ visible = false
 [node name="TransitionScreen" parent="Effects" instance=ExtResource("3_yf6qs")]
 
 [node name="LoadingScreen" parent="Effects" instance=ExtResource("8_hcj47")]
+visible = false
 
 [connection signal="pressed" from="Background/PauseButton" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="Config/CanvasLayer/Control/ColorRect/VBoxContainer/VoltarFromConfig" to="." method="_on_voltar_from_config_pressed"]

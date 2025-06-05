@@ -12,7 +12,11 @@ func _ready() -> void:
 	if is_instance_valid(text_label):
 		text_label.visible_ratio = 0.0
 		
-func show_line(text_content: String, speed: float = 0.03) -> void:
+# Verifica se o texto está sendo digitado (efeito de typewriter ativo)
+func is_typewriting() -> bool:
+	return _current_tween != null and _current_tween.is_valid() and _current_tween.is_running()
+
+func show_line(text_content: String, speed: float = 0.05) -> void:
 	if not is_instance_valid(text_label) or not is_instance_valid(background_box):
 		printerr("DialogueBox: Nó TextLabel ou BackgroundBox não encontrado!")
 		return
