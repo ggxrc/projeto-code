@@ -2969,6 +2969,7 @@ position = Vector2(-4.66666, -5.33334)
 scale = Vector2(0.140625, 0.127604)
 animation = &"idle"
 autoplay = "Padrao"
+frame_progress = 0.0
 
 [node name="CollisionShape2D" parent="Player/Body" index="1"]
 position = Vector2(-4.66669, -3)

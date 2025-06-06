@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://by74bdic2lqhi"]
+
+[ext_resource type="Script" path="res://scenes/prologue/sofa_collision_manager.gd" id="1_7bwgd"]
+
+[node name="SofaCollisionManager" type="Node"]
+script = ExtResource("1_7bwgd")

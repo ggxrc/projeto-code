@@ -36,6 +36,9 @@ expand_icon = true
 
 [node name="Prologue" parent="." instance=ExtResource("1_mhhmh")]
 
+[node name="Sprite2D" parent="Prologue/Player/Body" index="0"]
+frame_progress = 0.0
+
 [node name="Config" parent="." instance=ExtResource("4_v6o4w")]
 
 [node name="CanvasLayer" parent="Config" index="0"]

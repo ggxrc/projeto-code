@@ -12,6 +12,7 @@ const PATH_BLUE = 1     # Caminho alternativo (azul)
 @onready var choice_dialogue_box = $ChoiceDialogueBox
 @onready var description_box = $DescriptionBoxUI
 @onready var click_indicator = $ClickIndicator if has_node("ClickIndicator") else null
+@onready var player = $Player/Body if has_node("Player/Body") else null
 
 # Variáveis para controlar a espera por clique do usuário
 var waiting_for_input = false
@@ -164,6 +165,9 @@ func _ready() -> void:
 	if not game_manager:
 		printerr("Prologue.gd: Game.gd não encontrado em /root/Game!")
 
+	# Configurar colisão para o sofá
+	setup_couch_collision()
+
 	if is_instance_valid(tela_inicial):
 		if not tela_inicial.linha_exibida_completamente.is_connected(_avancar_dialogo):
 			tela_inicial.linha_exibida_completamente.connect(_avancar_dialogo)
@@ -266,6 +270,10 @@ func _iniciar_sequencia_jogador_dormindo() -> void:
 	else:
 		print("Iniciando sequência de diálogo interativo...")
 	
+	# Esconder joystick virtual (se existir)
+	if player and player.has_method("hide_joystick"):
+		player.hide_joystick()
+		
 	# Esconder a tela inicial e mostrar os diálogos
 	if tela_inicial and tela_inicial.visible:
 		tela_inicial.visible = false
@@ -459,25 +467,18 @@ func _process_next_dialogue_state():
 				show_choice_options(DialogueState.FIRST_CHOICE)
 				
 		DialogueState.FIRST_CHOICE:
-			# Se chegamos aqui, é porque o jogador fez uma escolha incorreta
-			# e precisamos mostrar as opções atualizadas
-			if DEBUG_DIALOGUE:
-				print("[Escolha] Mostrando opções atualizadas da primeira escolha")
+			# Não reiniciamos automaticamente caso selecionada uma opção incorreta
+			# Em vez disso, mostramos as opções atualizadas
 			show_choice_options(DialogueState.FIRST_CHOICE)
 			
 		DialogueState.SECOND_CHOICE:
-			# Se chegamos aqui, é porque o jogador fez uma escolha incorreta
-			# e precisamos mostrar as opções atualizadas
-			if DEBUG_DIALOGUE:
-				print("[Escolha] Mostrando opções atualizadas da segunda escolha")
+			# Não reinistalizamos automaticamente caso selecionada uma opção incorreta
 			show_choice_options(DialogueState.SECOND_CHOICE)
 		
 		DialogueState.BLUE_PATH:
 			if current_text_index < blue_path_texts.size():
 				show_appropriate_text(blue_path_texts[current_text_index])
 			else:
-				if DEBUG_DIALOGUE:
-					print("[Escolha] Mostrando opções do BLUE_PATH")
 				show_choice_options(DialogueState.BLUE_PATH)
 		
 		DialogueState.BLUE_PATH_CONTINUATION:
@@ -532,12 +533,12 @@ func _on_choice_selected(choice_index: int):
 				if DEBUG_DIALOGUE:
 					print("[Escolha] Escolha correta (acordar) na primeira etapa")
 					
-				current_text_index = 0
+				current_text_index = 0  # Reinicia o contador para o próximo estado
 				current_state = DialogueState.SECOND_CHOICE
 				
-				# Resetamos as escolhas da segunda etapa (por segurança)
-				second_choices = original_second_choices.duplicate()
-				incorrect_second_choices.clear()
+				# Não avançar automaticamente para o próximo diálogo
+				# Em vez disso, esperar até o diálogo atual terminar
+				# _process_next_dialogue_state será chamado quando o texto for exibido completamente
 			else:
 				# Marca esta opção como incorreta usando nossa função auxiliar
 				var selected_option_text = first_choices[choice_index]
@@ -546,8 +547,9 @@ func _on_choice_selected(choice_index: int):
 				if DEBUG_DIALOGUE:
 					print("[Escolha] Escolha incorreta, opções restantes: ", first_choices)
 				
-				# Voltar para o estado de primeira escolha para mostrar as opções atualizadas
-				current_text_index = -1  # Para que _process_next_dialogue_state incremente para 0
+				# Não continuamos o diálogo automaticamente
+				# Em vez disso, o texto de resposta terminará e _on_dialogue_line_finished 
+				# irá configurar waiting_for_input = true
 			
 		DialogueState.SECOND_CHOICE:
 			# Use show_appropriate_text para verificar se há instruções de contexto
@@ -556,11 +558,13 @@ func _on_choice_selected(choice_index: int):
 			if choice_index == 2:  # 'd) sair da cama' - Opção AZUL
 				# Caminho azul é sempre válido (escolha especial)
 				current_state = DialogueState.BLUE_PATH
-				current_text_index = -1  # Para que _process_next_dialogue_state incremente para 0
+				current_text_index = 0  # Define explicitamente para 0
 				current_path = PATH_BLUE
 				
 				if DEBUG_DIALOGUE:
 					print("[Caminho] Definido caminho AZUL")
+					
+				# Não avançamos automaticamente, esperamos o texto terminar
 			else:  # Outras opções - Caminho AMARELO potencial
 				# Verifica se a resposta está correta com base no texto de resposta
 				# Resposta errada tem "vai" no início (ex: "vai sair deitado?")
@@ -572,41 +576,45 @@ func _on_choice_selected(choice_index: int):
 					if DEBUG_DIALOGUE:
 						print("[Escolha] Resposta incorreta na segunda etapa, mostrando opções atualizadas")
 					
-					current_text_index = -1  # Volta para mostrar as escolhas atualizadas
+					# Não fazemos nada aqui, esperamos o texto ser exibido completamente
 				else:
 					# Se a resposta for correta ("isso mesmo"), segue para o caminho amarelo
 					# Primeiro determina qual conjunto de textos usar com base na escolha
-					if choice_index == 0: # "b) levantar"
+					if choice_index == 0:  # "b) levantar"
 						yellow_path_texts = yellow_path_levantar_texts.duplicate()
 						if DEBUG_DIALOGUE:
 							print("[Caminho] AMARELO - via levantar")
-					else: # "c) abrir o olho"
+					else:  # "c) abrir o olho"
 						yellow_path_texts = yellow_path_olho_texts.duplicate() 
 						if DEBUG_DIALOGUE:
 							print("[Caminho] AMARELO - via abrir olho")
 					
 					# Depois atualiza o estado e caminho
 					current_state = DialogueState.YELLOW_PATH
-					current_text_index = -1  # Para que _process_next_dialogue_state incremente para 0
+					current_text_index = 0  # Define explicitamente para 0
 					current_path = PATH_STANDARD
+					
+					# Não avançamos automaticamente, esperamos o texto terminar
 				
 		DialogueState.BLUE_PATH:
 			# Use show_appropriate_text para verificar se há instruções de contexto
 			show_appropriate_text(blue_path_responses[choice_index])
 			
 			# Determina qual conjunto de textos adicionais usar com base na escolha
-			if choice_index == 0: # "a) levantar"
+			if choice_index == 0:  # "a) levantar"
 				blue_path_continuation_texts = blue_path_levantar_texts.duplicate()
 				if DEBUG_DIALOGUE:
 					print("[Caminho] AZUL - continua via levantar")
-			else: # "b) abrir o olho"
+			else:  # "b) abrir o olho"
 				blue_path_continuation_texts = blue_path_olho_texts.duplicate()
 				if DEBUG_DIALOGUE:
 					print("[Caminho] AZUL - continua via abrir olho")
 			
 			# Após resposta, vamos para um estado intermediário antes da conclusão
 			current_state = DialogueState.BLUE_PATH_CONTINUATION
-			current_text_index = -1  # Para que _process_next_dialogue_state incremente para 0
+			current_text_index = 0  # Define explicitamente para 0
+			
+			# Não avançamos automaticamente, esperamos o texto terminar
 
 func show_choice_options(state: DialogueState):
 	# Esconder todas as outras caixas de diálogo
@@ -618,39 +626,46 @@ func show_choice_options(state: DialogueState):
 	
 	match state:
 		DialogueState.FIRST_CHOICE:
-			# Verificar se ainda temos opções disponíveis
-			if first_choices.size() <= 1:  # Deixamos pelo menos a opção correta ("acordar")
-				# Se não tiver mais opções ou só restar uma, reinicia as opções
-				first_choices = original_first_choices.duplicate()
-				incorrect_first_choices.clear()
+			# Verificamos se só resta a opção correta (acordar)
+			# Nesse caso, não reiniciamos as opções incorretas
+			if first_choices.size() <= 0:  # Se não tivermos nenhuma opção (caso extremo)
+				first_choices = ["a) acordar"] # Apenas disponibilizamos a opção correta
 				if DEBUG_DIALOGUE:
-					print("[Sistema] Opções da primeira escolha reiniciadas.")
+					print("[Sistema] Disponibilizando apenas opção correta da primeira escolha.")
+					
+			# Filtramos as opções incorretas antes de mostrar
+			var filtered_choices = []
+			for choice in original_first_choices:
+				if not choice in incorrect_first_choices or choice == "a) acordar":
+					filtered_choices.append(choice)
 					
 			if DEBUG_DIALOGUE:
-				print("[Escolhas] Exibindo opções para primeira escolha: ", first_choices)
+				print("[Escolhas] Exibindo opções filtradas para primeira escolha: ", filtered_choices)
 				
-			choice_dialogue_box.show_choices(first_choices, "O que você vai fazer?")
+			choice_dialogue_box.show_choices(filtered_choices, "O que você vai fazer?")
 			
 		DialogueState.SECOND_CHOICE:
 			# Verificar se ainda temos opções disponíveis
 			if second_choices.size() == 0:
-				# Se não tiver mais opções, reinicia as opções
-				second_choices = original_second_choices.duplicate()
-				incorrect_second_choices.clear()
+				# Se não tiver mais opções, mostramos pelo menos as opções corretas 
+				# (levantar, abrir o olho e sair da cama)
+				second_choices = ["b) levantar", "c) abrir o olho", "d) sair da cama"]
 				if DEBUG_DIALOGUE:
-					print("[Sistema] Todas as opções da segunda escolha foram tentadas. Reiniciando.")
-			elif second_choices.size() == 1 && second_choices[0].ends_with("sair da cama"):
-				# Se só restar a opção "sair da cama", também reiniciamos
-				# para garantir que as outras opções também sejam mostradas
-				second_choices = original_second_choices.duplicate()
-				incorrect_second_choices.clear()
-				if DEBUG_DIALOGUE:
-					print("[Sistema] Restando apenas opção azul. Reiniciando opções.")
+					print("[Sistema] Disponibilizando apenas opções corretas da segunda escolha.")
+			
+			# Filtramos as opções incorretas antes de mostrar as escolhas disponíveis
+			var filtered_second_choices = []
+			for choice in original_second_choices:
+				if not choice in incorrect_second_choices:
+					filtered_second_choices.append(choice)
+			
+			if DEBUG_DIALOGUE:
+				print("[Sistema] Segunda escolha - opções filtradas disponíveis: ", filtered_second_choices)
 					
 			if DEBUG_DIALOGUE:
-				print("[Escolhas] Exibindo opções para segunda escolha: ", second_choices)
+				print("[Escolhas] Exibindo opções para segunda escolha: ", filtered_second_choices)
 				
-			choice_dialogue_box.show_choices(second_choices, "Agora que ele está acordado, o que vem depois?")
+			choice_dialogue_box.show_choices(filtered_second_choices, "Agora que ele está acordado, o que vem depois?")
 			
 		DialogueState.BLUE_PATH:
 			if DEBUG_DIALOGUE:
@@ -668,6 +683,10 @@ func finish_interactive_dialogue():
 	
 	# Salvar resultados do diálogo antes de prosseguir
 	_save_dialogue_choices()
+	
+	# Mostrar joystick novamente para a jogabilidade
+	if player and player.has_method("show_joystick"):
+		player.show_joystick()
 	
 	dialogue_active = false
 	_prosseguir_apos_dialogo()
@@ -767,3 +786,55 @@ func reset_choices():
 	
 	if DEBUG_DIALOGUE:
 		print("[Sistema] Opções de escolha resetadas")
+
+# Função para configurar a colisão do sofá
+func setup_couch_collision() -> void:
+	# Tenta localizar o nó do quarto que contém o sofá
+	var quarto_casa = get_node_or_null("QuartoCasa")
+	if not quarto_casa:
+		printerr("Nó QuartoCasa não encontrado!")
+		return
+		
+	# Tenta localizar o nó do sofá diretamente
+	var sofa = quarto_casa.get_node_or_null("Sofa")
+	if not sofa:
+		printerr("Nó do sofá não encontrado!")
+		return
+	
+	# Criar corpo de colisão para o sofá
+	var static_body = StaticBody2D.new()
+	static_body.name = "SofaCollision"
+	
+	# Criar forma de colisão
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	
+	# Definir tamanho da colisão (ajustar conforme necessário)
+	shape.size = Vector2(120, 30)
+	collision.shape = shape
+	
+	# Posicionar a colisão relativamente ao sofá
+	collision.position = Vector2(0, 10)  # Ajustar posição conforme necessário
+	
+	# Adicionar colisão ao corpo estático
+	static_body.add_child(collision)
+	
+	# Adicionar o corpo estático ao sofá
+	sofa.add_child(static_body)
+	
+	print("Colisão do sofá configurada com sucesso!")
+	
+# Função para encontrar um nó pelo nome em toda a árvore
+func find_node_by_name(node_name: String) -> Node:
+	return find_node_recursive(self, node_name)
+	
+func find_node_recursive(root: Node, node_name: String) -> Node:
+	if root.name == node_name:
+		return root
+		
+	for child in root.get_children():
+		var found = find_node_recursive(child, node_name)
+		if found:
+			return found
+			
+	return null

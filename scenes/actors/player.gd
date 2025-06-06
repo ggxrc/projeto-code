@@ -148,6 +148,22 @@ func find_joystick():
 	var joystick = find_joystick_recursive(root)
 	
 	return joystick
+
+# Função para esconder o joystick virtual
+func hide_joystick() -> void:
+	var joystick = find_joystick()
+	if joystick:
+		var parent = joystick.get_parent()
+		if parent:
+			parent.visible = false
+
+# Função para mostrar o joystick virtual
+func show_joystick() -> void:
+	var joystick = find_joystick()
+	if joystick:
+		var parent = joystick.get_parent()
+		if parent:
+			parent.visible = true
 	
 # Função recursiva para procurar um joystick na árvore de cena
 func find_joystick_recursive(node):
@@ -160,4 +176,3 @@ func find_joystick_recursive(node):
 			return result
 			
 	return null
-	
