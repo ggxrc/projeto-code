@@ -1,8 +1,8 @@
 [gd_scene load_steps=28 format=3 uid="uid://cbdw2mmnv7a53"]
 
-[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
-[ext_resource type="Texture2D" uid="uid://b52wgkv5ey5cd" path="res://assets/character sprites/Sprite Padronização.png" id="3_7wueq"]
+[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/Jogador/player.gd" id="1_ru62r"]
 [ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/Sprite Prota.png" id="3_ktjr4"]
+[ext_resource type="Texture2D" uid="uid://cxo1f7mcohn6s" path="res://assets/character sprites/Sprite Prota dormindo.png" id="3_yua0u"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7860b"]
 atlas = ExtResource("3_ktjr4")
@@ -73,23 +73,22 @@ atlas = ExtResource("3_ktjr4")
 region = Rect2(768, 768, 256, 384)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j3wsw"]
-atlas = ExtResource("3_7wueq")
 region = Rect2(0, 0, 256, 384)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uqfkb"]
-atlas = ExtResource("3_7wueq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_x2gti"]
+atlas = ExtResource("3_yua0u")
 region = Rect2(0, 0, 256, 384)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_642so"]
-atlas = ExtResource("3_7wueq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvai0"]
+atlas = ExtResource("3_yua0u")
 region = Rect2(512, 384, 256, 384)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_afsss"]
-atlas = ExtResource("3_7wueq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_q1xj7"]
+atlas = ExtResource("3_yua0u")
 region = Rect2(512, 0, 256, 384)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6a6mx"]
-atlas = ExtResource("3_7wueq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4tiv"]
+atlas = ExtResource("3_yua0u")
 region = Rect2(0, 384, 256, 384)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7wueq"]
@@ -183,16 +182,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_uqfkb")
+"texture": SubResource("AtlasTexture_x2gti")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_642so")
+"texture": SubResource("AtlasTexture_rvai0")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_afsss")
+"texture": SubResource("AtlasTexture_q1xj7")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6a6mx")
+"texture": SubResource("AtlasTexture_n4tiv")
 }],
 "loop": true,
 "name": &"sleeping",
@@ -209,7 +208,8 @@ script = ExtResource("1_ru62r")
 position = Vector2(-1, -0.874976)
 scale = Vector2(0.0898438, 0.0683595)
 sprite_frames = SubResource("SpriteFrames_7wueq")
-frame_progress = 0.78493
+animation = &"sleeping"
+frame_progress = 0.444762
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 0)

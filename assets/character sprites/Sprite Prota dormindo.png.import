@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ql6bio66jveb"
-path="res://.godot/imported/personagem-sprite-sheet-jogoveio-234x350.png-235caec796d24af891b6b7411cc218a7.ctex"
+uid="uid://cxo1f7mcohn6s"
+path="res://.godot/imported/Sprite Prota dormindo.png-ba96171fb61c1db2440e6321d30c71f2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character sprites/personagem-sprite-sheet-jogoveio-234x350.png"
-dest_files=["res://.godot/imported/personagem-sprite-sheet-jogoveio-234x350.png-235caec796d24af891b6b7411cc218a7.ctex"]
+source_file="res://assets/character sprites/Sprite Prota dormindo.png"
+dest_files=["res://.godot/imported/Sprite Prota dormindo.png-ba96171fb61c1db2440e6321d30c71f2.ctex"]
 
 [params]
 

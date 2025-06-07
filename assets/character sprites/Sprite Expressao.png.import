@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgeim4ufr64c6"
-path="res://.godot/imported/Sprite Base.png-cd9e679766629ae4085cee71ff55c293.ctex"
+uid="uid://diacvfs5ovjws"
+path="res://.godot/imported/Sprite Expressao.png-b83ca7d0810827127c36223e7bbe5b67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character sprites/Sprite Base.png"
-dest_files=["res://.godot/imported/Sprite Base.png-cd9e679766629ae4085cee71ff55c293.ctex"]
+source_file="res://assets/character sprites/Sprite Expressao.png"
+dest_files=["res://.godot/imported/Sprite Expressao.png-b83ca7d0810827127c36223e7bbe5b67.ctex"]
 
 [params]
 
