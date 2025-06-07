@@ -24,7 +24,7 @@ enum GameState {
 	PLAYING,
 	PAUSED,
 	OPTIONS,
-	CONFIG_FROM_PAUSE 
+	CONFIG_FROM_PAUSE
 }
 var current_state: GameState = GameState.MENU
 var previous_state_before_pause: GameState = GameState.NONE

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkpxuuethomde"]
+
+[ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/Jogador/player.tscn" id="2_os5tv"]
+
+[node name="GameplayPrologue" type="Node"]
+
+[node name="ExteriorVizinhos" type="Node2D" parent="."]
+
+[node name="Player" parent="ExteriorVizinhos" instance=ExtResource("2_os5tv")]
+position = Vector2(600, 500)
+
+[node name="Camera2D" type="Camera2D" parent="ExteriorVizinhos/Player"]
+zoom = Vector2(2, 2)

@@ -1,6 +1,6 @@
-[gd_scene load_steps=28 format=3 uid="uid://dsxr5plonibnw"]
+[gd_scene load_steps=28 format=3 uid="uid://cbdw2mmnv7a53"]
 
-[ext_resource type="Script" path="res://scenes/actors/player.gd" id="1_ru62r"]
+[ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/player.gd" id="1_ru62r"]
 [ext_resource type="Texture2D" uid="uid://b52wgkv5ey5cd" path="res://assets/character sprites/Sprite Padronização.png" id="3_7wueq"]
 [ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/Sprite Prota.png" id="3_ktjr4"]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cr7svoyjtp1ax"
-path="res://.godot/imported/personagem-sprite-sheet-jogoveio-234x350.png-3c75d7ba7482130c1b3d691d7446aac8.ctex"
+uid="uid://d3nwjuy8m4je6"
+path="res://.godot/imported/sprite jogador base.png-f4bbbe31864352bb367d466b5df41c80.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bregueça/personagem-sprite-sheet-jogoveio-234x350.png"
-dest_files=["res://.godot/imported/personagem-sprite-sheet-jogoveio-234x350.png-3c75d7ba7482130c1b3d691d7446aac8.ctex"]
+source_file="res://assets/character sprites/sprite jogador base.png"
+dest_files=["res://.godot/imported/sprite jogador base.png-f4bbbe31864352bb367d466b5df41c80.ctex"]
 
 [params]
 

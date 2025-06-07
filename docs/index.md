@@ -9,6 +9,13 @@ Este diretório contém a documentação completa do Projeto Code, um jogo desen
 ### Visão Geral
 - [README Principal](../README.md) - Visão geral do projeto e sua estrutura
 
+### Arquitetura e Planejamento
+- [Análise de Arquitetura do Projeto](arquitetura.md) - Análise técnica da arquitetura atual
+- [Plano de Implementação de Melhorias](plano_implementacao.md) - Plano estruturado para implementar as melhorias
+- [Registro de Bugs e Problemas](bugs.md) - Documentação de bugs conhecidos e soluções
+- [Padrões de Código](padroes_de_codigo.md) - Guia de padrões e práticas recomendadas
+- [Proposta de Implementação do Gerenciador de Diálogos](dialogue_manager_proposta.md) - Proposta detalhada para o novo sistema
+
 ### Guias e Tutoriais
 - [Guia de Instalação e Configuração](guia_instalacao.md) - Como configurar e executar o projeto
 - [Guia para Contribuidores](guia_contribuidores.md) - Diretrizes para quem deseja contribuir com o projeto
@@ -16,6 +23,7 @@ Este diretório contém a documentação completa do Projeto Code, um jogo desen
 ### Sistemas Principais
 - [Sistema de Gerenciamento de Cenas (Orquestrador)](sistema_orquestrador.md) - Documentação do sistema de gerenciamento de cenas e estados do jogo
 - [Sistema de Diálogos](sistema_dialogos.md) - Documentação do sistema de diálogos e caixas de texto
+- [Sistema de Diálogos Atualizado](sistema_dialogos_atualizado.md) - Versão atualizada do sistema de diálogos
 - [Sistema de Controle do Jogador](sistema_controle_jogador.md) - Documentação dos controles de personagem e joystick virtual
 - [Sistema de Interface do Usuário](sistema_interface_usuario.md) - Documentação dos menus e elementos da interface
 - [Recursos Artísticos e Visuais](recursos_artisticos.md) - Documentação dos recursos visuais, sprites e fontes usados no jogo
@@ -67,4 +75,4 @@ Se você tiver dúvidas ou precisar de esclarecimentos sobre qualquer parte da d
 
 ---
 
-**Última atualização:** 03 de Junho de 2025
+**Última atualização:** 08 de Junho de 2025

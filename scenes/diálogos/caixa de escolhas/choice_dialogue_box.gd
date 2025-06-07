@@ -107,3 +107,9 @@ func show_choices(choices: Array, title: String = "") -> void:
 
 func _on_choice_button_pressed(choice_index: int) -> void:
 	choice_selected.emit(choice_index)
+
+# Função para obter o texto de uma opção pelo seu índice
+func get_option_text(choice_index: int) -> String:
+	if choice_index >= 0 and choice_index < choice_buttons.size():
+		return choice_buttons[choice_index].text
+	return ""

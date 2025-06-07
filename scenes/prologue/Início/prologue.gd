@@ -22,8 +22,9 @@ var text_displayed_completely = false
 var current_path = PATH_STANDARD
 
 var linhas_dialogo: Array[String] = [
-	"Seja bem vindo(a), vejo que você é novo por aqui.",
-	"Você pode achar que o começo é fácil, mas você sabe o que fazer?"
+	"Olha só, um rosto novo, muito prazer",
+	"Quem eu sou não é importante, mas eu ainda vou falar muito com você. \nE você vai falar muito com ele",
+	"Quer conhecer ele?"
 ]
 var indice_linha_atual: int = 0
 var game_manager: Node = null
@@ -47,11 +48,11 @@ var dialogue_active = false
 
 # Textos do roteiro
 var intro_texts = [
-	"*Protagonista dormindo*", # Texto de contexto, não será exibido
-	"Aí está nosso faz-tudo, em sua confortável cama.",
+	"Aí está nosso carinha, um faz-tudo que, bom... faz de tudo",
+	"ele está dormindo em sua confortável cama.",
 	"...",
-	"ou deveria ser uma cama... o importante é o conforto",
-	"Ele está dormindo, o que você vai fazer?"
+	"ou deveria ser uma cama... bom, o importante é o conforto, né?",
+	"Enfim, Ele está dormindo, o que você vai fazer?"
 ]
 
 var original_first_choices = [
@@ -70,7 +71,7 @@ var incorrect_first_choices = []
 var after_first_choice_texts = {
 	0: "ótimo, está indo no caminho certo", # acordar
 	1: "vai levantar dormindo?", # levantar
-	2: "vai abrir o olho dormindo?", # abrir o olho
+	2: "Algumas pessoas dormem de olho aberto, não acho que seja o caso dele", # abrir o olho
 	3: "que eu saiba ele não é sonâmbulo" # sair da cama
 }
 
@@ -87,9 +88,9 @@ var second_choices = original_second_choices.duplicate()
 var incorrect_second_choices = []
 
 var after_second_choice_texts = {
-	0: "isso mesmo", # levantar
-	1: "isso mesmo", # abrir o olho
-	2: "vai sair deitado?" # sair da cama
+	0: "boa, tu levantou, mas... num era pra você já ter aberto o olho?", # levantar
+	1: "boa, tu abriu o olho, então agora só falta?", # abrir o olho
+	2: "O_O" # sair da cama
 }
 
 var blue_path_texts = [
@@ -109,16 +110,15 @@ var blue_path_responses = {
 
 # Textos adicionais após a escolha no caminho azul
 var blue_path_levantar_texts = [
-	"*Protagonista se levanta do chão*", # Texto de contexto, não será exibido
-	"Agora você precisa abrir os olhos para completar o algoritmo.",
-	"*Protagonista abre os olhos*", # Texto de contexto, não será exibido
-	"Ótimo! O algoritmo foi concluído, mesmo que de um jeito... diferente."
+	"É, tu levantou, de olho fechado... mas levantou.",
+	"Vamos fingir que seus olhos estão abertos.",
+	"Ótimo! A sequência foi concluída, mesmo que de um jeito... diferente."
 ]
 
 var blue_path_olho_texts = [
-	"*Protagonista abre os olhos ainda no chão*", # Texto de contexto, não será exibido
-	"Agora você precisa levantar para completar o algoritmo.",
-	"*Protagonista se levanta do chão*", # Texto de contexto, não será exibido
+	
+	"Interessante você preferir abrir o olho do que levantar.",
+	"mas eu não tô aqui pra julgar, muito.",
 	"Ótimo! O algoritmo foi concluído, mesmo que de um jeito... diferente."
 ]
 
@@ -127,20 +127,14 @@ var blue_path_continuation_texts = [] # Será definida dinamicamente
 
 # Textos para quando o usuário escolhe "levantar" (opção 0)
 var yellow_path_levantar_texts = [
-	"Agora que você levantou, só sobra abrir o olho.",
-	"*Protagonista abre os olhos*", # Texto de contexto, não será exibido
-	"*Protagonista agora em pé com os olhos abertos*", # Texto de contexto, não será exibido
-	"Pronto! Agora ele acordou e está em pé.",
-	"Maravilha, mas então... você sabe o que fez?"
+	"pronto, agora sim está tudo certo.",
+	"Dito isso. você sabe o que acabou de fazer?"
 ]
 
 # Textos para quando o usuário escolhe "abrir o olho" (opção 1)
 var yellow_path_olho_texts = [
-	"Agora que você abriu o olho, só falta levantar.",
-	"*Protagonista se levanta*", # Texto de contexto, não será exibido
-	"*Protagonista agora em pé com os olhos abertos*", # Texto de contexto, não será exibido
-	"Pronto! Agora ele acordou e está em pé.",
-	"Maravilha, mas então... você sabe o que fez?"
+	"pronto, agora sim está tudo certo.",
+	"Dito isso. você sabe o que acabou de fazer?"
 ]
 
 # Variável para controlar qual caminho amarelo será usado
@@ -154,7 +148,8 @@ var conclusion_standard_texts = [
 var conclusion_blue_path_texts = [
 	"O que você acabou de ver foi um algoritmo, mesmo que de um jeito um pouco... caótico.",
 	"O objetivo dele era acordar e sair da cama, e você conseguiu, mesmo que caindo no chão primeiro!",
-	"Isso mostra que algoritmos podem ter diferentes soluções para o mesmo problema."
+	"Isso mostra que algoritmos podem ter diferentes soluções para o mesmo problema.",
+	"Então meus parabéns por concluir seu primeiro algoritmo"
 ]
 
 # Variável que será ajustada com base no caminho escolhido
@@ -225,6 +220,9 @@ func _create_click_indicator():
 func _create_pulse_animation():
 	if not click_indicator:
 		return
+	
+	# Garantir que o indicador está visível e com a opacidade correta
+	click_indicator.modulate.a = 1.0
 	
 	# Cria um tween para animar o indicador
 	var tween = create_tween()
@@ -389,10 +387,25 @@ func is_description_text(text: String) -> bool:
 			if keyword.to_lower() in text.to_lower():
 				return true
 	
+	# Verificação adicional para textos que começam com frases de contexto comuns
+	var context_phrases = ["texto de contexto", "não será exibido"]
+	for phrase in context_phrases:
+		if text.to_lower().contains(phrase):
+			return true
+	
 	return false
 
 # Função para mostrar o texto apropriado (diálogo ou descrição)
 func show_appropriate_text(text: String) -> void:
+	# Verificação para texto vazio ou nulo
+	if text.strip_edges() == "":
+		if DEBUG_DIALOGUE:
+			print("[Contexto] Texto vazio ignorado")
+		
+		# Avança automaticamente para o próximo texto (não há nada para mostrar)
+		call_deferred("_process_next_dialogue_state")
+		return
+		
 	if is_description_text(text):
 		# Este texto contém asteriscos e é uma instrução de contexto
 		# Isto não deve ser exibido como diálogo para o jogador
@@ -424,9 +437,13 @@ func show_appropriate_text(text: String) -> void:
 		# Escondemos o indicador
 		if click_indicator:
 			click_indicator.visible = false
-			
-		dialogue_box.visible = true
+		
+		# Garantimos que outras caixas estão escondidas
 		description_box.visible = false
+		choice_dialogue_box.visible = false
+			
+		# Mostramos a caixa de diálogo
+		dialogue_box.visible = true
 		dialogue_box.show_line(text)
 
 func _on_dialogue_line_finished():
@@ -439,14 +456,26 @@ func _on_dialogue_line_finished():
 	# Se for um texto de contexto, avança automaticamente sem esperar input
 	if not waiting_for_input:
 		_process_next_dialogue_state()
-	# Se não, esperamos pelo clique do usuário (que chamará _advance_dialogue)
-	else:
-		# Mostrar indicador visual de que o usuário precisa clicar para continuar
+	# Caso especial: quando estamos no estado SECOND_CHOICE e temos apenas uma opção restante,
+	# isso significa que precisamos mostrar a segunda parte do diálogo após "levantar" ou "abrir o olho"
+	elif current_state == DialogueState.SECOND_CHOICE and second_choices.size() == 1:
+		if DEBUG_DIALOGUE:
+			print("[Diálogo] Caminho amarelo - mostrando próxima escolha necessária: ", second_choices)
+		
+		# Mostrar o indicador de clique primeiro
 		if click_indicator:
 			click_indicator.visible = true
 			
 		if DEBUG_DIALOGUE:
-			print("[Diálogo] Aguardando clique do usuário para continuar...")
+			print("[Diálogo] Aguardando clique do usuário para mostrar próxima escolha...")
+	# Caso especial: após primeira escolha correta (acordar), mostrar texto e depois as opções da segunda etapa
+	elif current_state == DialogueState.SECOND_CHOICE and second_choices.size() > 1:
+		# Mostrar o indicador de clique para o usuário avançar manualmente
+		if click_indicator:
+			click_indicator.visible = true
+		
+		if DEBUG_DIALOGUE:
+			print("[Diálogo] Primeira escolha concluída, aguardando clique para segunda etapa.")
 
 # Função que processa o próximo estado de diálogo
 func _process_next_dialogue_state():
@@ -495,6 +524,18 @@ func _process_next_dialogue_state():
 				show_appropriate_text(conclusion_texts[current_text_index])
 				
 		DialogueState.YELLOW_PATH:
+			# Verificar se a lista de textos está vazia ou nula
+			if yellow_path_texts.size() == 0:
+				if DEBUG_DIALOGUE:
+					print("[ERRO] yellow_path_texts está vazio, preenchendo com valores padrão")
+				
+				# Definir valores padrão para o caminho amarelo
+				yellow_path_texts = [
+					"*Protagonista completa as ações necessárias*",
+					"pronto, agora sim está tudo certo.",
+					"Maravilha, mas então... você sabe o que fez?"
+				]
+				
 			if current_text_index < yellow_path_texts.size():
 				show_appropriate_text(yellow_path_texts[current_text_index])
 			else:
@@ -508,6 +549,18 @@ func _process_next_dialogue_state():
 				show_appropriate_text(conclusion_texts[current_text_index])
 				
 		DialogueState.CONCLUSION:
+			# Verificar se os textos de conclusão estão vazios
+			if conclusion_texts.size() == 0:
+				if DEBUG_DIALOGUE:
+					print("[ERRO] conclusion_texts está vazio, usando textos padrão.")
+				conclusion_texts = conclusion_standard_texts.duplicate()
+				if conclusion_texts.size() == 0:
+					# Fallback caso conclusion_standard_texts também esteja vazio
+					conclusion_texts = [
+						"O que você acabou de ver foi um algoritmo, um passo a passo lógico para concluir um objetivo.",
+						"O objetivo dele era acordar e sair da cama, o que significa que você concluiu seu primeiro algoritmo."
+					]
+					
 			if current_text_index < conclusion_texts.size():
 				show_appropriate_text(conclusion_texts[current_text_index])
 			else:
@@ -519,30 +572,65 @@ func _on_description_line_finished():
 	# Reutiliza a mesma lógica da função de diálogo
 	_on_dialogue_line_finished()
 
+# Função auxiliar para obter o índice original de uma opção com base no seu texto
+func get_original_index_from_text(option_text: String, choices_array: Array) -> int:
+	for i in range(choices_array.size()):
+		if choices_array[i] == option_text:
+			return i
+	return -1  # Não encontrado
+
 func _on_choice_selected(choice_index: int):
 	selected_option = choice_index
 	choice_dialogue_box.visible = false
 	
+	# Pega o texto da opção selecionada para identificação posterior
+	var selected_option_text = choice_dialogue_box.get_option_text(choice_index)
+	
 	match current_state:
 		DialogueState.FIRST_CHOICE:
-			# Use show_appropriate_text para garantir que textos de contexto sejam tratados corretamente
-			show_appropriate_text(after_first_choice_texts[choice_index])
+			# Obtém o texto da opção selecionada
+			var option_text = selected_option_text
 			
-			# Se escolheu "acordar", avança, caso contrário, volta para mostrar opções
-			if choice_index == 0:  # "a) acordar" - Caminho correto
+			# Encontra o índice original baseado no texto da opção
+			var original_index = get_original_index_from_text(option_text, original_first_choices)
+			
+			if DEBUG_DIALOGUE:
+				print("[Escolha] Primeira escolha selecionada: ", option_text, " (índice original: ", original_index, ")")
+			
+			# Use show_appropriate_text para garantir que textos de contexto sejam tratados corretamente
+			if original_index >= 0:
+				show_appropriate_text(after_first_choice_texts[original_index])
+			else:
+				# Fallback se não encontrarmos o índice original
+				show_appropriate_text("Hmm, isso não parece certo.")
+				return				# Se escolheu "acordar", avança, caso contrário, volta para mostrar opções
+			if option_text == "a) acordar":  # "a) acordar" - Caminho correto - verificando pelo texto
 				if DEBUG_DIALOGUE:
 					print("[Escolha] Escolha correta (acordar) na primeira etapa")
 					
 				current_text_index = 0  # Reinicia o contador para o próximo estado
 				current_state = DialogueState.SECOND_CHOICE
 				
+				# Garantir que second_choices contenha as opções corretas
+				second_choices = original_second_choices.duplicate()
+				
+				# Resetar as opções incorretas da segunda escolha para começar limpo
+				incorrect_second_choices.clear()
+				
+				if DEBUG_DIALOGUE:
+					print("[Sistema] Opções da segunda escolha resetadas: ", second_choices)
+				
 				# Não avançar automaticamente para o próximo diálogo
 				# Em vez disso, esperar até o diálogo atual terminar
 				# _process_next_dialogue_state será chamado quando o texto for exibido completamente
 			else:
-				# Marca esta opção como incorreta usando nossa função auxiliar
-				var selected_option_text = first_choices[choice_index]
-				first_choices = mark_option_as_incorrect(selected_option_text, original_first_choices, incorrect_first_choices)
+				# Salva a opção que o jogador tentou
+				if not option_text in incorrect_first_choices:
+					incorrect_first_choices.append(option_text)
+					print("[Debug] Adicionada opção incorreta na primeira escolha: ", option_text)
+				
+				# Atualizar first_choices para refletir as opções restantes
+				first_choices = mark_option_as_incorrect(option_text, original_first_choices, incorrect_first_choices)
 				
 				if DEBUG_DIALOGUE:
 					print("[Escolha] Escolha incorreta, opções restantes: ", first_choices)
@@ -552,10 +640,60 @@ func _on_choice_selected(choice_index: int):
 				# irá configurar waiting_for_input = true
 			
 		DialogueState.SECOND_CHOICE:
-			# Use show_appropriate_text para verificar se há instruções de contexto
-			show_appropriate_text(after_second_choice_texts[choice_index])
+			# Obtém o texto da opção selecionada
+			var option_text = selected_option_text
 			
-			if choice_index == 2:  # 'd) sair da cama' - Opção AZUL
+			# Encontra o índice original baseado no texto da opção
+			var original_index = get_original_index_from_text(option_text, original_second_choices)
+			
+			if DEBUG_DIALOGUE:
+				print("[Escolha] Segunda escolha selecionada: ", option_text, " (índice original: ", original_index, ")")
+			
+			# Verificar se esta é a segunda escolha do algoritmo completo
+			# Se second_choices tiver tamanho 1, significa que é a segunda etapa do algoritmo
+			if second_choices.size() == 1 and second_choices.has(option_text):
+				if DEBUG_DIALOGUE:
+					print("[Escolha] Escolha final do algoritmo selecionada: ", option_text)
+				
+				# Definir qual caminho de texto usar com base na escolha
+				if option_text == "b) levantar":
+					yellow_path_texts = yellow_path_olho_texts.duplicate()
+					if DEBUG_DIALOGUE:
+						print("[Caminho] AMARELO - Escolha final 'levantar', usando textos yellow_path_olho_texts")
+				else: # "c) abrir o olho"
+					yellow_path_texts = yellow_path_levantar_texts.duplicate()
+					if DEBUG_DIALOGUE:
+						print("[Caminho] AMARELO - Escolha final 'abrir o olho', usando textos yellow_path_levantar_texts")
+				
+				# Verificar se os textos do caminho amarelo foram configurados corretamente
+				if yellow_path_texts.size() == 0:
+					printerr("[ERRO] Caminho amarelo não tem textos configurados!")
+					if option_text == "b) levantar":
+						yellow_path_texts = ["*Protagonista se levanta*", "pronto, agora sim está tudo certo.", "Maravilha, mas então... você sabe o que fez?"]
+					else:
+						yellow_path_texts = ["*Protagonista abre os olhos*", "pronto, agora sim está tudo certo.", "Maravilha, mas então... você sabe o que fez?"]
+				
+				# Ir diretamente para o caminho amarelo (conclusão do algoritmo)
+				current_state = DialogueState.YELLOW_PATH
+				current_text_index = 0
+				current_path = PATH_STANDARD
+				
+				# Esconder a caixa de opções
+				choice_dialogue_box.visible = false
+				
+				# Mostrar o primeiro texto do caminho amarelo
+				show_appropriate_text(yellow_path_texts[current_text_index])
+				return
+			
+			# Use show_appropriate_text para verificar se há instruções de contexto
+			if original_index >= 0:
+				show_appropriate_text(after_second_choice_texts[original_index])
+			else:
+				# Fallback se não encontrarmos o índice original
+				show_appropriate_text("Hmm, isso não parece certo.")
+				return
+			
+			if option_text == "d) sair da cama":  # Opção AZUL - verifica pelo texto e não pelo índice
 				# Caminho azul é sempre válido (escolha especial)
 				current_state = DialogueState.BLUE_PATH
 				current_text_index = 0  # Define explicitamente para 0
@@ -567,41 +705,95 @@ func _on_choice_selected(choice_index: int):
 				# Não avançamos automaticamente, esperamos o texto terminar
 			else:  # Outras opções - Caminho AMARELO potencial
 				# Verifica se a resposta está correta com base no texto de resposta
-				# Resposta errada tem "vai" no início (ex: "vai sair deitado?")
-				if after_second_choice_texts[choice_index].begins_with("vai"):
+				var response_text = after_second_choice_texts[original_index]
+				if response_text.begins_with("vai"):
 					# Esta é uma resposta incorreta
-					var selected_option_text = second_choices[choice_index]
-					second_choices = mark_option_as_incorrect(selected_option_text, original_second_choices, incorrect_second_choices)
+					
+					# Adiciona explicitamente a opção ao array de opções incorretas
+					if not option_text in incorrect_second_choices:
+						incorrect_second_choices.append(option_text)
+						print("[Debug] Adicionada opção incorreta: ", option_text)
+					
+					# Depois atualiza as opções disponíveis
+					second_choices = mark_option_as_incorrect(option_text, original_second_choices, incorrect_second_choices)
 					
 					if DEBUG_DIALOGUE:
 						print("[Escolha] Resposta incorreta na segunda etapa, mostrando opções atualizadas")
+						print("[Escolha] Opções incorretas da segunda escolha: ", incorrect_second_choices)
 					
 					# Não fazemos nada aqui, esperamos o texto ser exibido completamente
 				else:
-					# Se a resposta for correta ("isso mesmo"), segue para o caminho amarelo
-					# Primeiro determina qual conjunto de textos usar com base na escolha
-					if choice_index == 0:  # "b) levantar"
+					# Se a resposta for correta (começa com "boa"), preparamos a próxima etapa
+					if option_text == "b) levantar":  # "b) levantar" - verificando pelo texto
+						# Após levantar, só resta "abrir o olho"
+						var filtered_choices = ["c) abrir o olho"]
 						yellow_path_texts = yellow_path_levantar_texts.duplicate()
+						
 						if DEBUG_DIALOGUE:
-							print("[Caminho] AMARELO - via levantar")
+							print("[Caminho] AMARELO - via levantar, próxima opção: abrir o olho")
+						
+						# Mostrar o texto de resposta primeiro
+						dialogue_box.visible = true
+						choice_dialogue_box.visible = false
+						dialogue_box.show_line(response_text)
+						
+						# Armazenar a próxima escolha para quando o diálogo acabar
+						# Indicamos que só resta a opção de "abrir o olho"
+						second_choices = filtered_choices
+						
+						# Não transicionamos para YELLOW_PATH ainda, apenas quando selecionada a 
+						# segunda opção necessária (abrir o olho)
+						waiting_for_input = true
+						text_displayed_completely = true
+						
+						if DEBUG_DIALOGUE:
+							print("[Escolha] Aguardando clique para mostrar escolha restante: c) abrir o olho")
+						
 					else:  # "c) abrir o olho"
+						# Após abrir o olho, só resta "levantar"
+						var filtered_choices = ["b) levantar"]
 						yellow_path_texts = yellow_path_olho_texts.duplicate() 
+						
 						if DEBUG_DIALOGUE:
-							print("[Caminho] AMARELO - via abrir olho")
-					
-					# Depois atualiza o estado e caminho
-					current_state = DialogueState.YELLOW_PATH
-					current_text_index = 0  # Define explicitamente para 0
-					current_path = PATH_STANDARD
-					
-					# Não avançamos automaticamente, esperamos o texto terminar
+							print("[Caminho] AMARELO - via abrir olho, próxima opção: levantar")
+						
+						# Mostrar o texto de resposta primeiro
+						dialogue_box.visible = true
+						choice_dialogue_box.visible = false
+						dialogue_box.show_line(response_text)
+						
+						# Armazenar a próxima escolha para quando o diálogo acabar
+						# Indicamos que só resta a opção de "levantar"
+						second_choices = filtered_choices
+						
+						# Não transicionamos para YELLOW_PATH ainda, apenas quando selecionada a 
+						# segunda opção necessária (levantar)
+						waiting_for_input = true
+						text_displayed_completely = true
+						
+						if DEBUG_DIALOGUE:
+							print("[Escolha] Aguardando clique para mostrar escolha restante: b) levantar")
 				
 		DialogueState.BLUE_PATH:
-			# Use show_appropriate_text para verificar se há instruções de contexto
-			show_appropriate_text(blue_path_responses[choice_index])
+			# Obtém o texto da opção selecionada
+			var option_text = choice_dialogue_box.get_option_text(choice_index)
+			
+			if DEBUG_DIALOGUE:
+				print("[Escolha] Caminho Azul - opção selecionada: ", option_text)
+			
+			# Verifique se o índice é válido para blue_path_responses
+			if choice_index < 0 || choice_index >= blue_path_responses.size():
+				# Fallback para casos onde o índice está fora dos limites
+				if option_text == "a) levantar":
+					show_appropriate_text("Maravilha, você levantou, mas por que até agora você não abriu o olho?")
+				else:
+					show_appropriate_text("De que adianta abrir o olho se você ainda tá no chão?")
+			else:
+				# Use show_appropriate_text para verificar se há instruções de contexto
+				show_appropriate_text(blue_path_responses[choice_index])
 			
 			# Determina qual conjunto de textos adicionais usar com base na escolha
-			if choice_index == 0:  # "a) levantar"
+			if option_text == "a) levantar":  # Verificando pelo texto
 				blue_path_continuation_texts = blue_path_levantar_texts.duplicate()
 				if DEBUG_DIALOGUE:
 					print("[Caminho] AZUL - continua via levantar")
@@ -610,9 +802,25 @@ func _on_choice_selected(choice_index: int):
 				if DEBUG_DIALOGUE:
 					print("[Caminho] AZUL - continua via abrir olho")
 			
+			# Verificar se os textos da continuação do caminho azul não estão vazios
+			if blue_path_continuation_texts.size() == 0:
+				if DEBUG_DIALOGUE:
+					print("[ERRO] blue_path_continuation_texts está vazio, adicionando textos de fallback.")
+				
+				# Adicionar textos fallback
+				blue_path_continuation_texts = [
+					"*Protagonista completa as ações*",
+					"Agora você precisa completar o algoritmo.",
+					"*Protagonista completa o algoritmo*",
+					"Ótimo! O algoritmo foi concluído, mesmo que de um jeito... diferente."
+				]
+			
 			# Após resposta, vamos para um estado intermediário antes da conclusão
 			current_state = DialogueState.BLUE_PATH_CONTINUATION
 			current_text_index = 0  # Define explicitamente para 0
+			
+			# Esconder a caixa de escolhas após a seleção
+			choice_dialogue_box.visible = false
 			
 			# Não avançamos automaticamente, esperamos o texto terminar
 
@@ -620,6 +828,9 @@ func show_choice_options(state: DialogueState):
 	# Esconder todas as outras caixas de diálogo
 	dialogue_box.hide_box()
 	description_box.hide_box()
+	
+	# Limpar qualquer caixa de escolha anterior
+	choice_dialogue_box.visible = false
 	
 	# Mostrar a caixa de escolha
 	choice_dialogue_box.visible = true
@@ -638,6 +849,12 @@ func show_choice_options(state: DialogueState):
 			for choice in original_first_choices:
 				if not choice in incorrect_first_choices or choice == "a) acordar":
 					filtered_choices.append(choice)
+			
+			# Garantir que temos pelo menos uma opção (a correta) para mostrar
+			if filtered_choices.size() == 0:
+				filtered_choices = ["a) acordar"]
+				if DEBUG_DIALOGUE:
+					print("[Sistema] Forçando exibição da opção 'acordar' como fallback.")
 					
 			if DEBUG_DIALOGUE:
 				print("[Escolhas] Exibindo opções filtradas para primeira escolha: ", filtered_choices)
@@ -645,6 +862,21 @@ func show_choice_options(state: DialogueState):
 			choice_dialogue_box.show_choices(filtered_choices, "O que você vai fazer?")
 			
 		DialogueState.SECOND_CHOICE:
+			# Caso especial: se já estamos na segunda etapa do algoritmo (apenas uma opção disponível)
+			if second_choices.size() == 1:
+				if DEBUG_DIALOGUE:
+					print("[Sistema] Mostrando apenas a opção restante para completar o algoritmo: ", second_choices)
+				
+				# Usar um título específico baseado na opção restante
+				var prompt_title = ""
+				if second_choices[0] == "b) levantar":
+					prompt_title = "O que falta fazer para completar o algoritmo?"
+				else: # "c) abrir o olho"
+					prompt_title = "O que falta fazer para completar o algoritmo?"
+					
+				choice_dialogue_box.show_choices(second_choices, prompt_title)
+				return
+				
 			# Verificar se ainda temos opções disponíveis
 			if second_choices.size() == 0:
 				# Se não tiver mais opções, mostramos pelo menos as opções corretas 
@@ -660,11 +892,15 @@ func show_choice_options(state: DialogueState):
 					filtered_second_choices.append(choice)
 			
 			if DEBUG_DIALOGUE:
+				print("[Sistema] Segunda escolha - opções incorretas: ", incorrect_second_choices)
 				print("[Sistema] Segunda escolha - opções filtradas disponíveis: ", filtered_second_choices)
-					
-			if DEBUG_DIALOGUE:
-				print("[Escolhas] Exibindo opções para segunda escolha: ", filtered_second_choices)
 				
+			# Garantir que temos pelo menos uma opção para mostrar
+			if filtered_second_choices.size() == 0:
+				filtered_second_choices = ["b) levantar", "c) abrir o olho", "d) sair da cama"]
+				if DEBUG_DIALOGUE:
+					print("[Sistema] Recuperando todas as opções da segunda escolha.")
+			
 			choice_dialogue_box.show_choices(filtered_second_choices, "Agora que ele está acordado, o que vem depois?")
 			
 		DialogueState.BLUE_PATH:
@@ -708,15 +944,30 @@ func _save_dialogue_choices():
 			if DEBUG_DIALOGUE:
 				print("[Persistência] Salvando dados de escolha: ", choice_data)
 
+var last_input_time = 0.0
+var input_cooldown = 0.3 # Tempo mínimo entre inputs (em segundos)
+
 func _input(event):
 	# Só processa input quando o diálogo está ativo
 	if not dialogue_active:
+		return
+	
+	# Proteção contra cliques múltiplos rápidos
+	var current_time = Time.get_ticks_msec() / 1000.0
+	var time_since_last_input = current_time - last_input_time
+	
+	if time_since_last_input < input_cooldown:
+		if DEBUG_DIALOGUE:
+			print("[Input] Ignorando entrada rápida demais (cooldown: ", time_since_last_input, ")")
 		return
 		
 	# Verifica se é um evento de clique, toque ou tecla de espaço/enter
 	if ((event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or \
 	   (event is InputEventScreenTouch and event.pressed) or \
 	   (event is InputEventKey and event.pressed and (event.keycode == KEY_SPACE or event.keycode == KEY_ENTER))):
+		
+		# Atualiza o tempo do último input
+		last_input_time = current_time
 		
 		if DEBUG_DIALOGUE:
 			print("[Input] Detectado clique ou tecla")
@@ -752,6 +1003,17 @@ func _advance_dialogue():
 	if click_indicator:
 		click_indicator.visible = false
 	
+	# Caso especial: se estamos no estado SECOND_CHOICE e temos apenas uma opção restante,
+	# mostrar a próxima escolha necessária em vez de avançar o estado
+	if current_state == DialogueState.SECOND_CHOICE and second_choices.size() == 1:
+		if DEBUG_DIALOGUE:
+			print("[Diálogo] Mostrando próxima escolha necessária para completar o algoritmo: ", second_choices)
+		
+		# Garantimos que a próxima opção seja exibida corretamente
+		dialogue_box.visible = false
+		show_choice_options(DialogueState.SECOND_CHOICE)
+		return
+	
 	# Resetamos a flag de espera por input
 	waiting_for_input = false
 	text_displayed_completely = false
@@ -761,11 +1023,17 @@ func _advance_dialogue():
 
 # Função para marcar uma opção como incorreta e removê-la das escolhas disponíveis
 func mark_option_as_incorrect(option_text: String, choices_array: Array, incorrect_array: Array) -> Array:
+	if DEBUG_DIALOGUE:
+		print("[Escolha] Marcada como incorreta e removida: ", option_text)
+		print("[Escolha] Total de opções incorretas antes: ", incorrect_array)
+		
+	# Garante que a opção seja adicionada ao array de incorretas se ainda não estiver lá
 	if not option_text in incorrect_array:
 		incorrect_array.append(option_text)
-		
-		if DEBUG_DIALOGUE:
-			print("[Escolha] Marcada como incorreta e removida: ", option_text)
+		print("[Debug] Adicionada à lista de incorretas: ", option_text)
+	
+	if DEBUG_DIALOGUE:
+		print("[Escolha] Total de opções incorretas depois: ", incorrect_array)
 	
 	# Atualiza a lista de escolhas disponíveis removendo as opções incorretas
 	var updated_choices = []
@@ -774,6 +1042,18 @@ func mark_option_as_incorrect(option_text: String, choices_array: Array, incorre
 		# que sempre precisa estar disponível (opção "acordar")
 		if not choice in incorrect_array or (choice == "a) acordar" and choices_array == original_first_choices):
 			updated_choices.append(choice)
+	
+	# Verificar se acabamos com uma lista vazia (todas as opções foram marcadas como incorretas)
+	# Se sim, devemos mostrar pelo menos uma opção para o jogador não ficar travado
+	if updated_choices.size() == 0:
+		if choices_array == original_first_choices:
+			updated_choices.append("a) acordar")  # Garantir que a opção correta sempre esteja disponível
+		elif choices_array == original_second_choices:
+			# Na segunda escolha, garantir que pelo menos as opções principais estejam disponíveis
+			updated_choices = ["b) levantar", "c) abrir o olho"]
+	
+	if DEBUG_DIALOGUE:
+		print("[Escolha] Escolhas atualizadas após a remoção: ", updated_choices)
 	
 	return updated_choices
 

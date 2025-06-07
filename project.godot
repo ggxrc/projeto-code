@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 
 TransitionScreen="*res://scenes/global/effects/transition_screen.tscn"
 LoadingScreen="*res://scenes/global/effects/loading_screen.tscn"
+GameUtils="*res://scripts/game_utils.gd"
 
 [display]
 

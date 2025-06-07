@@ -51,15 +51,16 @@ func _physics_process(delta: float) -> void:
 	# Captura a entrada de movimento (teclado ou joystick virtual)
 	var dir := Vector2.ZERO
 	
-	# Primeiro tenta obter input do teclado
-	dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
-	
-	# Se não houver input do teclado, procura por joystick virtual
-	if dir == Vector2.ZERO:
-		# Procura por um joystick virtual na cena
-		var joystick = find_joystick()
-		if joystick and joystick.is_pressing and not joystick.is_in_deadzone():
-			dir = joystick.get_output()
+	# Só processa input se o joystick estiver visível (controle habilitado)
+	if is_joystick_visible():
+		# Primeiro tenta obter input do teclado
+		dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
+		
+		# Se não houver input do teclado, procura por joystick virtual
+		if dir == Vector2.ZERO:
+			var joystick = find_joystick()
+			if joystick and joystick.is_pressing and not joystick.is_in_deadzone():
+				dir = joystick.get_output()
 	
 	if dir:
 		# Aplica o movimento com base na entrada
@@ -121,8 +122,8 @@ func update_animation(direction: Vector2) -> void:
 			sprite.play("cima")
 			
 func _input(event: InputEvent) -> void:
-	# Verifica qualquer input para resetar o estado de sono ou inatividade
-	if event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
+	# Só processa input se o joystick estiver visível (controle habilitado)
+	if is_joystick_visible() and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
 		if event.is_pressed():
 			if sprite:
 				# Se estava dormindo, volta para default
@@ -164,6 +165,21 @@ func show_joystick() -> void:
 		var parent = joystick.get_parent()
 		if parent:
 			parent.visible = true
+
+# Verifica se o joystick está visível e se não há diálogo ativo
+func is_joystick_visible() -> bool:
+	# Tenta usar o GameUtils singleton para verificar diálogos ativos
+	if Engine.has_singleton("GameUtils"):
+		var game_utils = Engine.get_singleton("GameUtils") 
+		if game_utils.has_method("is_dialogue_active") and game_utils.is_dialogue_active():
+			return false
+	
+	# Verifica a visibilidade do joystick
+	var joystick = find_joystick()
+	if joystick:
+		var parent = joystick.get_parent()
+		return parent and parent.visible
+	return false
 	
 # Função recursiva para procurar um joystick na árvore de cena
 func find_joystick_recursive(node):
