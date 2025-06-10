@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://do25tif5i2xcq"]
 
 [ext_resource type="Script" uid="uid://u8eq8ivti82a" path="res://scenes/testes/debug_scene.gd" id="1_wrvdy"]
-[ext_resource type="PackedScene" uid="uid://mxffm6n8wfjk" path="res://scenes/diálogos/DialogueBox.tscn" id="2_nvoic"]
-[ext_resource type="PackedScene" uid="uid://b34vsfg8xybqv" path="res://scenes/diálogos/DescriptionBox.tscn" id="3_nvoic"]
+[ext_resource type="PackedScene" uid="uid://mxffm6n8wfjk" path="res://scenes/diálogos/caixa de diálogos/DialogueBox.tscn" id="2_nvoic"]
+[ext_resource type="PackedScene" uid="uid://b34vsfg8xybqv" path="res://scenes/diálogos/caixa de descrições/DescriptionBox.tscn" id="3_nvoic"]
 
 [node name="DebugScene" type="Node"]
 script = ExtResource("1_wrvdy")

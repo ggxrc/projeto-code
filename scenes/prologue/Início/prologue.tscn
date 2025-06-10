@@ -460,9 +460,8 @@ texture = ExtResource("3_loiah")
 11:12/0 = 0
 12:12/0 = 0
 0:13/0 = 0
-0:13/0/physics_layer_0/polygon_0/points = PackedVector2Array(8, 8, 8, -8, -8, -8, -8, 8)
+0:13/0/physics_layer_0/polygon_0/points = PackedVector2Array(-0.719435, 8, -0.359718, -6.47491, -8, -8, -8, 8)
 1:13/0 = 0
-1:13/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -3, -8, -3, 8, -8, 8)
 2:13/0 = 0
 3:13/0 = 0
 4:13/0 = 0
@@ -475,9 +474,8 @@ texture = ExtResource("3_loiah")
 11:13/0 = 0
 12:13/0 = 0
 0:14/0 = 0
-0:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(8, 8, 8, -8, -8, -8, -8, 8)
+0:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(0.539576, 8, -0.359718, -8, -8, -8, -8, 8)
 1:14/0 = 0
-1:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -3, -8, -3, 8, -8, 8)
 2:14/0 = 0
 3:14/0 = 0
 4:14/0 = 0
@@ -2892,49 +2890,49 @@ tile_map_data = PackedByteArray("AAAAAP3/AAACAAYAAAAAAP7/AAACAAYAAAAAAP//AAACAAY
 tile_set = SubResource("TileSet_tix82")
 
 [node name="Geladeira" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(142, -88.5)
-scale = Vector2(2, 2)
+position = Vector2(150.333, -87.6667)
+scale = Vector2(1.5, 1.5)
 tile_map_data = PackedByteArray("AAD///7/AAACAAwAAAD/////AAACAA0AAAD//wAAAAACAA4AAAD//wEAAAACAA8AAAAAAP7/AAADAAwAAAAAAP//AAADAA0AAAAAAAAAAAADAA4AAAAAAAEAAAADAA8AAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Fogo" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(202.5, -55.5)
-scale = Vector2(2, 2)
+position = Vector2(196.667, -63.8333)
+scale = Vector2(1.5, 1.5)
 tile_map_data = PackedByteArray("AAD///7/AAAEAAwAAAD/////AAAEAA0AAAD//wAAAAAEAA4AAAAAAP7/AAAFAAwAAAAAAP//AAAFAA0AAAAAAAAAAAAFAA4AAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Ferro de passar" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(-53.5, 68)
+position = Vector2(-74.3333, 78.8333)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAADABAAAAD//wAAAAADABEAAAAAAP//AAAEABAAAAAAAAAAAAAEABEAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Armario" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(-88.3333, 16.6667)
+position = Vector2(-99.1666, 16.6667)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AQACAAcAAAD//wAAAQACAAgAAAD//wEAAQACAAkAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Tapete" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(77, 42)
+position = Vector2(128.667, 80.3333)
 scale = Vector2(2, 2)
-tile_map_data = PackedByteArray("AAD/////AQAKAAIAAAD//wAAAQAKAAMAAAAAAP//AQALAAIAAAAAAAAAAQALAAMAAAABAP//AQAMAAIAAAABAAAAAQAMAAMAAAA=")
+tile_map_data = PackedByteArray("AAD//wAAAQAKAAMAAAAAAP//AQALAAIAAAAAAAAAAQALAAMAAAABAP//AQAMAAIAAAABAAAAAQAMAAMAAAD/////AQAKAAIAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Sofa" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(205, 79.1667)
+position = Vector2(216.667, 81.6667)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAP7/AQAAAAwAABD///7/AQABAAwAABAAAP//AQAAAA0AABD/////AQABAA0AABAAAAAAAQAAAA4AABD//wAAAQABAA4AABAAAAEAAQAAAA8AABD//wEAAQABAA8AABA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Porta" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(58, -102.5)
-scale = Vector2(2, 2)
+position = Vector2(58, -105)
+scale = Vector2(1.8, 1.8)
 tile_map_data = PackedByteArray("AAD///7/AgAIAAAAAAD/////AgAIAAEAAAD//wAAAgAIAAIAAAAAAP7/AgAJAAAAAAAAAP//AgAJAAEAAAAAAAAAAgAJAAIAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Tapete2" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(58.5, -41)
+position = Vector2(58.5, -44.3333)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AAAIAAMAAAAAAP//AAAJAAMAAAA=")
 tile_set = SubResource("TileSet_e24q1")
@@ -2958,28 +2956,27 @@ tile_map_data = PackedByteArray("AAD/////AAALABAAAAD//wAAAAALABEAAAAAAP//AAAMABA
 tile_set = SubResource("TileSet_e24q1")
 
 [node name="Janela" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(-30.5, -119.5)
+position = Vector2(-39.6667, -132)
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD/////AQAGAAMAAAD//wAAAQAGAAQAAAAAAP//AQAHAAMAAAAAAAAAAQAHAAQAAAA=")
 tile_set = SubResource("TileSet_ue5l7")
 
 [node name="Café" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(19.5, -3)
-scale = Vector2(2, 2)
-tile_map_data = PackedByteArray("AAD9//3/AAAEAAcAAAD8//3/AAAFAAYAAAA=")
+position = Vector2(17.8333, 3.66669)
+scale = Vector2(1.5, 1.5)
+tile_map_data = PackedByteArray("AAD8//z/AAAEAAcAAAD7//z/AAAFAAYAAAA=")
 tile_set = SubResource("TileSet_f822g")
 
 [node name="Buly" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(225, -99.1667)
-scale = Vector2(1.5, 1.5)
-tile_map_data = PackedByteArray("AAD/////AgAHAAcAAAA=")
+position = Vector2(229.167, -112.5)
+tile_map_data = PackedByteArray("AAD+/wAAAgAHAAcAAAA=")
 tile_set = SubResource("TileSet_asecn")
 
 [node name="Player" type="Node2D" parent="."]
 position = Vector2(-12, 136)
 
 [node name="Body" parent="Player" instance=ExtResource("6_gfsru")]
-position = Vector2(-105, -105)
+position = Vector2(-94, -105)
 scale = Vector2(1.2, 1.2)
 collision_mask = 14
 
@@ -2988,7 +2985,6 @@ position = Vector2(-4.66666, -5.33334)
 scale = Vector2(0.140625, 0.127604)
 animation = &"idle"
 autoplay = "Padrao"
-frame_progress = 0.0
 
 [node name="CollisionShape2D" parent="Player/Body" index="1"]
 position = Vector2(-4.99999, -3.33333)
