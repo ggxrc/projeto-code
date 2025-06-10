@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=4 uid="uid://dkpxuuethomde"]
+[gd_scene load_steps=53 format=4 uid="uid://dkpxuuethomde"]
 
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/Jogador/player.tscn" id="2_os5tv"]
 [ext_resource type="Texture2D" uid="uid://cwbayvdllf51e" path="res://assets/textures/sprites exterior/Tilemaps & Additive Env/roadtilemap16x16.png" id="3_7gixl"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://crjmfb1ygfalk" path="res://assets/textures/sprites exterior/Vegetation/tree_big 128x128.png" id="17_h3y3g"]
 [ext_resource type="Texture2D" uid="uid://yxkt5ad72yho" path="res://assets/textures/sprites exterior/Vegetation/bush.png" id="18_odef2"]
 [ext_resource type="Texture2D" uid="uid://cew6l6rxhlwg4" path="res://assets/textures/sprites exterior/Vegetation/minitree32x48.png" id="19_purk3"]
+[ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="21_odef2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdgvx"]
 texture = ExtResource("3_7gixl")
@@ -19290,6 +19291,7 @@ texture = ExtResource("15_no1m1")
 texture = ExtResource("16_lytkw")
 
 [sub_resource type="TileSet" id="TileSet_hsd8v"]
+physics_layer_0/collision_layer = 4
 sources/0 = SubResource("TileSetAtlasSource_jdgvx")
 sources/1 = SubResource("TileSetAtlasSource_hsd8v")
 sources/2 = SubResource("TileSetAtlasSource_gu3vm")
@@ -19626,13 +19628,6 @@ position = Vector2(-32, 23)
 tile_map_data = PackedByteArray("AAD6////EAACAAIAAAD6/wAAEAACAAMAAAD6/wEAEAACAAQAAAD6/wIAEAACAAUAAAD7//7/EAADAAEAAAD7////EAADAAIAAAD7/wAAEAADAAMAAAD7/wEAEAADAAQAAAD7/wIAEAADAAUAAAD7/wMAEAADAAYAAAD8//7/EAAEAAEAAAD8////EAAEAAIAAAD8/wAAEAAEAAMAAAD8/wEAEAAEAAQAAAD8/wIAEAAEAAUAAAD8/wMAEAAEAAYAAAD9////EAAFAAIAAAD9/wAAEAAFAAMAAAD9/wEAEAAFAAQAAAD9/wIAEAAFAAUAAAD+////EAACAAIAAAD+/wAAEAACAAMAAAD+/wEAEAACAAQAAAD+/wIAEAACAAUAAAD///7/EAADAAEAAAD/////EAADAAIAAAD//wAAEAADAAMAAAD//wEAEAADAAQAAAD//wIAEAADAAUAAAD//wMAEAADAAYAAAAAAP7/EAAEAAEAAAAAAP//EAAEAAIAAAAAAAAAEAAEAAMAAAAAAAEAEAAEAAQAAAAAAAIAEAAEAAUAAAAAAAMAEAAEAAYAAAABAP//EAAFAAIAAAABAAAAEAAFAAMAAAABAAEAEAAFAAQAAAABAAIAEAAFAAUAAAACAP//EAACAAIAAAACAAAAEAACAAMAAAACAAEAEAACAAQAAAACAAIAEAACAAUAAAADAP7/EAADAAEAAAADAP//EAADAAIAAAADAAAAEAADAAMAAAADAAEAEAADAAQAAAADAAIAEAADAAUAAAADAAMAEAADAAYAAAAEAP7/EAAEAAEAAAAEAP//EAAEAAIAAAAEAAAAEAAEAAMAAAAEAAEAEAAEAAQAAAAEAAIAEAAEAAUAAAAEAAMAEAAEAAYAAAAFAP//EAAFAAIAAAAFAAAAEAAFAAMAAAAFAAEAEAAFAAQAAAAFAAIAEAAFAAUAAAAGAP//EAACAAIAAAAGAAAAEAACAAMAAAAGAAEAEAACAAQAAAAGAAIAEAACAAUAAAAHAP7/EAADAAEAAAAHAP//EAADAAIAAAAHAAAAEAADAAMAAAAHAAEAEAADAAQAAAAHAAIAEAADAAUAAAAHAAMAEAADAAYAAAAIAP7/EAAEAAEAAAAIAP//EAAEAAIAAAAIAAAAEAAEAAMAAAAIAAEAEAAEAAQAAAAIAAIAEAAEAAUAAAAIAAMAEAAEAAYAAAAJAP//EAAFAAIAAAAJAAAAEAAFAAMAAAAJAAEAEAAFAAQAAAAJAAIAEAAFAAUAAAA=")
 tile_set = SubResource("TileSet_jx8th")
 
-[node name="Player" parent="ExteriorVizinhos" instance=ExtResource("2_os5tv")]
-visible = false
-position = Vector2(600, 500)
-
-[node name="Camera2D" type="Camera2D" parent="ExteriorVizinhos/Player"]
-zoom = Vector2(2, 2)
-
 [node name="Sinais 2" type="TileMapLayer" parent="ExteriorVizinhos"]
 position = Vector2(1167, 24)
 tile_map_data = PackedByteArray("AAD9//7/AQAAAAAAAAD9////AQAAAAEAAAD9/wAAAQAAAAIAAAD+//7/AQABAAAAAAD+////AQABAAEAAAD+/wAAAQABAAIAAAD///7/AQACAAAAAAD/////AQACAAEAAAD//wAAAQACAAIAAAAAAP7/AQAAAAAAAAAAAP//AQAAAAEAAAAAAAAAAQAAAAIAAAABAP7/AQABAAAAAAABAP//AQABAAEAAAABAAAAAQABAAIAAAACAP7/AQACAAAAAAACAP//AQACAAEAAAACAAAAAQACAAIAAAA=")
@@ -19672,3 +19667,37 @@ tile_set = SubResource("TileSet_jx8th")
 position = Vector2(1227, 67)
 tile_map_data = PackedByteArray("AAD///3/AwABAAAAAAD///7/AwABAAEAAAD/////AwABAAIAAAAAAP3/AwACAAAAAAAAAP7/AwACAAEAAAAAAP//AwACAAIAAAD//wAAAwABAAAAAAD//wEAAwABAAEAAAD//wIAAwABAAIAAAAAAAAAAwACAAAAAAAAAAEAAwACAAEAAAAAAAIAAwACAAIAAAA=")
 tile_set = SubResource("TileSet_jx8th")
+
+[node name="Player" type="Node2D" parent="."]
+
+[node name="Body" parent="Player" instance=ExtResource("2_os5tv")]
+position = Vector2(581.515, 579.615)
+
+[node name="Camera2D" type="Camera2D" parent="Player/Body"]
+zoom = Vector2(2, 2)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Player/Body"]
+
+[node name="TouchScreenJoystick" type="Control" parent="Player/Body/CanvasLayer"]
+layout_mode = 3
+anchor_top = 0.729
+anchor_right = 0.169
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 0.119995
+offset_right = -0.320023
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(106.5, 98)
+size_flags_horizontal = 3
+size_flags_vertical = 2
+script = ExtResource("21_odef2")
+base_radius = 100.0
+knob_radius = 50.0
+anti_aliased = true
+smooth_reset = true
+smooth_speed = 15.0
+change_opacity_when_touched = true
+use_input_actions = true
+metadata/_edit_use_anchors_ = true

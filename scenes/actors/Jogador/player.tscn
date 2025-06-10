@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cbdw2mmnv7a53"]
+[gd_scene load_steps=27 format=3 uid="uid://cbdw2mmnv7a53"]
 
 [ext_resource type="Script" uid="uid://dpgbd0nayxdt0" path="res://scenes/actors/Jogador/player.gd" id="1_ru62r"]
 [ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/Sprite Prota.png" id="3_ktjr4"]
@@ -71,9 +71,6 @@ region = Rect2(512, 768, 256, 384)
 [sub_resource type="AtlasTexture" id="AtlasTexture_8y416"]
 atlas = ExtResource("3_ktjr4")
 region = Rect2(768, 768, 256, 384)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j3wsw"]
-region = Rect2(0, 0, 256, 384)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x2gti"]
 atlas = ExtResource("3_yua0u")
@@ -172,9 +169,6 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7wueq")
-}, {
-"duration": 0.5,
-"texture": SubResource("AtlasTexture_j3wsw")
 }],
 "loop": true,
 "name": &"idle",
@@ -208,7 +202,7 @@ script = ExtResource("1_ru62r")
 position = Vector2(-1, -0.874976)
 scale = Vector2(0.0898438, 0.0683595)
 sprite_frames = SubResource("SpriteFrames_7wueq")
-animation = &"sleeping"
+animation = &"cima"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 0)
