@@ -2,6 +2,13 @@ extends CharacterBody2D
 
 @onready var sprite = $Sprite2D
 @onready var animation_player = $AnimationPlayer
+@onready var botao_toque = $CanvasLayer/BotaoToque
+
+# Sistema de interação universal
+var objeto_interagivel_atual = null
+var pode_interagir = false
+var raio_interacao = 100.0
+signal interacao_realizada(objeto)
 
 # Tempo de inatividade (em segundos) antes de mudar para animação "sleeping"
 const IDLE_TIMEOUT = 5.0
@@ -21,7 +28,12 @@ func _ready() -> void:
 	# Detecta se estamos em uma plataforma móvel e adiciona um joystick se necessário
 	if OS.get_name() == "Android" or OS.get_name() == "iOS" or OS.has_feature("mobile"):
 		add_virtual_joystick()
-		
+	
+	# Configurar o botão Toque
+	if botao_toque:
+		botao_toque.pressed.connect(_on_botao_interacao_pressed)
+		botao_toque.visible = false  # Inicialmente invisível
+
 func add_virtual_joystick() -> void:
 	# Verifica se já existe um joystick
 	if find_joystick():
@@ -72,6 +84,9 @@ func _physics_process(delta: float) -> void:
 		
 		# Reset estado de inatividade
 		is_moving = true
+		
+		# Enquanto se movimenta, verificar objetos interativos
+		verificar_objetos_interagiveis()
 		idle_timer = 0.0
 	else:
 		# Desacelera o movimento quando não há entrada
@@ -192,3 +207,81 @@ func find_joystick_recursive(node):
 			return result
 			
 	return null
+
+# ====== SISTEMA DE INTERAÇÃO UNIVERSAL ======
+
+# Função chamada quando o botão de interação é pressionado
+func _on_botao_interacao_pressed() -> void:
+	if pode_interagir and objeto_interagivel_atual:
+		interagir_com_objeto(objeto_interagivel_atual)
+
+# Verifica os objetos interagíveis no raio de alcance e gerencia estado de inatividade
+func _process(delta: float) -> void:
+	# Lógica para animação idle
+	if !is_moving:
+		idle_timer += delta
+		if idle_timer >= IDLE_TIMEOUT and sprite and sprite.animation != "sleeping":
+			sprite.play("sleeping")
+	else:
+		idle_timer = 0.0
+		if sprite and sprite.animation == "sleeping":
+			sprite.play("idle")
+	
+	# Resetar flag de movimento a cada frame
+	# (será definida como true em _physics_process se houver movimento)
+	is_moving = false
+	
+	# Verificar objetos interagíveis próximos periodicamente
+	if Engine.get_frames_drawn() % 30 == 0:  # A cada 30 frames (meio segundo a 60fps)
+		verificar_objetos_interagiveis()
+
+# Verifica se há objetos interagíveis próximos e atualiza o estado
+func verificar_objetos_interagiveis() -> void:
+	var proximo_objeto = encontrar_objeto_interagivel_proximo()
+	
+	if proximo_objeto != objeto_interagivel_atual:
+		objeto_interagivel_atual = proximo_objeto
+		atualizar_botao_interacao()
+
+# Encontra o objeto interagível mais próximo dentro do raio de interação
+func encontrar_objeto_interagivel_proximo():
+	# Primeiro vamos procurar o TileMapLayer "Música"
+	var root = get_tree().current_scene
+	if root:
+		var quarto_casa = root.get_node_or_null("QuartoCasa")
+		if quarto_casa:
+			var musica_layer = quarto_casa.get_node_or_null("Musica")
+			if musica_layer:
+				# Calcular distância até o TileMapLayer Música
+				var distancia = global_position.distance_to(musica_layer.global_position)
+				if distancia <= raio_interacao:
+					return musica_layer
+					
+	return null
+
+# Atualiza a visibilidade do botão de interação
+func atualizar_botao_interacao() -> void:
+	pode_interagir = objeto_interagivel_atual != null
+	
+	if botao_toque:
+		botao_toque.visible = pode_interagir
+		if pode_interagir:
+			# Configurar o texto do botão baseado no tipo de interação
+			if objeto_interagivel_atual.name == "Musica":
+				botao_toque.text = "Tocar Música"
+			else:
+				botao_toque.text = "Interagir"
+
+# Interage com o objeto especificado
+func interagir_com_objeto(objeto) -> void:
+	if objeto.name == "Musica":
+		print("Tocando música na caixinha de som!")
+		# Aqui você pode adicionar qualquer efeito visual ou sonoro
+		# Por exemplo, tocar um som de música
+		var audio_player = AudioStreamPlayer.new()
+		add_child(audio_player)
+		# audio_player.stream = load("res://assets/audio/musica.ogg")
+		# audio_player.play()
+		
+	# Emitir sinal para que outros objetos possam responder à interação
+	interacao_realizada.emit(objeto)

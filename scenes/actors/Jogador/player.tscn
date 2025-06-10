@@ -202,10 +202,26 @@ script = ExtResource("1_ru62r")
 position = Vector2(-1, -0.874976)
 scale = Vector2(0.0898438, 0.0683595)
 sprite_frames = SubResource("SpriteFrames_7wueq")
-animation = &"cima"
+animation = &"sleeping"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_15tap")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="BotaoToque" type="Button" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -120.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Tocar Música"
