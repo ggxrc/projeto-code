@@ -36,9 +36,6 @@ expand_icon = true
 
 [node name="Prologue" parent="." instance=ExtResource("1_mhhmh")]
 
-[node name="TouchScreenJoystick" parent="Prologue/Player/CanvasLayer" index="0"]
-pivot_offset = Vector2(106.5, 98)
-
 [node name="Config" parent="." instance=ExtResource("4_v6o4w")]
 
 [node name="CanvasLayer" parent="Config" index="0"]
