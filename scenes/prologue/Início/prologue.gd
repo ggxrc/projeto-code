@@ -7,6 +7,12 @@ const DEBUG_DIALOGUE = true # Ative para ver logs detalhados do fluxo de diálog
 const PATH_STANDARD = 0 # Caminho padrão (amarelo)
 const PATH_BLUE = 1     # Caminho alternativo (azul)
 
+# Variáveis para controle do skip
+var space_press_count = 0
+var last_space_press_time = 0
+const SPACE_PRESS_INTERVAL = 1.0  # Intervalo máximo entre pressionamentos (1 segundo)
+const SPACE_PRESS_REQUIRED = 3     # Número de pressionamentos necessários
+
 # Variáveis para controle da porta
 var player_near_door = false
 var door_hint_label = null
@@ -100,7 +106,7 @@ var after_second_choice_texts = {
 
 var blue_path_texts = [
 	"*Protagonista cai da cama*", # Texto de contexto, não será exibido
-	"Muito bem, você esbagaçou ele no chão, mas, tecnicamente funciona... Então, o que vem agora?"
+	"Muito bem, você esbagaçou ele no chão, mas ele ainda vai viver, com dor nas costas, mas vai viver. Mas iai, o que vem a seguir?"
 ]
 
 var blue_path_choices = [
@@ -458,6 +464,9 @@ func _on_dialogue_line_finished():
 	# Marca que o texto foi exibido completamente e estamos esperando input do usuário
 	text_displayed_completely = true
 	
+	# Aplicar o cooldown ao finalizar um diálogo para evitar avanços rápidos
+	last_input_time = Time.get_ticks_msec() / 1000.0
+	
 	if DEBUG_DIALOGUE:
 		print("[Diálogo] Texto completamente exibido. Esperando input? ", waiting_for_input)
 	
@@ -488,6 +497,9 @@ func _on_dialogue_line_finished():
 # Função que processa o próximo estado de diálogo
 func _process_next_dialogue_state():
 	current_text_index += 1
+	
+	# Aplicar cooldown para evitar progressão acelerada
+	last_input_time = Time.get_ticks_msec() / 1000.0
 	
 	if DEBUG_DIALOGUE:
 		print("[Estado] ", DialogueState.keys()[current_state], " | Índice: ", current_text_index)
@@ -577,6 +589,9 @@ func _process_next_dialogue_state():
 				finish_interactive_dialogue()
 
 func _on_description_line_finished():
+	# Aplica o cooldown explicitamente antes de chamar a outra função
+	last_input_time = Time.get_ticks_msec() / 1000.0
+	
 	# Reutiliza a mesma lógica da função de diálogo
 	_on_dialogue_line_finished()
 
@@ -588,6 +603,10 @@ func get_original_index_from_text(option_text: String, choices_array: Array) -> 
 	return -1  # Não encontrado
 
 func _on_choice_selected(choice_index: int):
+	# Aplica o cooldown imediatamente ao selecionar uma opção
+	# para evitar avanços rápidos após fazer uma escolha
+	last_input_time = Time.get_ticks_msec() / 1000.0
+	
 	selected_option = choice_index
 	choice_dialogue_box.visible = false
 	
@@ -837,6 +856,9 @@ func show_choice_options(state: DialogueState):
 	dialogue_box.hide_box()
 	description_box.hide_box()
 	
+	# Aplicar o cooldown para evitar inputs rápidos após mostrar as opções
+	last_input_time = Time.get_ticks_msec() / 1000.0
+	
 	# Limpar qualquer caixa de escolha anterior
 	choice_dialogue_box.visible = false
 	
@@ -956,12 +978,26 @@ var last_input_time = 0.0
 var input_cooldown = 0.3 # Tempo mínimo entre inputs (em segundos)
 
 func _input(event):
-	# Verificar primeiro se o jogador está perto da porta e quer interagir
-	if player_near_door and ready_to_transition:
-		if event is InputEventKey and event.pressed and event.keycode == KEY_E:
-			_transition_to_next_scene()
-			return
-	
+	# Detecta pressionamento de tecla para verificar o comando de skip
+	# Verifica se o diálogo inicial está visível
+	if is_instance_valid(tela_inicial) and tela_inicial.visible:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
+			var current_time = Time.get_ticks_msec() / 1000.0
+			
+			# Se passou mais tempo que o intervalo, reseta a contagem
+			if current_time - last_space_press_time > SPACE_PRESS_INTERVAL:
+				space_press_count = 0
+			
+			# Incrementa a contagem de pressionamentos
+			space_press_count += 1
+			last_space_press_time = current_time
+			
+			# Se pressionou o espaço 3 vezes em menos de 1 segundo
+			if space_press_count >= SPACE_PRESS_REQUIRED:
+				space_press_count = 0
+				print("Debug: Sequência de skip detectada! Pulando diálogo inicial...")
+				_skip_dialogo_inicial()
+				
 	# Só processa input quando o diálogo está ativo
 	if not dialogue_active:
 		return
@@ -1013,6 +1049,9 @@ func _advance_dialogue():
 	if DEBUG_DIALOGUE:
 		print("[Input] Usuário avançou o diálogo")
 	
+	# Aplicar o cooldown para evitar avanço rápido
+	last_input_time = Time.get_ticks_msec() / 1000.0
+	
 	# Esconder o indicador de clique
 	if click_indicator:
 		click_indicator.visible = false
@@ -1034,6 +1073,27 @@ func _advance_dialogue():
 	
 	# Processamos o próximo estado de diálogo
 	_process_next_dialogue_state()
+
+# Função para pular o diálogo inicial completamente
+func _skip_dialogo_inicial() -> void:
+	# Se a tela inicial não existe ou já está escondida, não faz nada
+	if not is_instance_valid(tela_inicial) or not tela_inicial.visible:
+		return
+		
+	# Interrompe qualquer animação de texto em andamento
+	tela_inicial.parar_e_limpar_linha_atual()
+	
+	# Define a flag no game_manager para que o diálogo não apareça novamente
+	if game_manager:
+		game_manager.prologo_introducao_concluida = true
+		print("Prologue: Flag 'prologo_introducao_concluida' definida como true via comando de skip.")
+	
+	# Esconde a tela inicial imediatamente sem fade
+	tela_inicial.visible = false
+	
+	# Inicia a sequência do jogador dormindo
+	print("Prologue: Diálogo inicial pulado via comando de skip.")
+	_iniciar_sequencia_jogador_dormindo()
 
 # Função para marcar uma opção como incorreta e removê-la das escolhas disponíveis
 func mark_option_as_incorrect(option_text: String, choices_array: Array, incorrect_array: Array) -> Array:

@@ -115,26 +115,60 @@ func _physics_process(delta):
     move_and_slide()
 ```
 
-## Animações do Personagem
+## Sistema de Animação do Personagem
 
-Para integrar animações com o sistema de controle:
+O sistema de animação foi aprimorado para oferecer transições suaves e um comportamento mais realista do personagem em diferentes estados.
+
+### Principais Componentes do Sistema de Animação
+
+- **Animações Direcionais**: O personagem possui animações específicas para cada direção (cima, baixo, esquerda, direita)
+- **Transições de Estado**: Transições suaves entre movimento e estados parados
+- **Sistema de Idle**: Animações especiais após períodos de inatividade
+- **Prevenção de Deslizamento Visual**: Início de movimento a partir do segundo frame para evitar efeito de deslizamento
+
+### Estrutura de Animação
 
 ```gdscript
-@onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
+var is_moving = false
+var last_direction = Vector2.DOWN  # Armazena a última direção do movimento
+var was_idle_last_frame = true     # Controla se o jogador estava parado no frame anterior
+const IDLE_TIMEOUT = 10.0          # Tempo até mudar para animação "sleeping"
+var idle_timer = 0.0               # Contador de tempo ocioso
+```
 
-func _process(delta):
-    # Determina a animação baseada no movimento
-    if velocity.length() > 10:
-        animation_player.play("walk")
+### Atualização de Animação em Movimento
+
+```gdscript
+func update_animation(direction: Vector2) -> void:
+    if not sprite:
+        return
         
-        # Vira o sprite na direção do movimento
-        if velocity.x < 0:
-            sprite.flip_h = true
-        elif velocity.x > 0:
-            sprite.flip_h = false
+    var starting_frame = 0
+    
+    # Se o jogador estava parado e agora está se movendo, começamos no segundo frame (índice 1)
+    # Isso evita o efeito de "deslizamento" quando o jogador começa a andar
+    if was_idle_last_frame:
+        starting_frame = 1
+        was_idle_last_frame = false
+    
+    # Determina a animação com base na direção principal do movimento
+    if abs(direction.x) > abs(direction.y):
+        # Movimento horizontal
+        if direction.x > 0:
+            sprite.play("direita")
+        else:
+            sprite.play("esquerda")
     else:
-        animation_player.play("idle")
+        # Movimento vertical
+        if direction.y > 0:
+            sprite.play("baixo")
+        else:
+            sprite.play("cima")
+    
+    # Configura o frame inicial para evitar deslizamento
+    if starting_frame > 0 and sprite.sprite_frames.get_frame_count(sprite.animation) > starting_frame:
+        sprite.frame = starting_frame
 ```
 
 ## Melhores Práticas
@@ -144,11 +178,76 @@ func _process(delta):
 - **Desempenho**: Use `move_toward()` para suavizar o movimento e evitar mudanças bruscas
 - **Configuração**: Use variáveis `@export` para permitir ajustes no Editor Godot
 
+### Sistema de Manutenção de Orientação
+
+Um dos recursos implementados é a manutenção da orientação do personagem quando ele para de se mover. Isso é realizado através da função `play_idle_in_direction`:
+
+```gdscript
+func play_idle_in_direction(direction: Vector2) -> void:
+    if not sprite:
+        return
+    
+    # Determina qual animação de "parado" usar com base na última direção de movimento
+    var animation_name = ""
+    
+    if abs(direction.x) > abs(direction.y):
+        # Direção horizontal
+        if direction.x > 0:
+            animation_name = "direita"
+        else:
+            animation_name = "esquerda"
+    else:
+        # Direção vertical
+        if direction.y > 0:
+            animation_name = "baixo"
+        else:
+            animation_name = "cima"
+    
+    # Define a animação e para no primeiro frame
+    if sprite.sprite_frames and sprite.sprite_frames.has_animation(animation_name):
+        sprite.stop()
+        sprite.animation = animation_name
+        sprite.frame = 0
+        was_idle_last_frame = true  # Importante para a próxima vez que se mover
+    else:
+        sprite.stop()
+        sprite.animation = "default"
+        sprite.frame = 0
+```
+
+### Sistema de Idle Progressivo
+
+O sistema implementa um comportamento de idle progressivo, onde o personagem muda para diferentes animações após períodos de inatividade:
+
+```gdscript
+# Em _physics_process, quando o jogador está parado
+if not is_moving:
+    # Incrementa o temporizador de inatividade
+    idle_timer += delta
+    
+    # Após 5 segundos, muda para a animação "idle" se não estiver em uma animação especial
+    if idle_timer > 5.0 and sprite and sprite.animation != "idle" and sprite.animation != "sleeping":
+        sprite.play("idle")
+        
+    # Após o tempo definido em IDLE_TIMEOUT, muda para "sleeping"
+    elif idle_timer > IDLE_TIMEOUT and sprite and sprite.animation != "sleeping":
+        sprite.play("sleeping")
+```
+
+## Detecção Precisa de Movimento
+
+Para garantir que a animação responda corretamente ao movimento do jogador, implementamos uma verificação precisa de movimento:
+
+```gdscript
+func is_actually_moving() -> bool:
+    return velocity.length_squared() > 0.01  # Um pequeno valor para evitar imprecisões
+```
+
 ## Limitações Atuais
 
 - O sistema atual não implementa controles de gamepad
 - Não há suporte para múltiplos jogadores
-- As animações são básicas e precisam ser expandidas
+- As transições entre animações diferentes ainda podem ser melhoradas
 
 ## Planos Futuros
 
@@ -156,3 +255,65 @@ func _process(delta):
 - Adicionar sistema de corrida e ações especiais
 - Melhorar sistema de animação com blendtree
 - Adicionar efeitos de som ao movimento
+- Implementar sistema de passos e sons de deslocamento
+
+## Integração Avançada de Sistemas de Entrada e Interação
+
+O sistema de controle do jogador foi atualizado para lidar de forma inteligente com diferentes fontes de entrada e considerar o contexto do jogo:
+
+### Verificação de Diálogos Ativos
+
+O sistema verifica automaticamente se há diálogos ativos para evitar que o jogador se mova durante conversas:
+
+```gdscript
+func is_joystick_visible() -> bool:
+    # Tenta usar o GameUtils singleton para verificar diálogos ativos
+    if Engine.has_singleton("GameUtils"):
+        var game_utils = Engine.get_singleton("GameUtils") 
+        if game_utils.has_method("is_dialogue_active") and game_utils.is_dialogue_active():
+            return false
+    
+    # Verifica a visibilidade do joystick
+    var joystick = find_joystick()
+    if joystick:
+        var parent = joystick.get_parent()
+        return parent and parent.visible
+    return false
+```
+
+### Sistema de Interação Universal
+
+O jogador também possui um sistema de interação com objetos no mundo:
+
+```gdscript
+# Sistema de interação universal
+var objeto_interagivel_atual = null
+var pode_interagir = false
+var raio_interacao = 100.0
+signal interacao_realizada(objeto)
+
+# Verifica objetos interagíveis no raio de alcance
+func verificar_objetos_interagiveis() -> void:
+    var proximo_objeto = encontrar_objeto_interagivel_proximo()
+    
+    if proximo_objeto != objeto_interagivel_atual:
+        objeto_interagivel_atual = proximo_objeto
+        atualizar_botao_interacao()
+```
+
+### Tratamento de Eventos de Entrada
+
+O sistema responde a diferentes tipos de entrada e mantém o estado de animação consistente:
+
+```gdscript
+func _input(event: InputEvent) -> void:
+    # Só processa input se o joystick estiver visível (controle habilitado)
+    if is_joystick_visible() and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
+        if event.is_pressed():
+            # Se qualquer tecla foi pressionada enquanto está em estado idle/sleeping
+            if sprite and (sprite.animation == "sleeping" or sprite.animation == "idle"):
+                # Volta para o estado de parado, olhando na última direção
+                play_idle_in_direction(last_direction)
+                idle_timer = 0.0
+                was_idle_last_frame = true  # Importante para a próxima animação de movimento
+```

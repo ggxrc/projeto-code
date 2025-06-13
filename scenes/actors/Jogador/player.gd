@@ -11,15 +11,18 @@ var raio_interacao = 100.0
 signal interacao_realizada(objeto)
 
 # Tempo de inatividade (em segundos) antes de mudar para animação "sleeping"
-const IDLE_TIMEOUT = 5.0
+const IDLE_TIMEOUT = 10.0
 var idle_timer = 0.0
 var is_moving = false
 var last_direction = Vector2.DOWN  # Armazena a última direção do movimento
+var was_idle_last_frame = true     # Controla se o jogador estava parado no frame anterior
 
 func _ready() -> void:
-	# Configura a animação padrão
+	# Configura a animação padrão - começamos com o jogador olhando para baixo
 	if sprite:
-		sprite.play("idle")
+		last_direction = Vector2.DOWN
+		play_idle_in_direction(last_direction)
+		was_idle_last_frame = true  # Inicializa como parado
 		
 	# Debug - Imprime as animações disponíveis
 	if sprite and sprite.sprite_frames:
@@ -74,6 +77,8 @@ func _physics_process(delta: float) -> void:
 			if joystick and joystick.is_pressing and not joystick.is_in_deadzone():
 				dir = joystick.get_output()
 	
+	var was_moving = is_moving  # Guarda o estado anterior para detectar mudanças
+	
 	if dir:
 		# Aplica o movimento com base na entrada
 		velocity = dir * 200
@@ -93,20 +98,21 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, 200)
 		velocity.y = move_toward(velocity.y, 0, 200)
 		
-		# Verifica se acabou de parar
-		if is_moving:
-			# Acabou de parar de mover
-			is_moving = false
+		# Verifica se está realmente parado (velocidade próxima de zero)
+		is_moving = is_actually_moving()
+		
+		# Verifica se acabou de parar (transição de movimento para parado)
+		if was_moving and not is_moving:
 			if sprite:
-				# Quando para, muda para animação default
-				sprite.play("default")
+				# Quando para, mantém a direção que estava olhando usando o primeiro frame
+				play_idle_in_direction(last_direction)
 				# Reinicia o temporizador
 				idle_timer = 0.0
-		else:
+		elif not is_moving:
 			# Já estava parado, incrementa o temporizador de inatividade
 			idle_timer += delta
 			
-			# Após 5 segundos, muda para a animação "idle"
+			# Após 5 segundos, muda para a animação "idle" se não estiver em uma animação especial
 			if idle_timer > 5.0 and sprite and sprite.animation != "idle" and sprite.animation != "sleeping":
 				sprite.play("idle")
 				
@@ -119,6 +125,14 @@ func _physics_process(delta: float) -> void:
 func update_animation(direction: Vector2) -> void:
 	if not sprite:
 		return
+		
+	var starting_frame = 0
+	
+	# Se o jogador estava parado e agora está se movendo, começamos no segundo frame (índice 1)
+	# Isso evita o efeito de "deslizamento" quando o jogador começa a andar
+	if was_idle_last_frame:
+		starting_frame = 1
+		was_idle_last_frame = false
 	
 	# Determina a animação com base na direção principal do movimento
 	if abs(direction.x) > abs(direction.y):
@@ -135,16 +149,21 @@ func update_animation(direction: Vector2) -> void:
 			sprite.play("baixo")
 		else:
 			sprite.play("cima")
+	
+	# Configura o frame inicial para evitar deslizamento
+	if starting_frame > 0 and sprite.sprite_frames.get_frame_count(sprite.animation) > starting_frame:
+		sprite.frame = starting_frame
 			
 func _input(event: InputEvent) -> void:
 	# Só processa input se o joystick estiver visível (controle habilitado)
 	if is_joystick_visible() and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
 		if event.is_pressed():
-			if sprite:
-				# Se estava dormindo, volta para default
-				if sprite.animation == "sleeping" or sprite.animation == "idle":
-					sprite.play("default")
-					idle_timer = 0.0
+			# Se qualquer tecla foi pressionada enquanto está em estado idle/sleeping
+			if sprite and (sprite.animation == "sleeping" or sprite.animation == "idle"):
+				# Volta para o estado de parado, olhando na última direção
+				play_idle_in_direction(last_direction)
+				idle_timer = 0.0
+				was_idle_last_frame = true  # Marca que estava parado para a próxima animação de movimento
 			
 # Tenta encontrar um joystick virtual na cena
 func find_joystick():
@@ -215,25 +234,14 @@ func _on_botao_interacao_pressed() -> void:
 	if pode_interagir and objeto_interagivel_atual:
 		interagir_com_objeto(objeto_interagivel_atual)
 
-# Verifica os objetos interagíveis no raio de alcance e gerencia estado de inatividade
+# Verifica os objetos interagíveis no raio de alcance
 func _process(delta: float) -> void:
-	# Lógica para animação idle
-	if !is_moving:
-		idle_timer += delta
-		if idle_timer >= IDLE_TIMEOUT and sprite and sprite.animation != "sleeping":
-			sprite.play("sleeping")
-	else:
-		idle_timer = 0.0
-		if sprite and sprite.animation == "sleeping":
-			sprite.play("idle")
-	
-	# Resetar flag de movimento a cada frame
-	# (será definida como true em _physics_process se houver movimento)
-	is_moving = false
-	
 	# Verificar objetos interagíveis próximos periodicamente
 	if Engine.get_frames_drawn() % 30 == 0:  # A cada 30 frames (meio segundo a 60fps)
 		verificar_objetos_interagiveis()
+		
+	# Nota: A lógica de animação idle foi movida para _physics_process 
+	# para evitar conflitos de controle de animação
 
 # Verifica se há objetos interagíveis próximos e atualiza o estado
 func verificar_objetos_interagiveis() -> void:
@@ -285,3 +293,45 @@ func interagir_com_objeto(objeto) -> void:
 		
 	# Emitir sinal para que outros objetos possam responder à interação
 	interacao_realizada.emit(objeto)
+
+func play_idle_in_direction(direction: Vector2) -> void:
+	if not sprite:
+		return
+	
+	# Determina qual animação de "parado" usar com base na última direção de movimento
+	# Usamos o mesmo nome da animação, mas paramos no primeiro frame
+	var animation_name = ""
+	
+	if abs(direction.x) > abs(direction.y):
+		# Direção horizontal
+		if direction.x > 0:
+			animation_name = "direita"
+		else:
+			animation_name = "esquerda"
+	else:
+		# Direção vertical
+		if direction.y > 0:
+			animation_name = "baixo"
+		else:
+			animation_name = "cima"
+	
+	# Verifica se a animação existe
+	if sprite.sprite_frames and sprite.sprite_frames.has_animation(animation_name):
+		# Primeiro para qualquer animação em andamento
+		sprite.stop()
+		# Define a animação e define o frame para o inicial
+		sprite.animation = animation_name
+		sprite.frame = 0
+		# Marca que o jogador está no estado idle para a próxima vez que se mover
+		was_idle_last_frame = true
+	else:
+		# Fallback para animação padrão se a direção específica não existir
+		sprite.stop()
+		sprite.animation = "default"
+		sprite.frame = 0
+		# Marca que o jogador está no estado idle para a próxima vez que se mover
+		was_idle_last_frame = true
+
+# Verifica se o jogador está realmente em movimento baseado na velocidade
+func is_actually_moving() -> bool:
+	return velocity.length_squared() > 0.01  # Um pequeno valor para evitar imprecisões de ponto flutuante
