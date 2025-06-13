@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://6kksgt7lj1ch"]
 
-[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/interface/buttons/BotãoMenu.tscn" id="1_qg45m"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/UI/buttons/BotãoMenu.tscn" id="1_qg45m"]
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="2_4u060"]
 
 [node name="MenuPausa" type="CanvasLayer"]

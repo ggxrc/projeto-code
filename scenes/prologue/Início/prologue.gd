@@ -7,6 +7,11 @@ const DEBUG_DIALOGUE = true # Ative para ver logs detalhados do fluxo de diálog
 const PATH_STANDARD = 0 # Caminho padrão (amarelo)
 const PATH_BLUE = 1     # Caminho alternativo (azul)
 
+# Variáveis para controle da porta
+var player_near_door = false
+var door_hint_label = null
+var ready_to_transition = false
+
 @onready var tela_inicial: Control = $TelaInicial
 @onready var dialogue_box = $DialogueBoxUI
 @onready var choice_dialogue_box = $ChoiceDialogueBox
@@ -190,6 +195,9 @@ func _ready() -> void:
 	if click_indicator:
 		click_indicator.visible = false
 		
+	# Configurar a transição da porta
+	setup_door_transition()
+	
 # Função para criar dinamicamente um indicador de clique se não existir na cena
 func _create_click_indicator():
 	# Cria uma label simples para indicar que o usuário deve clicar
@@ -948,6 +956,12 @@ var last_input_time = 0.0
 var input_cooldown = 0.3 # Tempo mínimo entre inputs (em segundos)
 
 func _input(event):
+	# Verificar primeiro se o jogador está perto da porta e quer interagir
+	if player_near_door and ready_to_transition:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_E:
+			_transition_to_next_scene()
+			return
+	
 	# Só processa input quando o diálogo está ativo
 	if not dialogue_active:
 		return
@@ -1118,3 +1132,125 @@ func find_node_recursive(root: Node, node_name: String) -> Node:
 			return found
 			
 	return null
+
+# Função para configurar a transição da porta
+func setup_door_transition() -> void:
+	# Tenta localizar a porta
+	var door_node = get_node_or_null("QuartoCasa/Porta")
+	if not door_node:
+		printerr("Nó da porta não encontrado em QuartoCasa/Porta!")
+		return
+	
+	print("Porta encontrada, configurando área de interação")
+	
+	# Criar a área de interação da porta
+	var door_area = Area2D.new()
+	door_area.name = "DoorTransitionArea"
+	
+	# Adiciona uma forma de colisão
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	
+	# Ajuste estas dimensões conforme o tamanho da sua porta
+	shape.size = Vector2(32, 32)  # Tamanho ajustado para a porta
+	collision.shape = shape
+	
+	# Usar a posição fornecida
+	# A posição pode precisar de ajuste fino com base na posição do jogador e da colisão
+	door_area.position = Vector2(58, -105)  # Coordenadas fornecidas
+	
+	# Adiciona o colisor à área
+	door_area.add_child(collision)
+	
+	# Conecta os sinais de entrada e saída da área
+	door_area.body_entered.connect(_on_door_area_entered)
+	door_area.body_exited.connect(_on_door_area_exited)
+	
+	# Adiciona a área à porta ou ao nó correto
+	door_node.add_child(door_area)
+	print("Área de transição da porta configurada com sucesso!")
+
+# Função que é chamada quando o jogador entra na área da porta
+func _on_door_area_entered(body) -> void:
+	# Verifica se o corpo que entrou é o jogador
+	if body == player or body.name == "Player" or (body.is_in_group("player") if body.has_method("is_in_group") else false):
+		player_near_door = true
+		ready_to_transition = true
+		_show_door_interaction_hint()
+		print("Jogador próximo à porta - Interação disponível")
+
+# Função que é chamada quando o jogador sai da área da porta
+func _on_door_area_exited(body) -> void:
+	# Verifica se o corpo que saiu é o jogador
+	if body == player or body.name == "Player" or (body.is_in_group("player") if body.has_method("is_in_group") else false):
+		player_near_door = false
+		ready_to_transition = false
+		_hide_door_interaction_hint()
+		print("Jogador saiu da área da porta")
+
+# Mostra dica visual para o jogador
+func _show_door_interaction_hint() -> void:
+	# Remove qualquer dica existente primeiro
+	_hide_door_interaction_hint()
+	
+	# Cria uma nova dica
+	door_hint_label = Label.new()
+	door_hint_label.name = "DoorHint"
+	door_hint_label.text = "Pressione E para usar a porta"
+	door_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	door_hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	
+	# Ajusta o estilo da dica
+	door_hint_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.8))
+	door_hint_label.add_theme_font_size_override("font_size", 16)
+	
+	# Posiciona no fundo da tela
+	door_hint_label.anchor_bottom = 1.0
+	door_hint_label.anchor_top = 0.9
+	door_hint_label.anchor_left = 0.0
+	door_hint_label.anchor_right = 1.0
+	
+	# Adiciona à cena
+	add_child(door_hint_label)
+	
+	# Anima a entrada da dica
+	var tween = create_tween()
+	door_hint_label.modulate.a = 0
+	tween.tween_property(door_hint_label, "modulate:a", 1.0, 0.5)
+
+# Esconde a dica de interação
+func _hide_door_interaction_hint() -> void:
+	if door_hint_label and is_instance_valid(door_hint_label):
+		# Anima a saída da dica
+		var tween = create_tween()
+		tween.tween_property(door_hint_label, "modulate:a", 0.0, 0.3)
+		tween.tween_callback(door_hint_label.queue_free)
+		door_hint_label = null
+
+# Função para transição para a próxima cena
+func _transition_to_next_scene() -> void:
+	if not ready_to_transition:
+		return
+	
+	# Evita múltiplas transições
+	ready_to_transition = false
+	
+	print("Transitando para a próxima cena...")
+	
+	# Efeito de fade
+	var fade = ColorRect.new()
+	fade.name = "FadeEffect"
+	fade.color = Color(0, 0, 0, 0) # Começa transparente
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT) # Cobre toda a tela
+	add_child(fade)
+	
+	# Animar o fade
+	var tween = create_tween()
+	tween.tween_property(fade, "color:a", 1.0, 1.0) # Fade para preto em 1 segundo
+	
+	# Aguardar o fade terminar
+	await tween.finished
+	
+	# Navegar para a próxima cena específica
+	# Usando o caminho exato fornecido
+	get_tree().change_scene_to_file("res://scenes/prologue/Meio/Gameplay.tscn")

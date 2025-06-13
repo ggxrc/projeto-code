@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://blbkia8fnrlk7"]
 
-[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/Pixellari.ttf" id="1_17sfv"]
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="1_17sfv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17sfv"]
 bg_color = Color(0.497057, 0.216426, 0.920404, 1)

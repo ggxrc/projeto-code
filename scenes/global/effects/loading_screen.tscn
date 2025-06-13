@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dwdj4mhy8emsg" path="res://scenes/global/effects/loading_screen.gd" id="1_lljtp"]
 [ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_bx6bg"]
-[ext_resource type="Texture2D" uid="uid://bbrjisfc6mgcw" path="res://assets/interface/icons/Pixel UI pack 3/03.png" id="2_ynqcf"]
+[ext_resource type="Texture2D" uid="uid://bbrjisfc6mgcw" path="res://assets/UI/icons/Pixel UI pack 3/03.png" id="2_ynqcf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bx6bg"]
 atlas = ExtResource("2_ynqcf")

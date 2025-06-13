@@ -1,0 +1,37 @@
+extends Button
+
+# Sinal para notificar quando o botão de diálogo foi pressionado
+signal dialogue_button_pressed(button_index)
+
+# Índice do botão para identificação
+var button_index = -1
+
+# Customizações visuais padrão
+var default_font_color = Color(1.0, 1.0, 1.0)
+var hover_font_color = Color(1.0, 0.8, 0.0) # Cor dourada quando o mouse passa por cima
+
+func _ready():
+	# Configurações visuais adicionais
+	add_theme_font_size_override("font_size", 16)
+	
+	# Conectar sinais para efeitos visuais de hover
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exit)
+
+# Configuração do botão com texto e índice
+func setup(text_value, index):
+	text = text_value
+	button_index = index
+	return self
+
+# Efeito visual quando o mouse passa por cima do botão
+func _on_mouse_entered():
+	add_theme_color_override("font_color", hover_font_color)
+	
+# Restaurar cor original quando o mouse sai
+func _on_mouse_exit():
+	add_theme_color_override("font_color", default_font_color)
+
+# Quando o botão é pressionado
+func _on_pressed():
+	emit_signal("dialogue_button_pressed", button_index)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://i6x4lwpvdkfk"
-path="res://.godot/imported/volta.png-7d06d970cda560da33f009f73ef3e96f.ctex"
+uid="uid://bbrjisfc6mgcw"
+path="res://.godot/imported/03.png-1741c0687a351fbf00e55c47b7013c09.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/interface/icons/volta.png"
-dest_files=["res://.godot/imported/volta.png-7d06d970cda560da33f009f73ef3e96f.ctex"]
+source_file="res://assets/UI/icons/Pixel UI pack 3/03.png"
+dest_files=["res://.godot/imported/03.png-1741c0687a351fbf00e55c47b7013c09.ctex"]
 
 [params]
 

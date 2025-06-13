@@ -75,6 +75,9 @@ func advance_or_skip_typewriter() -> void:
 		text_label.visible_ratio = 1.0
 		dialogue_line_finished.emit()
 
+# Referência à cena do botão personalizado
+const ChoiceButtonScene = preload("res://assets/UI/buttons/ChoiceButton.tscn")
+
 # Mostra opções de escolha para o jogador
 func show_choices(choices: Array, title: String = "") -> void:
 	if not is_instance_valid(choices_container):
@@ -91,13 +94,19 @@ func show_choices(choices: Array, title: String = "") -> void:
 		button.queue_free()
 	choice_buttons.clear()
 	
-	# Criar novos botões para cada escolha
+	# Criar novos botões para cada escolha usando a cena ChoiceButton
 	for i in range(choices.size()):
 		var choice = choices[i]
-		var button = Button.new()
+		
+		# Instanciar o botão a partir da cena personalizada ChoiceButton
+		var button = ChoiceButtonScene.instantiate()
 		button.text = choice
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		
+		# Conectar sinal de clique
 		button.pressed.connect(_on_choice_button_pressed.bind(i))
+		
+		# O efeito hover é tratado automaticamente pelo script do botão
 		
 		choices_container.add_child(button)
 		choice_buttons.append(button)
