@@ -13,10 +13,7 @@ var last_space_press_time = 0
 const SPACE_PRESS_INTERVAL = 1.0  # Intervalo máximo entre pressionamentos (1 segundo)
 const SPACE_PRESS_REQUIRED = 3     # Número de pressionamentos necessários
 
-# Variáveis para controle da porta
-var player_near_door = false
-var door_hint_label = null
-var ready_to_transition = false
+# Nota: O sistema de portas agora é gerenciado pelo script prologue_doors.gd
 
 @onready var tela_inicial: Control = $TelaInicial
 @onready var dialogue_box = $DialogueBoxUI
@@ -48,7 +45,8 @@ enum DialogueState {
 	BLUE_PATH,
 	BLUE_PATH_CONTINUATION, # Após escolha no caminho azul
 	YELLOW_PATH,
-	CONCLUSION
+	CONCLUSION,
+	FINAL_DIALOGUE  # Novo estado para diálogo final após conclusão
 }
 
 # Estado atual do diálogo
@@ -166,6 +164,12 @@ var conclusion_blue_path_texts = [
 # Variável que será ajustada com base no caminho escolhido
 var conclusion_texts = [] # Será definida dinamicamente
 
+# Textos para o diálogo final após a conclusão principal
+var final_dialogue_texts = [
+	"Agora que você tá de pé, e eu não tenho mais animações dele, que tal sairmos desse castelo luxuoso e irmos para fora?",
+	"ele precisa trabalhar apesar de tudo"
+]
+
 func _ready() -> void:
 	game_manager = get_node("/root/Game") 
 	if not game_manager:
@@ -201,8 +205,11 @@ func _ready() -> void:
 	if click_indicator:
 		click_indicator.visible = false
 		
-	# Configurar a transição da porta
-	setup_door_transition()
+	# Adiciona o script de gerenciamento de portas interativas
+	var door_manager = Node.new()
+	door_manager.name = "DoorManager"
+	door_manager.set_script(load("res://scenes/prologue/Início/prologue_doors.gd"))
+	add_child(door_manager)
 	
 # Função para criar dinamicamente um indicador de clique se não existir na cena
 func _create_click_indicator():
@@ -252,18 +259,24 @@ func _on_scene_activated() -> void:
 		printerr("Nó TelaInicial não encontrado em Prologue.gd em _on_scene_activated!")
 		return
 	
+	# Verificar e obter referência para o game_manager
 	if not game_manager: 
 		game_manager = get_node("/root/Game")
 		if not game_manager:
 			printerr("Prologue.gd: Game.gd ainda não encontrado! Não é possível verificar o estado da introdução.")
+			print("DEBUG: Iniciando sequência de diálogo completa sem verificar flag.")
 			_iniciar_sequencia_dialogo_completa()
 			return
-
+	
+	# Verificar o estado da flag do prólogo
+	print("Prologue: Verificando flag 'prologo_introducao_concluida' = ", game_manager.prologo_introducao_concluida)
+	
 	if game_manager.prologo_introducao_concluida == true:
-		print("Prologue: Introdução já concluída. Pulando diálogo da TelaInicial.")
+		print("Prologue: Introdução já concluída. Pulando diálogo e indo direto para gameplay.")
 		tela_inicial.visible = false
 		_iniciar_sequencia_jogador_dormindo()
 	else:
+		print("Prologue: Primeira vez jogando. Iniciando sequência de diálogo completa.")
 		_iniciar_sequencia_dialogo_completa()
 
 func _iniciar_sequencia_dialogo_completa() -> void:
@@ -276,6 +289,33 @@ func _iniciar_sequencia_dialogo_completa() -> void:
 	_exibir_linha_atual()
 
 func _iniciar_sequencia_jogador_dormindo() -> void:
+	# Verificar o estado da flag do prólogo
+	print("Prologue: Iniciando sequência jogador dormindo. Verificando flag: ", 
+		game_manager.prologo_introducao_concluida if game_manager else "sem game_manager")
+	
+	# Verificar se o prólogo já foi completado anteriormente e se devemos pular para o gameplay
+	if game_manager and game_manager.prologo_introducao_concluida == true:
+		# O jogador já completou o prólogo antes, pular automaticamente para o gameplay
+		print("Prologue: Prólogo já foi concluído. Pulando diálogo e indo direto para o gameplay.")
+		dialogue_active = false
+		_prosseguir_apos_dialogo()
+		return
+	
+	# Se chegamos aqui, o jogador está vendo o prólogo pela primeira vez
+	print("Prologue: PRIMEIRA VEZ - Iniciando sequência de diálogo interativo do prólogo.")
+	print("Prologue: Verificação de intro_texts (tamanho): ", intro_texts.size())
+	print("Prologue: Verificação de dialogue_box disponível: ", is_instance_valid(dialogue_box))
+	
+	# Debug adicional para garantir que dialogue_box está presente
+	if not dialogue_box:
+		dialogue_box = $DialogueBoxUI
+		print("Prologue: Tentando recuperar dialogue_box = ", is_instance_valid(dialogue_box))
+	
+	# Vamos garantir que o diálogo seja iniciado corretamente
+	if DEBUG_DIALOGUE:
+		print("[Sistema] Configurando sequência de diálogo interativo do prólogo...")
+	
+	
 	if DEBUG_DIALOGUE:
 		print("[Sistema] Iniciando sequência de diálogo interativo do prólogo...")
 		print("[Sistema] Modo de depuração ATIVADO - logs detalhados serão exibidos")
@@ -411,8 +451,11 @@ func is_description_text(text: String) -> bool:
 
 # Função para mostrar o texto apropriado (diálogo ou descrição)
 func show_appropriate_text(text: String) -> void:
+	print("Prologue: show_appropriate_text chamado com texto: ", text)
+	
 	# Verificação para texto vazio ou nulo
 	if text.strip_edges() == "":
+		print("Prologue: Texto vazio detectado, ignorando")
 		if DEBUG_DIALOGUE:
 			print("[Contexto] Texto vazio ignorado")
 		
@@ -423,6 +466,7 @@ func show_appropriate_text(text: String) -> void:
 	if is_description_text(text):
 		# Este texto contém asteriscos e é uma instrução de contexto
 		# Isto não deve ser exibido como diálogo para o jogador
+		print("Prologue: Texto de descrição detectado (não será mostrado ao jogador)")
 		if DEBUG_DIALOGUE:
 			print("[Contexto] Texto ignorado (com asteriscos): ", text)
 		
@@ -441,6 +485,9 @@ func show_appropriate_text(text: String) -> void:
 		call_deferred("_process_next_dialogue_state")
 	else:
 		# Texto normal de diálogo para ser mostrado ao jogador
+		print("Prologue: Mostrando texto de diálogo ao jogador: ", text)
+		print("Prologue: dialogue_box válido? ", is_instance_valid(dialogue_box))
+		
 		if DEBUG_DIALOGUE:
 			print("[Diálogo] Mostrando: ", text)
 			
@@ -455,10 +502,19 @@ func show_appropriate_text(text: String) -> void:
 		# Garantimos que outras caixas estão escondidas
 		description_box.visible = false
 		choice_dialogue_box.visible = false
+		
+		# Verificar novamente se a dialogue_box existe
+		if not is_instance_valid(dialogue_box):
+			dialogue_box = $DialogueBoxUI
+			print("Prologue: Tentativa de recuperar dialogue_box: ", is_instance_valid(dialogue_box))
 			
 		# Mostramos a caixa de diálogo
-		dialogue_box.visible = true
-		dialogue_box.show_line(text)
+		if is_instance_valid(dialogue_box):
+			dialogue_box.visible = true
+			dialogue_box.show_line(text)
+			print("Prologue: Texto enviado para dialogue_box")
+		else:
+			printerr("Prologue: ERRO - dialogue_box não encontrado!")
 
 func _on_dialogue_line_finished():
 	# Marca que o texto foi exibido completamente e estamos esperando input do usuário
@@ -519,6 +575,15 @@ func _process_next_dialogue_state():
 			# Não reiniciamos automaticamente caso selecionada uma opção incorreta
 			# Em vez disso, mostramos as opções atualizadas
 			show_choice_options(DialogueState.FIRST_CHOICE)
+		
+		DialogueState.FINAL_DIALOGUE:
+			# Processo para o diálogo final após a conclusão principal
+			if current_text_index < final_dialogue_texts.size():
+				show_appropriate_text(final_dialogue_texts[current_text_index])
+			else:
+				if DEBUG_DIALOGUE:
+					print("[Fim] Diálogo final concluído, encerrando fluxo de diálogos")
+				_complete_all_dialogues()
 			
 		DialogueState.SECOND_CHOICE:
 			# Não reinistalizamos automaticamente caso selecionada uma opção incorreta
@@ -940,6 +1005,22 @@ func show_choice_options(state: DialogueState):
 			choice_dialogue_box.show_choices(blue_path_choices, "O que vem agora?")
 
 func finish_interactive_dialogue():
+	# Em vez de finalizar, inicia o diálogo final
+	current_state = DialogueState.FINAL_DIALOGUE
+	current_text_index = 0
+	
+	# Verifica se temos textos para mostrar
+	if final_dialogue_texts.size() > 0:
+		if DEBUG_DIALOGUE:
+			print("[Transição] CONCLUSION -> FINAL_DIALOGUE")
+		
+		# Mostrar o primeiro texto do diálogo final
+		show_appropriate_text(final_dialogue_texts[current_text_index])
+	else:
+		# Se não houver textos finais, continuar com o comportamento original
+		_complete_all_dialogues()
+		
+func _complete_all_dialogues():
 	# Esconder todas as caixas de diálogo
 	dialogue_box.hide_box()
 	choice_dialogue_box.hide_box()
@@ -957,9 +1038,15 @@ func finish_interactive_dialogue():
 	dialogue_active = false
 	_prosseguir_apos_dialogo()
 
-# Função para salvar as escolhas importantes do diálogo (para uso futuro se necessário)
+# Função para salvar as escolhas importantes do diálogo e marcar o prólogo como concluído
 func _save_dialogue_choices():
 	if game_manager:
+		# Define a flag que indica que o prólogo já foi concluído
+		# Isso permitirá pular o diálogo quando o jogador iniciar um novo jogo
+		game_manager.prologo_introducao_concluida = true
+		if DEBUG_DIALOGUE:
+			print("[Persistência] Flag 'prologo_introducao_concluida' definida como true.")
+		
 		# Podemos salvar informações sobre as escolhas do jogador para uso futuro
 		# Se o game_manager tiver este método (mesmo que não tenha agora, pode ser implementado depois)
 		if game_manager.has_method("set_player_choice_data"):
@@ -1083,16 +1170,15 @@ func _skip_dialogo_inicial() -> void:
 	# Interrompe qualquer animação de texto em andamento
 	tela_inicial.parar_e_limpar_linha_atual()
 	
-	# Define a flag no game_manager para que o diálogo não apareça novamente
-	if game_manager:
-		game_manager.prologo_introducao_concluida = true
-		print("Prologue: Flag 'prologo_introducao_concluida' definida como true via comando de skip.")
+	# Não define a flag prologo_introducao_concluida aqui, pois isso poderia fazer o 
+	# próximo _iniciar_sequencia_jogador_dormindo() pular direto para o gameplay
 	
 	# Esconde a tela inicial imediatamente sem fade
 	tela_inicial.visible = false
 	
-	# Inicia a sequência do jogador dormindo
-	print("Prologue: Diálogo inicial pulado via comando de skip.")
+	# Inicia a sequência do jogador dormindo, mas sem pular o diálogo interativo
+	print("Prologue: Diálogo inicial da tela inicial pulado via comando de skip.")
+	# Não definimos prologo_introducao_concluida = true aqui para garantir que o jogador veja o diálogo pelo menos uma vez
 	_iniciar_sequencia_jogador_dormindo()
 
 # Função para marcar uma opção como incorreta e removê-la das escolhas disponíveis
@@ -1193,124 +1279,14 @@ func find_node_recursive(root: Node, node_name: String) -> Node:
 			
 	return null
 
-# Função para configurar a transição da porta
-func setup_door_transition() -> void:
-	# Tenta localizar a porta
-	var door_node = get_node_or_null("QuartoCasa/Porta")
-	if not door_node:
-		printerr("Nó da porta não encontrado em QuartoCasa/Porta!")
-		return
-	
-	print("Porta encontrada, configurando área de interação")
-	
-	# Criar a área de interação da porta
-	var door_area = Area2D.new()
-	door_area.name = "DoorTransitionArea"
-	
-	# Adiciona uma forma de colisão
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	
-	# Ajuste estas dimensões conforme o tamanho da sua porta
-	shape.size = Vector2(32, 32)  # Tamanho ajustado para a porta
-	collision.shape = shape
-	
-	# Usar a posição fornecida
-	# A posição pode precisar de ajuste fino com base na posição do jogador e da colisão
-	door_area.position = Vector2(58, -105)  # Coordenadas fornecidas
-	
-	# Adiciona o colisor à área
-	door_area.add_child(collision)
-	
-	# Conecta os sinais de entrada e saída da área
-	door_area.body_entered.connect(_on_door_area_entered)
-	door_area.body_exited.connect(_on_door_area_exited)
-	
-	# Adiciona a área à porta ou ao nó correto
-	door_node.add_child(door_area)
-	print("Área de transição da porta configurada com sucesso!")
+# Nota: Esta função foi substituída pelo novo sistema em prologue_doors.gd
+# A função setup_door_transition foi removida
 
-# Função que é chamada quando o jogador entra na área da porta
-func _on_door_area_entered(body) -> void:
-	# Verifica se o corpo que entrou é o jogador
-	if body == player or body.name == "Player" or (body.is_in_group("player") if body.has_method("is_in_group") else false):
-		player_near_door = true
-		ready_to_transition = true
-		_show_door_interaction_hint()
-		print("Jogador próximo à porta - Interação disponível")
+# Nota: Sistema antigo de portas foi substituído pelo script prologue_doors.gd
+# As funções _on_door_area_entered e _on_door_area_exited foram removidas
 
-# Função que é chamada quando o jogador sai da área da porta
-func _on_door_area_exited(body) -> void:
-	# Verifica se o corpo que saiu é o jogador
-	if body == player or body.name == "Player" or (body.is_in_group("player") if body.has_method("is_in_group") else false):
-		player_near_door = false
-		ready_to_transition = false
-		_hide_door_interaction_hint()
-		print("Jogador saiu da área da porta")
+# Nota: Estas funções foram substituídas pelo novo sistema de portas interativas
+# As funções _show_door_interaction_hint, _hide_door_interaction_hint e _transition_to_next_scene foram removidas
 
-# Mostra dica visual para o jogador
-func _show_door_interaction_hint() -> void:
-	# Remove qualquer dica existente primeiro
-	_hide_door_interaction_hint()
-	
-	# Cria uma nova dica
-	door_hint_label = Label.new()
-	door_hint_label.name = "DoorHint"
-	door_hint_label.text = "Pressione E para usar a porta"
-	door_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	door_hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	
-	# Ajusta o estilo da dica
-	door_hint_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.8))
-	door_hint_label.add_theme_font_size_override("font_size", 16)
-	
-	# Posiciona no fundo da tela
-	door_hint_label.anchor_bottom = 1.0
-	door_hint_label.anchor_top = 0.9
-	door_hint_label.anchor_left = 0.0
-	door_hint_label.anchor_right = 1.0
-	
-	# Adiciona à cena
-	add_child(door_hint_label)
-	
-	# Anima a entrada da dica
-	var tween = create_tween()
-	door_hint_label.modulate.a = 0
-	tween.tween_property(door_hint_label, "modulate:a", 1.0, 0.5)
-
-# Esconde a dica de interação
-func _hide_door_interaction_hint() -> void:
-	if door_hint_label and is_instance_valid(door_hint_label):
-		# Anima a saída da dica
-		var tween = create_tween()
-		tween.tween_property(door_hint_label, "modulate:a", 0.0, 0.3)
-		tween.tween_callback(door_hint_label.queue_free)
-		door_hint_label = null
-
-# Função para transição para a próxima cena
-func _transition_to_next_scene() -> void:
-	if not ready_to_transition:
-		return
-	
-	# Evita múltiplas transições
-	ready_to_transition = false
-	
-	print("Transitando para a próxima cena...")
-	
-	# Efeito de fade
-	var fade = ColorRect.new()
-	fade.name = "FadeEffect"
-	fade.color = Color(0, 0, 0, 0) # Começa transparente
-	fade.set_anchors_preset(Control.PRESET_FULL_RECT) # Cobre toda a tela
-	add_child(fade)
-	
-	# Animar o fade
-	var tween = create_tween()
-	tween.tween_property(fade, "color:a", 1.0, 1.0) # Fade para preto em 1 segundo
-	
-	# Aguardar o fade terminar
-	await tween.finished
-	
-	# Navegar para a próxima cena específica
-	# Usando o caminho exato fornecido
-	get_tree().change_scene_to_file("res://scenes/prologue/Meio/Gameplay.tscn")
+# Função removida: _show_skip_dialogue_option
+# O prólogo agora pula automaticamente quando já foi concluído anteriormente

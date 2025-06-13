@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+# Certifique-se que as classes de interação sejam carregadas
+const InteractiveObjectClass = preload("res://scripts/interactive_object.gd")
+const InteractiveDoorClass = preload("res://scripts/interactive_door.gd")
+
 @onready var sprite = $Sprite2D
 @onready var animation_player = $AnimationPlayer
 @onready var botao_toque = $CanvasLayer/BotaoToque
@@ -9,6 +13,18 @@ var objeto_interagivel_atual = null
 var pode_interagir = false
 var raio_interacao = 100.0
 signal interacao_realizada(objeto)
+
+# Dicionário de textos de interação para diferentes tipos de objetos
+var textos_interacao = {
+	"porta": "Abrir Porta",
+	"porta_trancada": "Porta Trancada",
+	"alavanca": "Puxar Alavanca",
+	"musica": "Tocar Música",
+	"computador": "Usar Computador",
+	"bau": "Abrir Baú",
+	"item": "Pegar Item",
+	"default": "Interagir"
+}
 
 # Tempo de inatividade (em segundos) antes de mudar para animação "sleeping"
 const IDLE_TIMEOUT = 10.0
@@ -31,6 +47,15 @@ func _ready() -> void:
 	# Detecta se estamos em uma plataforma móvel e adiciona um joystick se necessário
 	if OS.get_name() == "Android" or OS.get_name() == "iOS" or OS.has_feature("mobile"):
 		add_virtual_joystick()
+		# Esconde o joystick imediatamente para evitar que apareça sobre a tela inicial
+		hide_joystick()
+		
+	# Registra para receber notificações de mudança de estado do jogo
+	call_deferred("register_for_game_state_changes")
+	
+	# Após setup inicial, configura a visibilidade do joystick com base no estado atual
+	# Usamos call_deferred para garantir que seja chamado após a cena estar completamente configurada
+	call_deferred("update_joystick_visibility")
 	
 	# Configurar o botão Toque
 	if botao_toque:
@@ -46,6 +71,10 @@ func add_virtual_joystick() -> void:
 	var canvas = CanvasLayer.new()
 	canvas.name = "JoystickLayer"
 	canvas.layer = 10  # Coloca na frente de outros elementos
+	
+	# Importante: Começa invisível para evitar sobreposição com texto inicial
+	canvas.visible = false
+	
 	get_tree().root.add_child(canvas)
 	
 	# Cria o joystick
@@ -61,6 +90,7 @@ func add_virtual_joystick() -> void:
 	# joystick.base_texture = load("res://assets/interface/joystick_base.png")
 	
 	canvas.add_child(joystick)
+	print("Player: Joystick virtual criado (inicialmente oculto)")
 
 func _physics_process(delta: float) -> void:
 	# Captura a entrada de movimento (teclado ou joystick virtual)
@@ -155,6 +185,12 @@ func update_animation(direction: Vector2) -> void:
 		sprite.frame = starting_frame
 			
 func _input(event: InputEvent) -> void:
+	# Detecta tecla E para interação com objetos
+	if event is InputEventKey and event.pressed and event.keycode == KEY_E:
+		# Verifica se há algum objeto disponível para interação
+		if pode_interagir and objeto_interagivel_atual:
+			interagir_com_objeto(objeto_interagivel_atual)
+	
 	# Só processa input se o joystick estiver visível (controle habilitado)
 	if is_joystick_visible() and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
 		if event.is_pressed():
@@ -200,15 +236,62 @@ func show_joystick() -> void:
 		if parent:
 			parent.visible = true
 
-# Verifica se o joystick está visível e se não há diálogo ativo
-func is_joystick_visible() -> bool:
-	# Tenta usar o GameUtils singleton para verificar diálogos ativos
-	if Engine.has_singleton("GameUtils"):
-		var game_utils = Engine.get_singleton("GameUtils") 
-		if game_utils.has_method("is_dialogue_active") and game_utils.is_dialogue_active():
-			return false
+# Função para verificar se o joystick deve estar visível com base no estado atual do jogo
+func update_joystick_visibility() -> void:
+	# Tenta obter referência ao Game (orquestrador)
+	var game = get_node_or_null("/root/Game")
+	if not game:
+		print("Player: Não foi possível encontrar o orquestrador Game")
+		return
+		
+	# Verifica se existe um método para verificar o estado do jogo
+	if not game.has_method("is_game_in_state"):
+		print("Player: Game não possui o método is_game_in_state")
+		return
 	
-	# Verifica a visibilidade do joystick
+	# Pega o valor dos estados do Game
+	var GameState = game.get("GameState")
+	if not GameState:
+		print("Player: Não foi possível acessar GameState")
+		return
+	
+	# Verifica se a tela inicial está visível (tela de diálogo inicial)
+	var tela_inicial_visivel = false
+	var prologue_node = game.get_node_or_null("Prologue")
+	if prologue_node and prologue_node.has_node("TelaInicial"):
+		var tela_inicial = prologue_node.get_node("TelaInicial")
+		tela_inicial_visivel = tela_inicial and tela_inicial.visible
+	
+	# Verifica se qualquer diálogo está ativo
+	var dialogue_active = false
+	if has_node("/root/GameUtils"):
+		var game_utils = get_node("/root/GameUtils")
+		if game_utils.has_method("is_dialogue_active"):
+			dialogue_active = game_utils.is_dialogue_active()
+	
+	# Verifica diretamente nodes de diálogo no prólogo
+	var dialogue_box_visivel = false
+	if prologue_node:
+		var dialogue_boxes = ["DialogueBoxUI", "ChoiceDialogueBox", "DescriptionBoxUI"]
+		for box_name in dialogue_boxes:
+			var box = prologue_node.get_node_or_null(box_name)
+			if box and box.visible:
+				dialogue_box_visivel = true
+				break
+		
+	# Verifica se o jogo está no estado de PROLOGUE ou PLAYING e se não há diálogos ativos
+	if (game.is_game_in_state(GameState.PROLOGUE) or game.is_game_in_state(GameState.PLAYING)) and \
+	   not dialogue_active and not tela_inicial_visivel and not dialogue_box_visivel:
+		show_joystick()
+	else:
+		# Esconder em qualquer outro caso:
+		# - Em outros estados (MENU, PAUSED, OPTIONS, CONFIG_FROM_PAUSE)
+		# - Quando há diálogos ativos
+		# - Quando a tela inicial está visível
+		hide_joystick()
+
+# Verifica se o joystick está visível
+func is_joystick_visible() -> bool:
 	var joystick = find_joystick()
 	if joystick:
 		var parent = joystick.get_parent()
@@ -236,9 +319,13 @@ func _on_botao_interacao_pressed() -> void:
 
 # Verifica os objetos interagíveis no raio de alcance
 func _process(delta: float) -> void:
-	# Verificar objetos interagíveis próximos periodicamente
+	# Verificar objetos interagíveis em cada frame para resposta imediata
+	verificar_objetos_interagiveis()
+	
+	# Estas verificações podem ser feitas com menos frequência
 	if Engine.get_frames_drawn() % 30 == 0:  # A cada 30 frames (meio segundo a 60fps)
-		verificar_objetos_interagiveis()
+		# Atualizar a visibilidade do joystick com base no estado atual do jogo
+		update_joystick_visibility()
 		
 	# Nota: A lógica de animação idle foi movida para _physics_process 
 	# para evitar conflitos de controle de animação
@@ -253,8 +340,19 @@ func verificar_objetos_interagiveis() -> void:
 
 # Encontra o objeto interagível mais próximo dentro do raio de interação
 func encontrar_objeto_interagivel_proximo():
-	# Primeiro vamos procurar o TileMapLayer "Música"
+	# Procura por qualquer objeto interagível
+	var interactive_objects = []
 	var root = get_tree().current_scene
+	
+	# Primeiro procura por objetos InteractiveObject
+	_find_interactive_objects(root, interactive_objects)
+	
+	# Verifica se algum objeto interativo já registrou o jogador
+	for obj in interactive_objects:
+		if obj.player_in_range and obj.player_node == self:
+			return obj
+	
+	# Compatibilidade com o sistema antigo
 	if root:
 		var quarto_casa = root.get_node_or_null("QuartoCasa")
 		if quarto_casa:
@@ -264,25 +362,50 @@ func encontrar_objeto_interagivel_proximo():
 				var distancia = global_position.distance_to(musica_layer.global_position)
 				if distancia <= raio_interacao:
 					return musica_layer
-					
+	
+	# Se não encontrou nenhum objeto interagível, retorna null
 	return null
+	
+# Função recursiva para encontrar objetos interagíveis na cena
+func _find_interactive_objects(node: Node, result: Array) -> void:
+	if node is InteractiveObject:
+		result.append(node)
+	
+	for child in node.get_children():
+		_find_interactive_objects(child, result)
 
 # Atualiza a visibilidade do botão de interação
 func atualizar_botao_interacao() -> void:
 	pode_interagir = objeto_interagivel_atual != null
 	
 	if botao_toque:
+		# Sempre torna o botão visível quando há objeto interagível
 		botao_toque.visible = pode_interagir
+		
 		if pode_interagir:
 			# Configurar o texto do botão baseado no tipo de interação
-			if objeto_interagivel_atual.name == "Musica":
-				botao_toque.text = "Tocar Música"
+			if objeto_interagivel_atual is InteractiveObject:
+				# Primeiro usa o prompt personalizado definido no objeto
+				botao_toque.text = objeto_interagivel_atual.get_interaction_prompt()
+				
+				# Adiciona efeito visual para destacar o botão
+				_aplicar_efeito_destaque_botao()
+			elif objeto_interagivel_atual.name.to_lower() in textos_interacao:
+				# Usa o texto do dicionário se o nome do objeto corresponder a uma chave
+				botao_toque.text = textos_interacao[objeto_interagivel_atual.name.to_lower()]
 			else:
-				botao_toque.text = "Interagir"
+				# Usa a categoria baseada no nome do objeto, ou valor padrão
+				var categoria = _identificar_categoria_objeto(objeto_interagivel_atual.name)
+				botao_toque.text = textos_interacao.get(categoria, textos_interacao["default"])
 
 # Interage com o objeto especificado
 func interagir_com_objeto(objeto) -> void:
-	if objeto.name == "Musica":
+	# Verifica se é um objeto do novo sistema de interação
+	if objeto is InteractiveObject:
+		print("Interagindo com objeto: ", objeto.name)
+		objeto.interact()
+	# Compatibilidade com o sistema antigo
+	elif objeto.name == "Musica":
 		print("Tocando música na caixinha de som!")
 		# Aqui você pode adicionar qualquer efeito visual ou sonoro
 		# Por exemplo, tocar um som de música
@@ -335,3 +458,70 @@ func play_idle_in_direction(direction: Vector2) -> void:
 # Verifica se o jogador está realmente em movimento baseado na velocidade
 func is_actually_moving() -> bool:
 	return velocity.length_squared() > 0.01  # Um pequeno valor para evitar imprecisões de ponto flutuante
+
+# Registra o player para receber notificações de mudanças de estado do jogo
+func register_for_game_state_changes() -> void:
+	# Tenta obter referência ao Game (orquestrador)
+	var game = get_node_or_null("/root/Game")
+	if not game:
+		print("Player: Não foi possível encontrar o orquestrador Game para registrar notificações de estado")
+		return
+		
+	# Verifica se o game tem um sinal para notificar mudanças de estado
+	if not game.has_signal("game_state_changed"):
+		# Se não tiver o sinal, podemos criar a conexão manualmente no orquestrador
+		print("Player: O orquestrador não possui sinal game_state_changed, usando verificação periódica")
+	else:
+		# Conecta ao sinal de mudança de estado se existir
+		if not game.game_state_changed.is_connected(self.on_game_state_changed):
+			game.game_state_changed.connect(self.on_game_state_changed)
+			print("Player: Registrado para receber notificações de mudança de estado do jogo")
+
+# Callback chamado quando o estado do jogo muda
+func on_game_state_changed(new_state) -> void:
+	print("Player: Estado do jogo mudou, atualizando visibilidade do joystick")
+	update_joystick_visibility()
+
+# Função que identifica a categoria de um objeto baseado em seu nome
+func _identificar_categoria_objeto(nome_objeto: String) -> String:
+	nome_objeto = nome_objeto.to_lower()
+	
+	# Verifica palavras-chave no nome do objeto
+	if "porta" in nome_objeto:
+		if "trancada" in nome_objeto or "fechada" in nome_objeto:
+			return "porta_trancada"
+		return "porta"
+	elif "musica" in nome_objeto or "radio" in nome_objeto or "som" in nome_objeto:
+		return "musica"
+	elif "computador" in nome_objeto or "pc" in nome_objeto or "laptop" in nome_objeto:
+		return "computador"
+	elif "alavanca" in nome_objeto or "botao" in nome_objeto or "switch" in nome_objeto:
+		return "alavanca"
+	elif "bau" in nome_objeto or "caixa" in nome_objeto or "container" in nome_objeto:
+		return "bau"
+	elif "item" in nome_objeto or "objeto" in nome_objeto or "coletavel" in nome_objeto:
+		return "item"
+	
+	# Se não encontrou correspondência, retorna o tipo padrão
+	return "default"
+
+# Aplica efeito visual de destaque ao botão de interação
+func _aplicar_efeito_destaque_botao() -> void:
+	if not botao_toque:
+		return
+	
+	# Cancela animações anteriores
+	if botao_toque.has_meta("tween") and botao_toque.get_meta("tween") != null:
+		var tween_antigo = botao_toque.get_meta("tween")
+		if tween_antigo.is_valid() and tween_antigo.is_running():
+			tween_antigo.kill()
+	
+	# Aplica efeito de pulsação sutil
+	botao_toque.scale = Vector2(1.0, 1.0)
+	var tween = create_tween()
+	tween.set_loops()  # Loop infinito
+	tween.tween_property(botao_toque, "scale", Vector2(1.1, 1.1), 0.5)
+	tween.tween_property(botao_toque, "scale", Vector2(1.0, 1.0), 0.5)
+	
+	# Armazena referência do tween para poder cancelá-lo depois
+	botao_toque.set_meta("tween", tween)

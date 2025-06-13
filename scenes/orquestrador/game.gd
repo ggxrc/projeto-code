@@ -1,5 +1,8 @@
 extends Node
 
+# Sinal para notificar quando o estado do jogo muda
+signal game_state_changed(new_state)
+
 # Referências para as cenas principais
 @onready var menu_principal: Node = $MenuPrincipal
 @onready var prologue: Node = $Prologue
@@ -11,6 +14,7 @@ extends Node
 # Referências para os nodes autoload
 @onready var loading_screen = $Effects/LoadingScreen
 
+# Flag para controlar se o prólogo já foi concluído - resetada para false no início de cada sessão
 var prologo_introducao_concluida: bool = false
 
 var scenes: Array[Node]
@@ -32,10 +36,19 @@ var previous_state_before_options_pause: GameState = GameState.NONE
 
 func _ready() -> void:
 	#get_tree().paused = true
+	
+	# IMPORTANTE: Garantir que a flag do prólogo começa como false em cada nova sessão
+	# Isso faz com que o diálogo seja exibido pelo menos uma vez ao jogador
+	prologo_introducao_concluida = false
+	print("Game: Flag 'prologo_introducao_concluida' inicializada como false.")
+	
 	_setup_scenes_array()
 	_initialize_game_state_and_scenes()
 	_connect_all_scene_signals()
 	_verify_autoload_nodes()
+	
+	# Log de depuração para confirmar o estado
+	print_debug_info()
 
 func _verify_autoload_nodes() -> void:
 	# Verifica se os AutoLoad estão funcionando corretamente
@@ -179,9 +192,15 @@ func _activate_scene(scene_node: Node, target_state: GameState) -> void:
 		scene_node._on_scene_activated()
 	
 	current_scene = scene_node
+	var old_state = current_state
 	current_state = target_state
 	
 	print("Cena ativada: ", scene_node.name, " | Estado: ", GameState.keys()[target_state])
+	
+	# Emite o sinal de mudança de estado se o estado realmente mudou
+	if old_state != current_state:
+		emit_signal("game_state_changed", current_state)
+		print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 
 func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transition_effect_type: String = "loading") -> void:
 	if is_transitioning or (next_scene_node == current_scene and current_state == next_game_state):
@@ -344,8 +363,14 @@ func _on_pause_button_pressed() -> void:
 		menu_pausa.visible = true
 		menu_pausa.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 		
+		var old_state = current_state
 		current_state = GameState.PAUSED
 		print("Jogo Pausado. Menu de Pausa ativado.")
+		
+		# Emite o sinal de mudança de estado
+		if old_state != current_state:
+			emit_signal("game_state_changed", current_state)
+			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 		
 		if menu_pausa.has_method("_on_scene_activated"):
 			menu_pausa._on_scene_activated()
@@ -362,6 +387,8 @@ func _on_retomar_pressed() -> void:
 	menu_pausa.visible = false
 	menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
 	
+	var old_state = current_state
+	
 	if previous_state_before_pause != GameState.NONE:
 		current_state = previous_state_before_pause
 		previous_state_before_pause = GameState.NONE
@@ -369,6 +396,11 @@ func _on_retomar_pressed() -> void:
 		current_state = GameState.PLAYING
 	
 	print("Jogo Retomado. Estado: ", GameState.keys()[current_state])
+	
+	# Emite o sinal de mudança de estado
+	if old_state != current_state:
+		emit_signal("game_state_changed", current_state)
+		print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 	
 	if menu_pausa.has_method("_on_scene_deactivating"):
 		menu_pausa._on_scene_deactivating()
@@ -386,8 +418,14 @@ func _on_config_pressed() -> void:
 		config.visible = true
 		config.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 		
+		var old_state = current_state
 		current_state = GameState.CONFIG_FROM_PAUSE 
 		print("Menu de Configuração (via Pausa) ativado.")
+		
+		# Emite o sinal de mudança de estado
+		if old_state != current_state:
+			emit_signal("game_state_changed", current_state)
+			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 		
 		if config.has_method("_on_scene_activated"):
 			config._on_scene_activated()
@@ -432,14 +470,96 @@ func _on_voltar_from_config_pressed() -> void:
 		menu_pausa.visible = true 
 		menu_pausa.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 		
+		var old_state = current_state
 		current_state = GameState.PAUSED 
 		print("Retornou para o Menu de Pausa.")
+		
+		# Emite o sinal de mudança de estado
+		if old_state != current_state:
+			emit_signal("game_state_changed", current_state)
+			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 		
 		if menu_pausa.has_method("_on_scene_activated"):
 			menu_pausa._on_scene_activated()
 
 func start_prologue() -> void:
+	# O prólogo.gd verifica esta flag e pula diretamente para o gameplay 
+	# se o jogador já completou o prólogo anteriormente
+	print("Game: Iniciando prólogo. Flag 'prologo_introducao_concluida' = ", prologo_introducao_concluida)
 	navigate_to_prologue()
+
+# Função para carregar uma cena por caminho de arquivo
+func load_scene_by_path(scene_path: String, transition_effect: String = "loading") -> void:
+	print("Game: Carregando cena por caminho: ", scene_path)
+	
+	if scene_path.is_empty():
+		printerr("Game: Tentativa de carregar cena com caminho vazio!")
+		return
+	
+	# Verifica se a cena existe antes de tentar carregá-la
+	if not ResourceLoader.exists(scene_path):
+		printerr("Game: Cena não encontrada no caminho: ", scene_path)
+		return
+		
+	# Determina o estado do jogo com base no caminho da cena
+	var target_state = GameState.PLAYING  # Estado padrão
+	
+	if "prologue" in scene_path.to_lower():
+		target_state = GameState.PROLOGUE
+	elif "menu" in scene_path.to_lower():
+		target_state = GameState.MENU
+	
+	# Inicia a transição
+	is_transitioning = true
+	
+	# Usa loading screen para todas as transições exceto 'instant'
+	if transition_effect == "instant":
+		_deactivate_all_main_scenes()
+		
+		# Carrega e instancia a nova cena
+		var scene_resource = load(scene_path)
+		var new_scene = scene_resource.instantiate()
+		
+		# Adiciona ao cenário e ativa
+		add_child(new_scene)
+		current_scene = new_scene
+		current_state = target_state
+		
+		is_transitioning = false
+	else:
+		# Fade out
+		if TransitionScreen and TransitionScreen.has_method("fade_out"):
+			await TransitionScreen.fade_out()
+		
+		_deactivate_all_main_scenes()
+		
+		# Verificar loading_screen
+		if not loading_screen:
+			loading_screen = $Effects/LoadingScreen
+		
+		# Mostrar tela de loading
+		if loading_screen:
+			loading_screen.start_loading(false) # Sem transições internas
+			await loading_screen.loading_finished
+		
+		# Carrega e instancia a nova cena
+		var scene_resource = load(scene_path)
+		var new_scene = scene_resource.instantiate()
+		
+		# Adiciona ao cenário e ativa
+		add_child(new_scene)
+		current_scene = new_scene
+		current_state = target_state
+		
+		# Fade in para revelar a cena
+		if TransitionScreen and TransitionScreen.has_method("fade_in"):
+			await TransitionScreen.fade_in()
+			
+		is_transitioning = false
+		
+	# Emite o sinal de mudança de estado
+	emit_signal("game_state_changed", current_state)
+	print("Game: Cena carregada com sucesso: ", scene_path)
 
 func test_loading_screen() -> void:
 	# Este método apenas demonstra o uso da tela de loading
