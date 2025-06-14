@@ -21076,7 +21076,6 @@ target_scene = "uid://btos0oij5qmbx"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExteriorVizinhos/CasaProta/Porta e Janela/Area2D"]
 position = Vector2(81.7857, 84.2857)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_rk7ta")
 
 [node name="Placa" type="TileMapLayer" parent="ExteriorVizinhos"]

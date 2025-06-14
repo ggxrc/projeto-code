@@ -42,6 +42,13 @@ func _ready() -> void:
 	prologo_introducao_concluida = false
 	print("Game: Flag 'prologo_introducao_concluida' inicializada como false.")
 	
+	# Verificar se o AudioManager está disponível como autoload
+	if AudioManager:
+		print("Game: AudioManager encontrado como autoload.")
+		# Conectar ao sinal de mudança de estado para gerenciar músicas
+		if not game_state_changed.is_connected(_on_game_state_changed):
+			game_state_changed.connect(_on_game_state_changed)
+	
 	_setup_scenes_array()
 	_initialize_game_state_and_scenes()
 	_connect_all_scene_signals()
@@ -216,7 +223,15 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 	if config and config.visible:
 		config.visible = false
 		config.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	# Preparar transição de áudio se necessário
+	if Engine.has_singleton("AudioManager") and current_state != next_game_state:
+		var audio_manager = Engine.get_singleton("AudioManager")
 		
+		# Inicia fade out da música atual para uma transição suave
+		if current_state != GameState.PAUSED and current_state != GameState.CONFIG_FROM_PAUSE:
+			audio_manager.stop_music(1.0)
+	
 	# Usa loading screen para todas as transições exceto 'instant'
 	if transition_effect_type == "instant":
 		_perform_instant_transition(next_scene_node, next_game_state)
@@ -574,3 +589,77 @@ func test_loading_screen() -> void:
 		print("Loading concluído!")
 	else:
 		print("LoadingScreen não encontrado!")
+
+func _on_game_state_changed(new_state: GameState) -> void:
+	# Lógica para gerenciar músicas entre estados do jogo
+	print("Mudança de estado do jogo detectada: ", GameState.keys()[new_state])
+	
+	# O AudioManager está disponível globalmente como um autoload
+	match new_state:
+		GameState.MENU:
+			# Toca música do menu
+			AudioManager.play_music("menu", 1.0)
+		GameState.PROLOGUE:
+			# Toca música do prólogo
+			AudioManager.play_music("prologue", 1.5)
+		GameState.PLAYING:
+			# Toca música da gameplay
+			AudioManager.play_music("gameplay", 1.5)
+		GameState.PAUSED:
+			# Não mudamos a música no estado pausado, apenas deixamos tocando
+			pass
+		GameState.OPTIONS, GameState.CONFIG_FROM_PAUSE:
+			# Não mudamos a música no estado de opções, apenas deixamos tocando
+			pass
+		_:
+			# Para qualquer outro estado, para a música
+			AudioManager.stop_music(1.0)
+
+# ============ CONFIGURAÇÕES ============
+
+func close_options() -> void:
+	# Função chamada quando o botão voltar é pressionado na tela de configurações
+	print("Game: Fechando tela de opções")
+	if config:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		# Voltar ao estado anterior
+		var old_state = current_state
+		current_state = GameState.MENU
+		print("Retornou para o Menu Principal.")
+		
+		# Emite o sinal de mudança de estado
+		if old_state != current_state:
+			emit_signal("game_state_changed", current_state)
+			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
+		
+		if menu_principal and menu_principal.visible == false:
+			menu_principal.visible = true
+			menu_principal.process_mode = Node.PROCESS_MODE_INHERIT
+			if menu_principal.has_method("_on_scene_activated"):
+				menu_principal._on_scene_activated()
+
+func close_options_from_pause() -> void:
+	# Função chamada quando o botão voltar é pressionado na tela de configurações durante pausa
+	print("Game: Fechando tela de opções (a partir da pausa)")
+	if config:
+		config.visible = false
+		config.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		# Restaurar menu de pausa
+		if menu_pausa:
+			menu_pausa.visible = true
+			menu_pausa.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+			if menu_pausa.has_method("_on_scene_activated"):
+				menu_pausa._on_scene_activated()
+		
+		# Voltar ao estado de pausa
+		var old_state = current_state
+		current_state = GameState.PAUSED
+		print("Retornou para o Menu de Pausa.")
+		
+		# Emite o sinal de mudança de estado
+		if old_state != current_state:
+			emit_signal("game_state_changed", current_state)
+			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])

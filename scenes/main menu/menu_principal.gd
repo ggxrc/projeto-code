@@ -5,21 +5,37 @@ func _ready():
 	var iniciar_btn = $VBoxContainer/Iniciar
 	var sair_btn = $VBoxContainer/Sair
 	
-	# Se os botões não estiverem conectados, conectar aos métodos correspondentes
-	if iniciar_btn and not iniciar_btn.pressed.is_connected(_on_iniciar_pressed):
-		iniciar_btn.pressed.connect(_on_iniciar_pressed)
+	# Conectar os botões aos nossos métodos sem remover outras conexões
+	# Isso permite que tanto o som quanto a navegação funcionem
+	if iniciar_btn:
+		# Apenas conectar se ainda não estiver conectado
+		if not iniciar_btn.pressed.is_connected(_on_iniciar_pressed):
+			iniciar_btn.pressed.connect(_on_iniciar_pressed)
 	
-	if sair_btn and not sair_btn.pressed.is_connected(_on_sair_pressed):
-		sair_btn.pressed.connect(_on_sair_pressed)
+	if sair_btn:
+		# Apenas conectar se ainda não estiver conectado
+		if not sair_btn.pressed.is_connected(_on_sair_pressed):
+			sair_btn.pressed.connect(_on_sair_pressed)
+	
+	# Iniciar música de fundo do menu
+	AudioManager.play_music("menu")
 
 # Método padrão para iniciar o jogo
 func _on_iniciar_pressed():
+	# Tocar efeito sonoro de clique
+	AudioManager.play_sfx("button_click")	
+	# Fade out da música do menu quando inicia o jogo
+	AudioManager.stop_music(1.0)
+	
 	var orquestrador = _get_orquestrador()
 	if orquestrador:
 		orquestrador.start_prologue()
 
 # Método para sair do jogo
 func _on_sair_pressed():
+	# Tocar efeito sonoro de clique
+	AudioManager.play_sfx("button_click")
+	
 	var orquestrador = _get_orquestrador()
 	if orquestrador:
 		orquestrador.quit_game()

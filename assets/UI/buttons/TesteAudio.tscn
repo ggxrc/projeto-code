@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://assets/UI/buttons/botao_som_direto.gd" id="1_rnwpg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qclbo"]
+bg_color = Color(0.243137, 0.243137, 0.243137, 0.784314)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="TesteSom" type="Button"]
+offset_right = 250.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qclbo")
+text = "CLIQUE PARA TESTAR SOM"
+script = ExtResource("1_rnwpg")

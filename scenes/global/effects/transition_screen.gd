@@ -19,6 +19,9 @@ enum TransitionState {
 var current_state: TransitionState = TransitionState.IDLE
 var is_transitioning: bool = false
 
+# Referência para AudioManager
+var audio_manager = null
+
 func _ready() -> void:
 	# Conecta sinais do AnimationPlayer
 	if animation_player.animation_finished.connect(_on_animation_finished) != OK:
@@ -29,6 +32,11 @@ func _ready() -> void:
 	
 	# Define layer alto para ficar acima de tudo
 	layer = 100
+	
+	# Inicializa acesso ao AudioManager
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
+		print("TransitionScreen: AudioManager encontrado como singleton.")
 
 # Método principal para transição completa (fade out -> ação -> fade in)
 func transition_to_scene(scene_path: String) -> void:
@@ -78,6 +86,10 @@ func fade_out(duration: float = -1) -> void:
 	current_state = TransitionState.FADING_OUT
 	color_rect.visible = true
 	
+	# Reproduz som de transição (fade out)
+	if audio_manager:
+		audio_manager.play_sfx("interact", 0.5)
+	
 	if duration > 0:
 		# Usa tween customizado
 		var tween = create_tween()
@@ -106,6 +118,10 @@ func fade_in(duration: float = -1) -> void:
 		# Usa animação pré-definida
 		animation_player.play("fade_to_normal")
 		await animation_player.animation_finished
+	
+	# Reproduz som de fade in, se AudioManager estiver disponível
+	if audio_manager != null:
+		audio_manager.play_sound("fade_in_sound")
 	
 	color_rect.visible = false
 	fade_in_finished.emit()

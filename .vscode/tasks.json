@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Verificar Estrutura do Projeto",
+			"type": "shell",
+			"command": "dir scenes\\configurações && dir scenes\\global\\audio",
+			"group": "test",
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,9 @@
+# Arquivo de configuração do projeto que deve ser adicionado ao projeto.godot
+# Para registrar o AudioManager como um singleton (autoload)
+
+[autoload]
+AudioManager="*res://scenes/global/audio/AudioManager.tscn"
+
+# Para usar o AudioManager em qualquer script, use:
+# AudioManager.play_music("menu")
+# AudioManager.play_sfx("button_click")

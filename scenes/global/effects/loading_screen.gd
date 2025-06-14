@@ -14,12 +14,20 @@ const MAX_LOADING_TIME: float = 3.0
 var loading_timer: SceneTreeTimer = null
 var is_loading: bool = false
 
+# Referência para AudioManager
+var audio_manager = null
+
 func _ready() -> void:
 	# Garante que a tela comece invisível
 	visible = false
 	
 	# Garante que está na camada correta para ficar acima de outros elementos
 	layer = 101  # Superior ao TransitionScreen (layer 100)
+	
+	# Inicializa acesso ao AudioManager
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
+		print("LoadingScreen: AudioManager encontrado como singleton.")
 	
 	# Verifica se os nodes necessários estão presentes
 	if not animated_sprite:
@@ -43,6 +51,10 @@ func start_loading(transitions: bool = true) -> void:
 	is_loading = true
 	print("LoadingScreen: Iniciando carregamento...")
 	debug_status()
+	
+	# Reproduz som de carregamento
+	if audio_manager:
+		audio_manager.play_sfx("interact", 0.4)
 	
 	# Ativa a animação do sprite
 	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("default"):

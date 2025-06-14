@@ -3,8 +3,17 @@ extends Node
 # Script principal para a cena Gameplay
 # Este script controla a lógica principal da cena de gameplay
 
+# Referência para o AudioManager
+var audio_manager = null
+
 func _ready() -> void:
 	print("Cena Gameplay carregada com sucesso!")
+	
+	# Inicializa referência ao AudioManager
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
+		# Iniciar música de gameplay se não estiver tocando
+		audio_manager.play_music("gameplay", 1.5)
 	
 	# Adiciona o script de gerenciamento de portas
 	var door_manager = Node.new()

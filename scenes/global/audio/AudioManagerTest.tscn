@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://p5qresm0571j"]
+
+[sub_resource type="GDScript" id="GDScript_sree7"]
+script/source = "extends Node2D
+
+# Este é um script de teste para diagnóstico do AudioManager
+# Adicione-o a uma cena vazia e execute para depurar
+
+func _ready():
+	print(\"\\n==== TESTE DO AUDIO MANAGER ====\")
+	
+	print(\"Verificando se o AudioManager existe...\")
+	var audio_manager_path = \"/root/AudioManager\"
+	var audio_manager_node = get_node_or_null(audio_manager_path)
+	
+	if audio_manager_node:
+		print(\"AudioManager encontrado em: \", audio_manager_path)
+		print(\"Classe: \", audio_manager_node.get_class())
+		
+		# Tenta tocar uma música
+		print(\"\\nTestando reprodução de música:\")
+		if \"menu\" in AudioManager.music_paths:
+			print(\"Música 'menu' encontrada: \", AudioManager.music_paths[\"menu\"])
+			print(\"Arquivo existe: \", FileAccess.file_exists(AudioManager.music_paths[\"menu\"]))
+			AudioManager.play_music(\"menu\")
+		else:
+			print(\"Música 'menu' não encontrada\")
+		
+		# Testa reprodução de SFX
+		print(\"\\nTestando reprodução de efeito sonoro:\")
+		if \"button_click\" in AudioManager.sfx_paths:
+			print(\"Som 'button_click' encontrado: \", AudioManager.sfx_paths[\"button_click\"])
+			print(\"Arquivo existe: \", FileAccess.file_exists(AudioManager.sfx_paths[\"button_click\"]))
+			var result = AudioManager.play_sfx(\"button_click\")
+			print(\"Resultado da chamada play_sfx: \", result != null)
+		else:
+			print(\"Som 'button_click' não encontrado\")
+			
+		# Testa volume
+		print(\"\\nTestando configurações de volume:\")
+		print(\"Master Volume: \", AudioManager.master_volume)
+		print(\"Music Volume: \", AudioManager.music_volume)
+		print(\"SFX Volume: \", AudioManager.sfx_volume)
+		
+		# Testa barramentos de áudio
+		print(\"\\nTestando barramentos de áudio:\")
+		print(\"Bus 'Master' existe: \", AudioServer.get_bus_index(\"Master\") >= 0)
+		print(\"Bus 'Music' existe: \", AudioServer.get_bus_index(\"Music\") >= 0)
+		print(\"Bus 'SFX' existe: \", AudioServer.get_bus_index(\"SFX\") >= 0)
+		
+		# Verifica se o Master não está mudo
+		print(\"Master bus muted: \", AudioServer.is_bus_mute(AudioServer.get_bus_index(\"Master\")))
+		
+		# Testa o método de callback
+		print(\"\\nVerificando método _on_sfx_finished...\")
+		if audio_manager_node.has_method(\"_on_sfx_finished\"):
+			print(\"Método _on_sfx_finished existe\")
+		else:
+			print(\"Método _on_sfx_finished não existe\")
+	else:
+		print(\"ERRO: AudioManager não encontrado em \", audio_manager_path)
+		print(\"Nós disponíveis em /root:\")
+		for child in get_node(\"/root\").get_children():
+			print(\" - \", child.name)
+"
+
+[node name="AudioManagerTest" type="Node2D"]
+script = SubResource("GDScript_sree7")

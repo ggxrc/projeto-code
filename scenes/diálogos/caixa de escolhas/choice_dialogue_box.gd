@@ -7,6 +7,9 @@ extends CanvasLayer
 signal dialogue_line_finished
 signal choice_selected(choice_index: int)
 
+# Referência ao AudioManager
+var audio_manager: Node
+
 var _current_tween: Tween = null
 var choice_buttons: Array[Button] = []
 
@@ -16,6 +19,10 @@ func _ready() -> void:
 		text_label.visible_ratio = 0.0
 	if is_instance_valid(choices_container):
 		choices_container.visible = false
+		
+	# Verificar se o AudioManager está disponível como singleton
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
 		
 func show_line(text_content: String, speed: float = 0.03) -> void:
 	if not is_instance_valid(text_label) or not is_instance_valid(background_box):
@@ -115,6 +122,10 @@ func show_choices(choices: Array, title: String = "") -> void:
 	choices_container.visible = true
 
 func _on_choice_button_pressed(choice_index: int) -> void:
+	# Tocar som de clique ao selecionar uma opção
+	if audio_manager:
+		audio_manager.play_sfx("button_click")
+		
 	choice_selected.emit(choice_index)
 
 # Função para obter o texto de uma opção pelo seu índice

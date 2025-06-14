@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 TransitionScreen="*res://scenes/global/effects/transition_screen.tscn"
 LoadingScreen="*res://scenes/global/effects/loading_screen.tscn"
 GameUtils="*res://scripts/game_utils.gd"
+AudioManager="*res://scenes/global/audio/AudioManager.tscn"
 
 [display]
 
@@ -40,7 +41,8 @@ project/assembly_name="Projeto Code"
 
 folder_colors={
 "res://Cenas/": "green",
-"res://cenas/": "green"
+"res://cenas/": "green",
+"res://scenes/global/": "green"
 }
 
 [input]

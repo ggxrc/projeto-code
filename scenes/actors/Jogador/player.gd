@@ -33,6 +33,9 @@ var is_moving = false
 var last_direction = Vector2.DOWN  # Armazena a última direção do movimento
 var was_idle_last_frame = true     # Controla se o jogador estava parado no frame anterior
 
+# Timer para controlar a frequência dos sons de passos
+var footstep_sound_timer = 0.0
+
 func _ready() -> void:
 	# Configura a animação padrão - começamos com o jogador olhando para baixo
 	if sprite:
@@ -120,9 +123,20 @@ func _physics_process(delta: float) -> void:
 		# Reset estado de inatividade
 		is_moving = true
 		
+		# Tocar som de passos com intervalo (a cada 0.3 segundos)
+		if Engine.has_singleton("AudioManager") and footstep_sound_timer <= 0:
+			var audio_manager = Engine.get_singleton("AudioManager")
+			var random_pitch = randf_range(0.9, 1.1)
+			audio_manager.play_sfx("footstep", 0.3, random_pitch)
+			footstep_sound_timer = 0.3  # Intervalo entre sons de passos
+		
 		# Enquanto se movimenta, verificar objetos interativos
 		verificar_objetos_interagiveis()
 		idle_timer = 0.0
+		
+		# Decrementar o timer de som de passos
+		if footstep_sound_timer > 0:
+			footstep_sound_timer -= delta
 	else:
 		# Desacelera o movimento quando não há entrada
 		velocity.x = move_toward(velocity.x, 0, 200)
@@ -318,7 +332,7 @@ func _on_botao_interacao_pressed() -> void:
 		interagir_com_objeto(objeto_interagivel_atual)
 
 # Verifica os objetos interagíveis no raio de alcance
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Verificar objetos interagíveis em cada frame para resposta imediata
 	verificar_objetos_interagiveis()
 	
@@ -400,6 +414,11 @@ func atualizar_botao_interacao() -> void:
 
 # Interage com o objeto especificado
 func interagir_com_objeto(objeto) -> void:
+	# Tocar som de interação
+	if Engine.has_singleton("AudioManager"):
+		var audio_manager = Engine.get_singleton("AudioManager")
+		audio_manager.play_sfx("interact")
+	
 	# Verifica se é um objeto do novo sistema de interação
 	if objeto is InteractiveObject:
 		print("Interagindo com objeto: ", objeto.name)
@@ -407,12 +426,12 @@ func interagir_com_objeto(objeto) -> void:
 	# Compatibilidade com o sistema antigo
 	elif objeto.name == "Musica":
 		print("Tocando música na caixinha de som!")
-		# Aqui você pode adicionar qualquer efeito visual ou sonoro
-		# Por exemplo, tocar um som de música
-		var audio_player = AudioStreamPlayer.new()
-		add_child(audio_player)
-		# audio_player.stream = load("res://assets/audio/musica.ogg")
-		# audio_player.play()
+		# Usar AudioManager para tocar música na caixinha de som
+		if Engine.has_singleton("AudioManager"):
+			var audio_manager = Engine.get_singleton("AudioManager")
+			# Adicionar música específica para o objeto com redução de volume
+			audio_manager.add_music("music_box", "res://assets/audio/songs/music_box.wav")
+			audio_manager.play_music("music_box", 0.5, 0.5)
 		
 	# Emitir sinal para que outros objetos possam responder à interação
 	interacao_realizada.emit(objeto)
@@ -478,7 +497,7 @@ func register_for_game_state_changes() -> void:
 			print("Player: Registrado para receber notificações de mudança de estado do jogo")
 
 # Callback chamado quando o estado do jogo muda
-func on_game_state_changed(new_state) -> void:
+func on_game_state_changed(_new_state) -> void:
 	print("Player: Estado do jogo mudou, atualizando visibilidade do joystick")
 	update_joystick_visibility()
 

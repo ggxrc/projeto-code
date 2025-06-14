@@ -22,6 +22,9 @@ const SPACE_PRESS_REQUIRED = 3     # Número de pressionamentos necessários
 @onready var click_indicator = $ClickIndicator if has_node("ClickIndicator") else null
 @onready var player = $Player/Body if has_node("Player/Body") else null
 
+# Referência ao AudioManager
+var audio_manager
+
 # Variáveis para controlar a espera por clique do usuário
 var waiting_for_input = false
 var text_displayed_completely = false
@@ -175,6 +178,12 @@ func _ready() -> void:
 	if not game_manager:
 		printerr("Prologue.gd: Game.gd não encontrado em /root/Game!")
 
+	# Verificar se o AudioManager está disponível
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
+		# Iniciar a música do prólogo com fade in
+		audio_manager.play_music("prologue", 2.0)
+	
 	# Configurar colisão para o sofá
 	setup_couch_collision()
 
@@ -512,6 +521,12 @@ func show_appropriate_text(text: String) -> void:
 		if is_instance_valid(dialogue_box):
 			dialogue_box.visible = true
 			dialogue_box.show_line(text)
+			
+			# Reduzir o volume da música para destacar o diálogo
+			if audio_manager:
+				var current_music_volume = audio_manager.music_volume
+				audio_manager.set_music_volume(current_music_volume * 0.7)
+			
 			print("Prologue: Texto enviado para dialogue_box")
 		else:
 			printerr("Prologue: ERRO - dialogue_box não encontrado!")
@@ -671,6 +686,10 @@ func _on_choice_selected(choice_index: int):
 	# Aplica o cooldown imediatamente ao selecionar uma opção
 	# para evitar avanços rápidos após fazer uma escolha
 	last_input_time = Time.get_ticks_msec() / 1000.0
+	
+	# Tocar som de clique ao selecionar uma opção
+	if audio_manager:
+		audio_manager.play_sfx("button_click")
 	
 	selected_option = choice_index
 	choice_dialogue_box.visible = false

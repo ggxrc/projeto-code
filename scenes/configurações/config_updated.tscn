@@ -1,0 +1,149 @@
+[gd_scene load_steps=8 format=3 uid="uid://bstniqeot16yg"]
+
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="1_5roa2"]
+[ext_resource type="Script" uid="uid://cmdyvprg2bh3" path="res://scenes/configurações/config.gd" id="1_hm9df"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/UI/buttons/BotãoMenu.tscn" id="1_rvri7"]
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="3_lhnvv"]
+[ext_resource type="AudioStream" uid="uid://57s8oshh5fni" path="res://assets/audio/sfx/button_click.wav" id="5_uh3hu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_627t8"]
+font = ExtResource("1_5roa2")
+font_size = 45
+
+[sub_resource type="LabelSettings" id="LabelSettings_e5o28"]
+font = ExtResource("3_lhnvv")
+font_size = 22
+
+[node name="Config" type="Node"]
+script = ExtResource("1_hm9df")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.05, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Opções" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "OPÇÕES"
+label_settings = SubResource("LabelSettings_627t8")
+
+[node name="ConfigContainer" type="VBoxContainer" parent="CanvasLayer/Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="MasterLabel" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/MasterVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "MASTER"
+label_settings = SubResource("LabelSettings_e5o28")
+horizontal_alignment = 2
+
+[node name="MasterBar" type="HSlider" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/MasterVolumeContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "MÚSICA"
+label_settings = SubResource("LabelSettings_e5o28")
+horizontal_alignment = 2
+
+[node name="MusicBar" type="HSlider" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="SFXLabel" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/SFXVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "SFX"
+label_settings = SubResource("LabelSettings_e5o28")
+horizontal_alignment = 2
+
+[node name="SFXBar" type="HSlider" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ConfigContainer/SFXVolumeContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="ButtonContainer" type="HBoxContainer" parent="CanvasLayer/Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="VoltarFromConfig" parent="CanvasLayer/Control/ColorRect/VBoxContainer/ButtonContainer" instance=ExtResource("1_rvri7")]
+layout_mode = 2
+text = "VOLTAR"
+icon_alignment = 1
+metadata/_edit_use_anchors_ = false
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_uh3hu")
+bus = &"SFX"
