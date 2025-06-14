@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://0to2fgqd3cgp"
+path="res://.godot/imported/ADS.mp3-de78c75e2cabec8b6071ea18d5c82ec3.mp3str"
+
+[deps]
+
+source_file="res://old/scenes/main menu/sfx/songs/ADS.mp3"
+dest_files=["res://.godot/imported/ADS.mp3-de78c75e2cabec8b6071ea18d5c82ec3.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

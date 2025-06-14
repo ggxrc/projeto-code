@@ -18,9 +18,8 @@ func _ready():
 	var player = $Player
 	if player:
 		hud.interaction_requested.connect(player._on_interaction_requested)
-	
-	# Iniciar música de fundo do nível
-	audio_manager.play_music("level_theme", "res://assets/audio/music/level_theme.ogg")
+		# Iniciar música de fundo do nível
+	audio_manager.play_music("level_theme", "res://assets/audio/music/level_theme.ogg", 0.0)
 	
 	# Configurar interações de objetos
 	_setup_interactive_objects()

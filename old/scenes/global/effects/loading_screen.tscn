@@ -1,0 +1,122 @@
+[gd_scene load_steps=12 format=3 uid="uid://de0m62clh51a2"]
+
+[ext_resource type="Script" uid="uid://dwdj4mhy8emsg" path="res://scenes/global/effects/loading_screen.gd" id="1_lljtp"]
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="2_bx6bg"]
+[ext_resource type="Texture2D" uid="uid://bbrjisfc6mgcw" path="res://assets/UI/icons/Pixel UI pack 3/03.png" id="2_ynqcf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bx6bg"]
+atlas = ExtResource("2_ynqcf")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_28dxr"]
+atlas = ExtResource("2_ynqcf")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1uqdl"]
+atlas = ExtResource("2_ynqcf")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ox22b"]
+atlas = ExtResource("2_ynqcf")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkcfd"]
+atlas = ExtResource("2_ynqcf")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gwk4u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bx6bg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_28dxr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1uqdl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ox22b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qkcfd")
+}],
+"loop": true,
+"name": &"default",
+"speed": 4.0
+}]
+
+[sub_resource type="Animation" id="Animation_l2x4v"]
+resource_name = "loading_rotation"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control/AnimatedSprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0cfgd"]
+_data = {
+&"loading_rotation": SubResource("Animation_l2x4v")
+}
+
+[node name="LoadingScreen" type="CanvasLayer"]
+layer = 101
+script = ExtResource("1_lljtp")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0323822, 0.0323822, 0.0323822, 1)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Texto" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = 25.0
+offset_right = 54.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(9.26517e-07, 0.398798, 0.0750509, 1)
+theme_override_fonts/font = ExtResource("2_bx6bg")
+text = "Carregando..."
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Control"]
+position = Vector2(0, -40)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_gwk4u")
+autoplay = "default"
+frame_progress = 0.144106
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_0cfgd")
+}
+autoplay = "loading_rotation"

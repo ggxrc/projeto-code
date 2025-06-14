@@ -38,7 +38,7 @@ func set_previous_state(state):
 # Callbacks dos botões
 func _on_resume_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg", 1.0)
 	
 	# Voltar ao estado anterior
 	if state_manager and previous_state:
@@ -50,7 +50,7 @@ func _on_resume_pressed():
 
 func _on_config_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg", 1.0)
 	
 	# Abrir configurações
 	if state_manager:
@@ -60,7 +60,7 @@ func _on_config_pressed():
 
 func _on_main_menu_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg", 1.0)
 	
 	# Voltar ao menu principal
 	get_tree().paused = false
@@ -71,7 +71,7 @@ func _on_main_menu_pressed():
 
 func _on_quit_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg", 1.0)
 	
 	# Sair do jogo
 	get_tree().quit()

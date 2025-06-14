@@ -127,21 +127,23 @@ func _create_audio_player(name: String, bus: String) -> AudioStreamPlayer:
 # MÚSICA
 
 # Toca uma música com fade opcional
-func play_music(track_path: String, fade_duration: float = 0.0, loop: bool = true, volume: float = 1.0) -> void:
+func play_music(track_name: String, track_path: String = "", fade_duration: float = 0.0, _loop: bool = true, volume: float = 1.0) -> void:
 	if not initialized:
 		push_error("AudioManager: Sistema de áudio não inicializado!")
 		return
 	
-	if current_music == track_path:
-		print("AudioManager: Música '%s' já está tocando." % track_path)
+	# Se foi fornecido um caminho, usa esse; caso contrário, usa o nome como caminho
+	var path = track_path if not track_path.is_empty() else track_name
+	
+	if current_music == path:
+		print("AudioManager: Música '%s' já está tocando." % path)
 		return
 	
 	# Carregar o recurso se necessário
-	var stream = _get_or_load_audio(track_path)
+	var stream = _get_or_load_audio(path)
 	if not stream:
-		push_error("AudioManager: Falha ao carregar música: %s" % track_path)
+		push_error("AudioManager: Falha ao carregar música: %s" % path)
 		return
-	
 	var player = music_players["main"]
 	
 	# Se quiser crossfade, use player auxiliar
@@ -172,8 +174,8 @@ func play_music(track_path: String, fade_duration: float = 0.0, loop: bool = tru
 		player.volume_db = linear_to_db(volume)
 		player.play()
 	
-	current_music = track_path
-	music_started.emit(track_path)
+	current_music = path
+	music_started.emit(track_name)
 
 # Para a música atual
 func stop_music(fade_duration: float = 0.0) -> void:
@@ -222,15 +224,18 @@ func play_sfx(sound_path: String, volume: float = 1.0, pitch: float = 1.0) -> Au
 # UI SOUNDS
 
 # Toca um som da UI
-func play_ui_sound(sound_path: String, volume: float = 1.0) -> void:
+func play_ui_sound(sound_name: String, sound_path: String = "", volume: float = 1.0) -> void:
 	if not initialized:
 		push_error("AudioManager: Sistema de áudio não inicializado!")
 		return
 	
+	# Se foi fornecido um caminho, usa esse; caso contrário, usa o nome como caminho
+	var path = sound_path if not sound_path.is_empty() else sound_name
+	
 	# Carregar o recurso
-	var stream = _get_or_load_audio(sound_path)
+	var stream = _get_or_load_audio(path)
 	if not stream:
-		push_error("AudioManager: Falha ao carregar som UI: %s" % sound_path)
+		push_error("AudioManager: Falha ao carregar som UI: %s" % path)
 		return
 	
 	# Criar um player temporário para o som UI
@@ -242,7 +247,7 @@ func play_ui_sound(sound_path: String, volume: float = 1.0) -> void:
 	add_child(player)
 	player.play()
 	
-	sound_played.emit(sound_path)
+	sound_played.emit(sound_name)
 
 # VOICE
 
@@ -273,7 +278,7 @@ func play_voice(voice_path: String, volume: float = 1.0) -> AudioStreamPlayer:
 # AMBIENT
 
 # Toca um som ambiente
-func play_ambient(sound_path: String, fade_duration: float = 1.0, loop: bool = true, volume: float = 1.0) -> void:
+func play_ambient(sound_path: String, fade_duration: float = 1.0, _loop: bool = true, volume: float = 1.0) -> void:
 	if not initialized:
 		push_error("AudioManager: Sistema de áudio não inicializado!")
 		return

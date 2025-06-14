@@ -19,10 +19,9 @@ func _ready():
 		audio_manager = service_locator.get_service("AudioManager")
 		scene_manager = service_locator.get_service("SceneManager")
 		hud = service_locator.get_service("HUD")
-	
-	# Tocar música de fundo do prólogo
+		# Tocar música de fundo do prólogo
 	if audio_manager:
-		audio_manager.play_music("prologue_theme", "res://scenes/prologue/Início/music/prologue_theme.ogg")
+		audio_manager.play_music("prologue_theme", "res://assets/audio/music/prologue_theme.ogg")
 	
 	# Conectar o sinal de finalização do prólogo, se disponível
 	var prologue_scene = $PrologueScene
@@ -40,7 +39,7 @@ func _on_prologue_completed():
 # Pular o prólogo (chamado por um botão, se necessário)
 func skip_prologue():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg", 1.0)
 	
 	prologue_completed = true
 	

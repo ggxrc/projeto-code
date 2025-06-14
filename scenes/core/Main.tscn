@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/managers/AudioManager.tscn" id="2_xag4o"]
 [ext_resource type="PackedScene" uid="uid://d360krttbumi6" path="res://scenes/ui/hud/HUD.tscn" id="3_xyul1"]
 [ext_resource type="PackedScene" uid="uid://bdfikj36osgky" path="res://scenes/ui/menus/LoadingScreen.tscn" id="4_ibrvq"]
-[ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="5_ig6ym"]
+[ext_resource type="PackedScene" uid="uid://c1qxs3trp2fyq" path="res://scenes/ui/menus/PauseMenu.tscn" id="5_ig6ym"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_inwdx")

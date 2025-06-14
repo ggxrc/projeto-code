@@ -46,8 +46,7 @@ folder_colors={
 
 [input]
 
-# Ações de movimento controladas pelo joystick virtual
-move_right={
+"#AÃ§Ãµesdemovimentocontroladaspelojoystickvirtualmove_right"={
 "deadzone": 0.2,
 "events": []
 }
@@ -63,8 +62,7 @@ move_down={
 "deadzone": 0.2,
 "events": []
 }
-# Ação para interação com objetos
-interact={
+"#AÃ§Ã£oparainteraÃ§Ã£ocomobjetosinteract"={
 "deadzone": 0.5,
 "events": []
 }
