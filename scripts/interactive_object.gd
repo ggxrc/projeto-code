@@ -11,6 +11,7 @@ signal interaction_triggered(object)
 @export var interaction_prompt: String = "Interagir"  # Texto exibido ao jogador
 @export var interaction_enabled: bool = true          # Se o objeto pode ser interagido
 @export var interaction_cooldown: float = 0.5         # Tempo mínimo entre interações
+@export var interaction_category: String = "default"  # Categoria do objeto para personalização
 
 # Controle interno
 var last_interaction_time: float = 0.0
@@ -21,6 +22,25 @@ func _ready() -> void:
 	# Conecta sinais relevantes se o nó pai tiver um método _on_interaction
 	if get_parent() and get_parent().has_method("_on_interaction"):
 		interaction_triggered.connect(get_parent()._on_interaction)
+		
+	# Garante que a área de detecção tenha sinais conectados
+	_setup_detection_area()
+
+# Configurar área de detecção
+func _setup_detection_area() -> void:
+	var area = find_child("InteractionArea")
+	
+	if area and area is Area2D:
+		# Conectar sinais de entrada/saída
+		if not area.body_entered.is_connected(_on_body_entered):
+			area.body_entered.connect(_on_body_entered)
+			
+		if not area.body_exited.is_connected(_on_body_exited):
+			area.body_exited.connect(_on_body_exited)
+			
+		print("InteractiveObject: Área de detecção configurada para ", name)
+	else:
+		print("InteractiveObject: AVISO - Objeto ", name, " não possui uma área de detecção válida")
 
 # Esta função é chamada pelo player quando a interação ocorre
 func interact() -> void:
@@ -53,14 +73,30 @@ func register_player_in_range(player) -> void:
 	# Notifica o jogador de que ele pode interagir com este objeto
 	if player_node and player_node.has_method("atualizar_botao_interacao"):
 		player_node.objeto_interagivel_atual = self
+		player_node.pode_interagir = true
 		player_node.atualizar_botao_interacao()
 	
 func unregister_player() -> void:
 	# Desativa a interação quando o jogador sai da área
 	if player_node and player_node.objeto_interagivel_atual == self:
 		player_node.objeto_interagivel_atual = null
+		player_node.pode_interagir = false
 		if player_node.has_method("atualizar_botao_interacao"):
 			player_node.atualizar_botao_interacao()
 			
 	player_in_range = false
 	player_node = null
+
+# Verifica se o jogador está na área de interação
+func is_player_in_range() -> bool:
+	return player_in_range
+
+# Callbacks para detecção de entrada/saída
+func _on_body_entered(body) -> void:
+	if body.name == "Player" or body.get_parent().name == "Player":
+		var player = body if body.name == "Player" else body.get_parent()
+		register_player_in_range(player)
+		
+func _on_body_exited(body) -> void:
+	if player_node and (body == player_node or body.get_parent() == player_node):
+		unregister_player()

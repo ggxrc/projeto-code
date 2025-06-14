@@ -1,0 +1,83 @@
+[gd_scene load_steps=7 format=3 uid="uid://cw5xf0imjuv7"]
+
+[ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="1_5roa2"]
+[ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/UI/buttons/BotãoMenu.tscn" id="1_rvri7"]
+[ext_resource type="Texture2D" uid="uid://i6x4lwpvdkfk" path="res://assets/UI/icons/volta.png" id="3_klxni"]
+[ext_resource type="FontFile" uid="uid://brl3qg5td87ra" path="res://assets/fonts/daydream_3/Daydream.ttf" id="3_lhnvv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_627t8"]
+font = ExtResource("1_5roa2")
+font_size = 45
+
+[sub_resource type="LabelSettings" id="LabelSettings_e5o28"]
+font = ExtResource("3_lhnvv")
+font_size = 22
+
+[node name="Config" type="Node"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(3.72304e-05, 3.72304e-05, 3.72304e-05, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/ColorRect"]
+layout_mode = 0
+offset_right = 1277.0
+offset_bottom = 717.0
+
+[node name="Opções" type="Label" parent="CanvasLayer/Control/ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "OPÇÕES"
+label_settings = SubResource("LabelSettings_627t8")
+
+[node name="VoltarFromConfig" parent="CanvasLayer/Control/ColorRect/VBoxContainer" instance=ExtResource("1_rvri7")]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 10
+text = ""
+icon = ExtResource("3_klxni")
+flat = true
+icon_alignment = 1
+
+[node name="Volume" type="Label" parent="CanvasLayer/Control/ColorRect"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 452.0
+offset_top = -223.0
+offset_right = 594.0
+offset_bottom = -192.0
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "VOLUMe"
+label_settings = SubResource("LabelSettings_e5o28")
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/Control/ColorRect/Volume"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 86.0
+offset_top = -19.5
+offset_right = 336.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 6

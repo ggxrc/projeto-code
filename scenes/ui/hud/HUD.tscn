@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3 uid="uid://d360krttbumi6"]
+
+[ext_resource type="Script" uid="uid://em303dfomyh7" path="res://scenes/ui/hud/HUD.gd" id="1_tke3n"]
+[ext_resource type="Texture2D" uid="uid://btgqop3x3251s" path="res://assets/UI/icons/Pause.svg" id="2_ro0l0"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_tke3n")
+
+[node name="InteractionContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InteractionButton" type="Button" parent="InteractionContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Interagir"
+
+[node name="PauseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -58.5649
+offset_top = 6.445
+offset_right = -10.5649
+offset_bottom = 72.445
+grow_horizontal = 0
+icon = ExtResource("2_ro0l0")
+flat = true
+expand_icon = true
+
+[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

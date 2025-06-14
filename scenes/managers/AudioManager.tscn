@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://cctss833uelq2"]
+
+[ext_resource type="Script" path="res://scenes/managers/AudioManager.gd" id="1_ac1nh"]
+
+[node name="AudioManager" type="Node"]
+script = ExtResource("1_ac1nh")
+
+[node name="MusicPlayers" type="Node" parent="."]
+
+[node name="MusicPlayer1" type="AudioStreamPlayer" parent="MusicPlayers"]
+bus = &"Music"
+
+[node name="MusicPlayer2" type="AudioStreamPlayer" parent="MusicPlayers"]
+bus = &"Music"
+
+[node name="SFXPlayers" type="Node" parent="."]
+
+[node name="SFXPlayer1" type="AudioStreamPlayer" parent="SFXPlayers"]
+bus = &"SFX"
+
+[node name="SFXPlayer2" type="AudioStreamPlayer" parent="SFXPlayers"]
+bus = &"SFX"
+
+[node name="SFXPlayer3" type="AudioStreamPlayer" parent="SFXPlayers"]
+bus = &"SFX"
+
+[node name="UIPlayers" type="Node" parent="."]
+
+[node name="UIPlayer1" type="AudioStreamPlayer" parent="UIPlayers"]
+bus = &"UI"
+
+[node name="UIPlayer2" type="AudioStreamPlayer" parent="UIPlayers"]
+bus = &"UI"
+
+[node name="VoicePlayers" type="Node" parent="."]
+
+[node name="VoicePlayer1" type="AudioStreamPlayer" parent="VoicePlayers"]
+bus = &"Voice"
+
+[node name="AmbientPlayers" type="Node" parent="."]
+
+[node name="AmbientPlayer1" type="AudioStreamPlayer" parent="AmbientPlayers"]
+bus = &"Ambient"

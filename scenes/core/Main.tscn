@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1hsr5h46swgk"]
+
+[ext_resource type="Script" uid="uid://cj53pr7q6388k" path="res://scenes/core/Main.gd" id="1_inwdx"]
+[ext_resource type="PackedScene" path="res://scenes/managers/AudioManager.tscn" id="2_xag4o"]
+[ext_resource type="PackedScene" uid="uid://d360krttbumi6" path="res://scenes/ui/hud/HUD.tscn" id="3_xyul1"]
+[ext_resource type="PackedScene" uid="uid://bdfikj36osgky" path="res://scenes/ui/menus/LoadingScreen.tscn" id="4_ibrvq"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="5_ig6ym"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_inwdx")
+
+[node name="AudioManager" parent="." instance=ExtResource("2_xag4o")]
+
+[node name="SceneContainer" type="Node" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("3_xyul1")]
+
+[node name="LoadingScreen" parent="UI" instance=ExtResource("4_ibrvq")]
+visible = false
+
+[node name="PauseMenu" parent="UI" instance=ExtResource("5_ig6ym")]
+visible = false

@@ -1,0 +1,18 @@
+extends Control
+
+# LoadingScreen.gd - Gerencia a tela de carregamento
+
+@onready var progress_bar = $VBoxContainer/ProgressBar
+
+# Mostra a tela de carregamento
+func show_screen():
+	visible = true
+	progress_bar.value = 0
+
+# Esconde a tela de carregamento
+func hide_screen():
+	visible = false
+
+# Atualiza o progresso de carregamento
+func update_progress(value: float):
+	progress_bar.value = value * 100  # Converter de [0-1] para [0-100]

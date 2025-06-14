@@ -29,7 +29,7 @@ func _ready():
 # Método padrão para iniciar o jogo
 func _on_iniciar_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://scenes/main menu/sfx/UI click.wav")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
 	
 	if state_manager:
 		state_manager.change_state("Prologue")
@@ -39,7 +39,7 @@ func _on_iniciar_pressed():
 # Método para abrir as opções
 func _on_opcoes_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://scenes/main menu/sfx/UI click.wav")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
 	
 	if state_manager:
 		state_manager.change_state("Config")
@@ -49,6 +49,6 @@ func _on_opcoes_pressed():
 # Método para sair do jogo
 func _on_sair_pressed():
 	if audio_manager:
-		audio_manager.play_ui_sound("button_click", "res://scenes/main menu/sfx/UI click.wav")
+		audio_manager.play_ui_sound("button_click", "res://assets/audio/ui/button_click.ogg")
 		
 	get_tree().quit()

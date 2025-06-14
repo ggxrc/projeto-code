@@ -4,9 +4,13 @@ extends CharacterBody2D
 const InteractiveObjectClass = preload("res://scripts/interactive_object.gd")
 const InteractiveDoorClass = preload("res://scripts/interactive_door.gd")
 
+# Referências aos componentes do jogador
 @onready var sprite = $Sprite2D
 @onready var animation_player = $AnimationPlayer
-@onready var botao_toque = $CanvasLayer/BotaoToque
+
+# Referências aos gerenciadores e serviços
+var hud
+var audio_manager
 
 # Sistema de interação universal
 var objeto_interagivel_atual = null
@@ -40,9 +44,11 @@ func _ready() -> void:
 		play_idle_in_direction(last_direction)
 		was_idle_last_frame = true  # Inicializa como parado
 		
-	# Debug - Imprime as animações disponíveis
-	if sprite and sprite.sprite_frames:
-		print("Animações disponíveis: ", sprite.sprite_frames.get_animation_names())
+	# Obter referências aos serviços
+	var service_locator = $"/root/ServiceLocator"
+	if service_locator:
+		hud = service_locator.get_service("HUD")
+		audio_manager = service_locator.get_service("AudioManager")
 		
 	# Detecta se estamos em uma plataforma móvel e adiciona um joystick se necessário
 	if OS.get_name() == "Android" or OS.get_name() == "iOS" or OS.has_feature("mobile"):
@@ -57,10 +63,9 @@ func _ready() -> void:
 	# Usamos call_deferred para garantir que seja chamado após a cena estar completamente configurada
 	call_deferred("update_joystick_visibility")
 	
-	# Configurar o botão Toque
-	if botao_toque:
-		botao_toque.pressed.connect(_on_botao_interacao_pressed)
-		botao_toque.visible = false  # Inicialmente invisível
+	# Configurar a interação com o HUD
+	if hud:
+		hud.interaction_requested.connect(_on_interaction_requested)
 
 func add_virtual_joystick() -> void:
 	# Verifica se já existe um joystick
@@ -317,8 +322,13 @@ func _on_botao_interacao_pressed() -> void:
 	if pode_interagir and objeto_interagivel_atual:
 		interagir_com_objeto(objeto_interagivel_atual)
 
+# Função chamada quando o botão de interação do HUD é pressionado
+func _on_interaction_requested() -> void:
+	if pode_interagir and objeto_interagivel_atual:
+		interagir_com_objeto(objeto_interagivel_atual)
+
 # Verifica os objetos interagíveis no raio de alcance
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Verificar objetos interagíveis em cada frame para resposta imediata
 	verificar_objetos_interagiveis()
 	
@@ -374,29 +384,31 @@ func _find_interactive_objects(node: Node, result: Array) -> void:
 	for child in node.get_children():
 		_find_interactive_objects(child, result)
 
-# Atualiza a visibilidade do botão de interação
+# Função que atualiza o botão de interação
 func atualizar_botao_interacao() -> void:
-	pode_interagir = objeto_interagivel_atual != null
-	
-	if botao_toque:
+	if hud:
 		# Sempre torna o botão visível quando há objeto interagível
-		botao_toque.visible = pode_interagir
-		
 		if pode_interagir:
 			# Configurar o texto do botão baseado no tipo de interação
-			if objeto_interagivel_atual is InteractiveObject:
+			var texto_botao = textos_interacao["default"]
+			
+			if objeto_interagivel_atual is InteractiveObjectClass:
 				# Primeiro usa o prompt personalizado definido no objeto
-				botao_toque.text = objeto_interagivel_atual.get_interaction_prompt()
+				texto_botao = objeto_interagivel_atual.get_interaction_prompt()
 				
 				# Adiciona efeito visual para destacar o botão
-				_aplicar_efeito_destaque_botao()
+				hud.highlight_interaction_button(true)
 			elif objeto_interagivel_atual.name.to_lower() in textos_interacao:
 				# Usa o texto do dicionário se o nome do objeto corresponder a uma chave
-				botao_toque.text = textos_interacao[objeto_interagivel_atual.name.to_lower()]
+				texto_botao = textos_interacao[objeto_interagivel_atual.name.to_lower()]
 			else:
 				# Usa a categoria baseada no nome do objeto, ou valor padrão
 				var categoria = _identificar_categoria_objeto(objeto_interagivel_atual.name)
-				botao_toque.text = textos_interacao.get(categoria, textos_interacao["default"])
+				texto_botao = textos_interacao.get(categoria, textos_interacao["default"])
+				
+			hud.show_interaction_button(texto_botao)
+		else:
+			hud.hide_interaction_button()
 
 # Interage com o objeto especificado
 func interagir_com_objeto(objeto) -> void:
@@ -478,7 +490,7 @@ func register_for_game_state_changes() -> void:
 			print("Player: Registrado para receber notificações de mudança de estado do jogo")
 
 # Callback chamado quando o estado do jogo muda
-func on_game_state_changed(new_state) -> void:
+func on_game_state_changed(_new_state) -> void:
 	print("Player: Estado do jogo mudou, atualizando visibilidade do joystick")
 	update_joystick_visibility()
 
@@ -505,23 +517,7 @@ func _identificar_categoria_objeto(nome_objeto: String) -> String:
 	# Se não encontrou correspondência, retorna o tipo padrão
 	return "default"
 
-# Aplica efeito visual de destaque ao botão de interação
+# Aplica efeito visual ao botão de interação
 func _aplicar_efeito_destaque_botao() -> void:
-	if not botao_toque:
-		return
-	
-	# Cancela animações anteriores
-	if botao_toque.has_meta("tween") and botao_toque.get_meta("tween") != null:
-		var tween_antigo = botao_toque.get_meta("tween")
-		if tween_antigo.is_valid() and tween_antigo.is_running():
-			tween_antigo.kill()
-	
-	# Aplica efeito de pulsação sutil
-	botao_toque.scale = Vector2(1.0, 1.0)
-	var tween = create_tween()
-	tween.set_loops()  # Loop infinito
-	tween.tween_property(botao_toque, "scale", Vector2(1.1, 1.1), 0.5)
-	tween.tween_property(botao_toque, "scale", Vector2(1.0, 1.0), 0.5)
-	
-	# Armazena referência do tween para poder cancelá-lo depois
-	botao_toque.set_meta("tween", tween)
+	if hud:
+		hud.highlight_interaction_button(true)
