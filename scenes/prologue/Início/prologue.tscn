@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=4 uid="uid://b56m6q8lb21x4"]
+[gd_scene load_steps=40 format=4 uid="uid://b56m6q8lb21x4"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls.png" id="1_3cuhw"]
 [ext_resource type="Script" uid="uid://jcnxox6jfobe" path="res://scenes/prologue/Início/prologue.gd" id="1_e24q1"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://c1j0ps1l820xp" path="res://scripts/interactive_door.gd" id="7_b28u0"]
 [ext_resource type="PackedScene" uid="uid://f3ms2l5g3ikb" path="res://scenes/prologue/Início/tela_inicial.tscn" id="8_0d6ok"]
 [ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="8_bxlvl"]
+[ext_resource type="Script" uid="uid://1n02rflyfx2p" path="res://scenes/prologue/Início/jukebox.gd" id="11_0akfd"]
 [ext_resource type="PackedScene" uid="uid://c1xyube487q1w" path="res://scenes/diálogos/caixa de escolhas/ChoiceDialogueBox.tscn" id="11_mas3y"]
 [ext_resource type="PackedScene" uid="uid://mxffm6n8wfjk" path="res://scenes/diálogos/caixa de diálogos/DialogueBox.tscn" id="12_k0wf4"]
 [ext_resource type="PackedScene" uid="uid://b34vsfg8xybqv" path="res://scenes/diálogos/caixa de descrições/DescriptionBox.tscn" id="13_omauq"]
@@ -1318,7 +1319,7 @@ sources/0 = SubResource("TileSetAtlasSource_8twsp")
 sources/1 = SubResource("TileSetAtlasSource_gfsru")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0akfd"]
-size = Vector2(23.6111, 59.0741)
+size = Vector2(35.8333, 29.5833)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ivpce"]
 texture = ExtResource("4_gfsru")
@@ -2961,12 +2962,6 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAD9//3/AQAAAAIAAAD9//7/AQAAAAMAAAD+//3/AQACAAIAAAD+//7/AQACAAMAAAA=")
 tile_set = SubResource("TileSet_e24q1")
 
-[node name="Musica" type="TileMapLayer" parent="QuartoCasa"]
-position = Vector2(-11, 110)
-scale = Vector2(2, 2)
-tile_map_data = PackedByteArray("AAD/////AAALABAAAAD//wAAAAALABEAAAAAAP//AAAMABAAAAAAAAAAAAAMABEAAAA=")
-tile_set = SubResource("TileSet_e24q1")
-
 [node name="Janela" type="TileMapLayer" parent="QuartoCasa"]
 position = Vector2(-39.6667, -132)
 scale = Vector2(2, 2)
@@ -3028,6 +3023,19 @@ smooth_speed = 15.0
 change_opacity_when_touched = true
 use_input_actions = true
 metadata/_edit_use_anchors_ = true
+
+[node name="Jukebox" type="TileMapLayer" parent="."]
+position = Vector2(-386.2, 70)
+scale = Vector2(2.4, 2.4)
+tile_map_data = PackedByteArray("AAD/////AAALABAAAAD//wAAAAALABEAAAAAAP//AAAMABAAAAAAAAAAAAAMABEAAAA=")
+tile_set = SubResource("TileSet_e24q1")
+script = ExtResource("11_0akfd")
+
+[node name="Area2D" type="Area2D" parent="Jukebox"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Jukebox/Area2D"]
+position = Vector2(0.500031, -0.208344)
+shape = SubResource("RectangleShape2D_0akfd")
 
 [node name="TelaInicial" parent="." instance=ExtResource("8_0d6ok")]
 visible = false
