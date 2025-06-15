@@ -5,6 +5,14 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lx2rt"]
 bg_color = Color(0.0338533, 0.0338533, 0.0338532, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="LabelSettings" id="LabelSettings_tdkof"]
 font = ExtResource("2_tgp6o")

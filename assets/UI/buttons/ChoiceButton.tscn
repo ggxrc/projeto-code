@@ -1,12 +1,163 @@
-[gd_scene load_steps=3 format=3 uid="uid://dnoec3ofx7p6v"]
+[gd_scene load_steps=12 format=3 uid="uid://dnoec3ofx7p6v"]
 
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="1_txhgr"]
 [ext_resource type="Script" uid="uid://dqbobhutybw43" path="res://assets/UI/buttons/choice_button.gd" id="2_45xtk"]
+[ext_resource type="Script" uid="uid://ceqhoxqdh4qxo" path="res://assets/UI/buttons/animated_border.gd" id="3_q0v7j"]
+[ext_resource type="Texture2D" uid="uid://rm2lt2isc8hc" path="res://assets/UI/icons/Botao_esquerda_cima.png" id="4_562ec"]
+[ext_resource type="Texture2D" uid="uid://n8cbc2ra33yv" path="res://assets/UI/icons/Botao_direita_cima.png" id="5_kgj8b"]
+[ext_resource type="Texture2D" uid="uid://njd7n0o54yti" path="res://assets/UI/icons/Botao_esquerda_baixo.png" id="6_f8ib3"]
+[ext_resource type="Texture2D" uid="uid://d35rvgdr3kd7l" path="res://assets/UI/icons/Botao_direita_baixo.png" id="7_wmnpj"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d4q1q"]
+
+[sub_resource type="Animation" id="Animation_r8ggu"]
+resource_name = "BordasAnimadas"
+length = 2.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TopLeft:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TopRight:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("BottomLeft:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("BottomRight:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_s1jiw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TopLeft:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TopRight:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("BottomLeft:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("BottomRight:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jpunp"]
+_data = {
+&"BordasAnimadas": SubResource("Animation_r8ggu"),
+&"RESET": SubResource("Animation_s1jiw")
+}
 
 [node name="ChoiceButton" type="Button"]
 offset_right = 173.0
 offset_bottom = 84.0
 theme_override_fonts/font = ExtResource("1_txhgr")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_d4q1q")
 text = "Escolha"
 script = ExtResource("2_45xtk")
+
+[node name="AnimatedBorder" type="Node2D" parent="."]
+position = Vector2(0, 38)
+script = ExtResource("3_q0v7j")
+
+[node name="TopLeft" type="Sprite2D" parent="AnimatedBorder"]
+position = Vector2(16, -30)
+texture = ExtResource("4_562ec")
+hframes = 4
+vframes = 2
+
+[node name="TopRight" type="Sprite2D" parent="AnimatedBorder"]
+position = Vector2(159, -30)
+texture = ExtResource("5_kgj8b")
+hframes = 4
+vframes = 2
+
+[node name="BottomLeft" type="Sprite2D" parent="AnimatedBorder"]
+position = Vector2(16, 30)
+texture = ExtResource("6_f8ib3")
+hframes = 4
+
+[node name="BottomRight" type="Sprite2D" parent="AnimatedBorder"]
+position = Vector2(156, 29)
+texture = ExtResource("7_wmnpj")
+hframes = 4
+frame = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedBorder"]
+libraries = {
+&"": SubResource("AnimationLibrary_jpunp")
+}
+autoplay = "BordasAnimadas"
