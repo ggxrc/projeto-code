@@ -13,6 +13,10 @@ var last_space_press_time = 0
 const SPACE_PRESS_INTERVAL = 1.0  # Intervalo máximo entre pressionamentos (1 segundo)
 const SPACE_PRESS_REQUIRED = 3     # Número de pressionamentos necessários
 
+# Variável para controlar se a tela inicial foi pulada pelo comando de skip
+# ou se ela foi concluída naturalmente
+var skip_command_used = false
+
 # Nota: O sistema de portas agora é gerenciado pelo script prologue_doors.gd
 
 @onready var tela_inicial: Control = $TelaInicial
@@ -174,29 +178,51 @@ var final_dialogue_texts = [
 ]
 
 func _ready() -> void:
+	print("Prologue: Iniciando método _ready()")
+	
 	game_manager = get_node("/root/Game") 
 	if not game_manager:
 		printerr("Prologue.gd: Game.gd não encontrado em /root/Game!")
+	else:
+		print("Prologue: Game.gd encontrado")
 
 	# Verificar se o AudioManager está disponível
-	if Engine.has_singleton("AudioManager"):
-		audio_manager = Engine.get_singleton("AudioManager")
+	if AudioManager:
+		audio_manager = AudioManager
 		# Iniciar a música do prólogo com fade in
 		audio_manager.play_music("prologue", 2.0)
+		print("Prologue: AudioManager encontrado e música iniciada")
 	
 	# Configurar colisão para o sofá
 	setup_couch_collision()
 
+	# Verificar e conectar o sinal da tela inicial
 	if is_instance_valid(tela_inicial):
+		print("Prologue: TelaInicial encontrada")
 		if not tela_inicial.linha_exibida_completamente.is_connected(_avancar_dialogo):
 			tela_inicial.linha_exibida_completamente.connect(_avancar_dialogo)
+			print("Prologue: Sinal linha_exibida_completamente conectado a _avancar_dialogo")
 	else:
-		printerr("Nó TelaInicial não encontrado em Prologue.gd no _ready!")
+		printerr("ERRO: Nó TelaInicial não encontrado em Prologue.gd no _ready()!")
+		tela_inicial = $TelaInicial
+		print("Prologue: Tentativa de recuperar TelaInicial = ", is_instance_valid(tela_inicial))
+		if is_instance_valid(tela_inicial):
+			tela_inicial.linha_exibida_completamente.connect(_avancar_dialogo)
+			print("Prologue: Sinal linha_exibida_completamente conectado após recuperação")
 	
 	# Configurar os diálogos
 	if dialogue_box:
 		dialogue_box.dialogue_line_finished.connect(_on_dialogue_line_finished)
 		dialogue_box.visible = false
+		print("Prologue: Caixa de diálogo configurada")
+	else:
+		printerr("ERRO: DialogueBoxUI não encontrado!")
+		dialogue_box = $DialogueBoxUI
+		if dialogue_box:
+			dialogue_box.dialogue_line_finished.connect(_on_dialogue_line_finished)
+			print("Prologue: Caixa de diálogo recuperada e configurada")
+	
+	print("Prologue: _ready() concluído")
 	
 	if choice_dialogue_box:
 		choice_dialogue_box.choice_selected.connect(_on_choice_selected)
@@ -289,7 +315,14 @@ func _on_scene_activated() -> void:
 		_iniciar_sequencia_dialogo_completa()
 
 func _iniciar_sequencia_dialogo_completa() -> void:
-	if not is_instance_valid(tela_inicial): return
+	if not is_instance_valid(tela_inicial): 
+		printerr("Tela inicial não encontrada em _iniciar_sequencia_dialogo_completa!")
+		return
+
+	# Garantir que o sinal esteja conectado antes de iniciar a sequência
+	if not tela_inicial.linha_exibida_completamente.is_connected(_avancar_dialogo):
+		print("Prologue: Conectando sinal linha_exibida_completamente a _avancar_dialogo")
+		tela_inicial.linha_exibida_completamente.connect(_avancar_dialogo)
 
 	indice_linha_atual = 0
 	tela_inicial.visible = true
@@ -303,9 +336,10 @@ func _iniciar_sequencia_jogador_dormindo() -> void:
 		game_manager.prologo_introducao_concluida if game_manager else "sem game_manager")
 	
 	# Verificar se o prólogo já foi completado anteriormente e se devemos pular para o gameplay
-	if game_manager and game_manager.prologo_introducao_concluida == true:
-		# O jogador já completou o prólogo antes, pular automaticamente para o gameplay
-		print("Prologue: Prólogo já foi concluído. Pulando diálogo e indo direto para o gameplay.")
+	# Só pulamos para o gameplay se a introdução foi concluída E o usuário não acabou de ver a tela inicial normalmente
+	if game_manager and game_manager.prologo_introducao_concluida == true and skip_command_used:
+		# O jogador já completou o prólogo antes e pulou a intro com o comando de skip
+		print("Prologue: Prólogo já foi concluído e comando de skip usado. Pulando diálogo e indo direto para o gameplay.")
 		dialogue_active = false
 		_prosseguir_apos_dialogo()
 		return
@@ -395,11 +429,25 @@ func _on_scene_deactivating() -> void:
 		description_box.visible = false
 
 func _exibir_linha_atual() -> void:
-	if not is_instance_valid(tela_inicial): return
+	print("Prologue: _exibir_linha_atual() chamado, índice atual:", indice_linha_atual)
+	
+	if not is_instance_valid(tela_inicial):
+		printerr("ERRO: TelaInicial inválida em _exibir_linha_atual!")
+		tela_inicial = $TelaInicial
+		if not is_instance_valid(tela_inicial):
+			printerr("ERRO CRÍTICO: Não foi possível recuperar TelaInicial!")
+			return
+
+	# Verificar se o sinal está conectado, se não estiver, conectar
+	if not tela_inicial.linha_exibida_completamente.is_connected(_avancar_dialogo):
+		print("Prologue: Conectando sinal linha_exibida_completamente a _avancar_dialogo em _exibir_linha_atual")
+		tela_inicial.linha_exibida_completamente.connect(_avancar_dialogo)
 
 	if indice_linha_atual < linhas_dialogo.size():
+		print("Prologue: Exibindo linha de diálogo:", linhas_dialogo[indice_linha_atual])
 		tela_inicial.exibir_linha_dialogo(linhas_dialogo[indice_linha_atual])
 	else:
+		print("Prologue: Fim das linhas de diálogo, chamando _finalizar_dialogo_da_introducao()")
 		_finalizar_dialogo_da_introducao()
 
 func _avancar_dialogo() -> void:
@@ -409,9 +457,9 @@ func _avancar_dialogo() -> void:
 func _finalizar_dialogo_da_introducao() -> void:
 	print("Prologue: Fim dos diálogos da introdução (TelaInicial).")
 	
-	if game_manager:
-		game_manager.prologo_introducao_concluida = true
-		print("Prologue: Flag 'prologo_introducao_concluida' definida como true.")
+	# Não definimos prologo_introducao_concluida = true aqui ainda
+	# para garantir que o diálogo interativo seja mostrado
+	# Será definido como true somente após o diálogo interativo
 
 	if is_instance_valid(tela_inicial):
 		await tela_inicial.esconder_fundo(1.0)
@@ -1084,12 +1132,13 @@ var last_input_time = 0.0
 var input_cooldown = 0.3 # Tempo mínimo entre inputs (em segundos)
 
 func _input(event):
+	# Obtém o tempo atual para uso em todo o método
+	var current_time = Time.get_ticks_msec() / 1000.0
+	
 	# Detecta pressionamento de tecla para verificar o comando de skip
 	# Verifica se o diálogo inicial está visível
 	if is_instance_valid(tela_inicial) and tela_inicial.visible:
 		if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
-			var current_time = Time.get_ticks_msec() / 1000.0
-			
 			# Se passou mais tempo que o intervalo, reseta a contagem
 			if current_time - last_space_press_time > SPACE_PRESS_INTERVAL:
 				space_press_count = 0
@@ -1109,7 +1158,6 @@ func _input(event):
 		return
 	
 	# Proteção contra cliques múltiplos rápidos
-	var current_time = Time.get_ticks_msec() / 1000.0
 	var time_since_last_input = current_time - last_input_time
 	
 	if time_since_last_input < input_cooldown:
@@ -1189,8 +1237,8 @@ func _skip_dialogo_inicial() -> void:
 	# Interrompe qualquer animação de texto em andamento
 	tela_inicial.parar_e_limpar_linha_atual()
 	
-	# Não define a flag prologo_introducao_concluida aqui, pois isso poderia fazer o 
-	# próximo _iniciar_sequencia_jogador_dormindo() pular direto para o gameplay
+	# Marca que o comando de skip foi usado
+	skip_command_used = true
 	
 	# Esconde a tela inicial imediatamente sem fade
 	tela_inicial.visible = false
