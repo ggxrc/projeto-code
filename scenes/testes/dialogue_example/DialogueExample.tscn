@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://c20ql3plofq5h"]
+
+[ext_resource type="Script" path="res://scenes/testes/dialogue_example/dialogue_example.gd" id="1_ipqkm"]
+[ext_resource type="PackedScene" uid="uid://mxffm6n8wfjk" path="res://scenes/diálogos/caixa de diálogos/DialogueBox.tscn" id="2_stnas"]
+
+[node name="DialogueExample" type="Node2D"]
+script = ExtResource("1_ipqkm")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 501.0
+offset_top = 274.0
+offset_right = 815.0
+offset_bottom = 319.0
+text = "Pressione Espaço ou clique para avançar o diálogo"
+horizontal_alignment = 1
+
+[node name="DialogueBoxUI" parent="." instance=ExtResource("2_stnas")]

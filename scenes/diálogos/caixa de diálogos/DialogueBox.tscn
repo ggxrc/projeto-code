@@ -1,18 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://mxffm6n8wfjk"]
 
 [ext_resource type="Script" uid="uid://eucwgtqtxii0" path="res://scenes/diálogos/caixa de diálogos/dialogue_box.gd" id="1_qqkfp"]
+[ext_resource type="Texture2D" uid="uid://ntnhhtgrde75" path="res://s.png" id="2_eugrn"]
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="2_tgp6o"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lx2rt"]
-bg_color = Color(0.0338533, 0.0338533, 0.0338532, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
 
 [sub_resource type="LabelSettings" id="LabelSettings_tdkof"]
 font = ExtResource("2_tgp6o")
@@ -22,20 +12,39 @@ shadow_size = 0
 [node name="DialogueBoxUI" type="CanvasLayer"]
 script = ExtResource("1_qqkfp")
 
-[node name="BackgroundBox" type="PanelContainer" parent="."]
+[node name="BackgroundBox" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 120.0
+offset_bottom = 180.0
 grow_horizontal = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_lx2rt")
 
-[node name="TextLabel" type="Label" parent="BackgroundBox"]
+[node name="TextureRect" type="TextureRect" parent="BackgroundBox"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 180.0
+grow_horizontal = 2
+texture = ExtResource("2_eugrn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="BackgroundBox"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 180.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 30
+
+[node name="TextLabel" type="Label" parent="BackgroundBox/MarginContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 1
 label_settings = SubResource("LabelSettings_tdkof")
 horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 2
+autowrap_mode = 3
