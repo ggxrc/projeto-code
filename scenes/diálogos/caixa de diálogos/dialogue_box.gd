@@ -1,7 +1,8 @@
 extends CanvasLayer
 
-@onready var text_label: Label = $BackgroundBox/TextLabel
+@onready var text_label: Label = $BackgroundBox/MarginContainer/TextLabel
 @onready var background_box: Control = $BackgroundBox
+@onready var texture_rect: TextureRect = $BackgroundBox/TextureRect
 
 signal dialogue_line_finished
 
@@ -18,6 +19,23 @@ func _ready() -> void:
 	# Verificar se o AudioManager está disponível como singleton
 	if Engine.has_singleton("AudioManager"):
 		audio_manager = Engine.get_singleton("AudioManager")
+		
+# Função para personalizar a aparência da caixa de diálogo
+func set_dialogue_style(texture_path: String = "", text_color: Color = Color.WHITE, font_size: int = 32, bg_modulate: Color = Color.WHITE) -> void:
+	if texture_path != "" and ResourceLoader.exists(texture_path):
+		var new_texture = load(texture_path)
+		if new_texture is Texture2D:
+			texture_rect.texture = new_texture
+	
+	if is_instance_valid(text_label):
+		var new_settings = LabelSettings.new()
+		new_settings.font = text_label.label_settings.font
+		new_settings.font_size = font_size
+		new_settings.font_color = text_color
+		text_label.label_settings = new_settings
+	
+	if is_instance_valid(texture_rect):
+		texture_rect.modulate = bg_modulate
 		
 # Verifica se o texto está sendo digitado (efeito de typewriter ativo)
 func is_typewriting() -> bool:
