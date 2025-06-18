@@ -1,12 +1,79 @@
-[gd_scene load_steps=4 format=3 uid="uid://y8m2v27kdnx8"]
+[gd_scene load_steps=4 format=3 uid="uid://dtxmhokw2h0wx"]
 
-[ext_resource type="Script" path="res://scenes/prologue/Meio/menu_pausa_simples.gd" id="1_awr5u"]
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/UI/buttons/BotãoMenu.tscn" id="2_gcjqc"]
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="3_m8ibg"]
 
+[sub_resource type="GDScript" id="GDScript_nct68"]
+script/source = "extends CanvasLayer
+
+# Script simplificado para o menu de pausa dentro da cena Gameplay
+# Não depende do orquestrador
+
+signal continuar_pressed
+signal reiniciar_pressed
+signal menu_pressed
+signal sair_pressed
+
+func _ready() -> void:
+	# Conecta os sinais dos botões
+	var continuar_button = $Control/VBoxContainer/ContinuarButton
+	var reiniciar_button = $Control/VBoxContainer/ReiniciarButton
+	var menu_button = $Control/VBoxContainer/MenuButton
+	var sair_button = $Control/VBoxContainer/SairButton
+	
+	if continuar_button:
+		continuar_button.pressed.connect(_on_continuar_pressed)
+		
+	if reiniciar_button:
+		reiniciar_button.pressed.connect(_on_reiniciar_pressed)
+	
+	if menu_button:
+		menu_button.pressed.connect(_on_menu_pressed)
+		
+	if sair_button:
+		sair_button.pressed.connect(_on_sair_pressed)
+
+# Manipuladores de eventos para os botões
+func _on_continuar_pressed() -> void:
+	# Reproduz som de clique
+	if Engine.has_singleton(\"AudioManager\"):
+		var audio_manager = Engine.get_singleton(\"AudioManager\")
+		audio_manager.play_sfx(\"button_click\")
+	
+	# Emite o sinal de continuar
+	continuar_pressed.emit()
+
+func _on_reiniciar_pressed() -> void:
+	# Reproduz som de clique
+	if Engine.has_singleton(\"AudioManager\"):
+		var audio_manager = Engine.get_singleton(\"AudioManager\")
+		audio_manager.play_sfx(\"button_click\")
+	
+	# Emite o sinal de reiniciar
+	reiniciar_pressed.emit()
+
+func _on_menu_pressed() -> void:
+	# Reproduz som de clique
+	if Engine.has_singleton(\"AudioManager\"):
+		var audio_manager = Engine.get_singleton(\"AudioManager\")
+		audio_manager.play_sfx(\"button_click\")
+	
+	# Emite o sinal de menu
+	menu_pressed.emit()
+
+func _on_sair_pressed() -> void:
+	# Reproduz som de clique
+	if Engine.has_singleton(\"AudioManager\"):
+		var audio_manager = Engine.get_singleton(\"AudioManager\")
+		audio_manager.play_sfx(\"button_click\")
+	
+	# Emite o sinal de sair
+	sair_pressed.emit()
+"
+
 [node name="MenuPausaSimples" type="CanvasLayer"]
 process_mode = 2
-script = ExtResource("1_awr5u")
+script = SubResource("GDScript_nct68")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -31,9 +98,9 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -80
+offset_left = -80.0
 offset_top = 16.0
-offset_right = 80
+offset_right = 80.0
 offset_bottom = 64.0
 grow_horizontal = 2
 theme_override_fonts/font = ExtResource("3_m8ibg")

@@ -21262,14 +21262,14 @@ flat = true
 expand_icon = true
 metadata/_edit_use_anchors_ = true
 
+[node name="MenuPausa" parent="ExteriorVizinhos/Player/Camera2D" instance=ExtResource("26_7vbrj")]
+process_mode = 3
+layer = 100
+visible = false
+
 [node name="Config" parent="ExteriorVizinhos/Player/Camera2D" instance=ExtResource("29_o01fa")]
 
 [node name="CanvasLayer" parent="ExteriorVizinhos/Player/Camera2D/Config" index="0"]
-visible = false
-
-[node name="Pause" type="Node" parent="ExteriorVizinhos/Player/Camera2D"]
-
-[node name="MenuPausa" parent="ExteriorVizinhos/Player/Camera2D/Pause" instance=ExtResource("26_7vbrj")]
 visible = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -21306,10 +21306,11 @@ metadata/_edit_use_anchors_ = true
 visible = false
 
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/PauseButton" to="." method="_on_pause_button_pressed"]
-[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Pause/MenuPausa/Control/Background/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]
-[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Pause/MenuPausa/Control/Background/VBoxContainer/Config" to="." method="_on_config_pressed"]
-[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Pause/MenuPausa/Control/Background/VBoxContainer/VoltarMenu" to="." method="_on_voltar_menu_pressed"]
-[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Pause/MenuPausa/Control/Background/VBoxContainer/SairPause" to="." method="_on_sair_pause_pressed"]
+[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]
+[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Config" to="." method="_on_config_pressed"]
+[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/VoltarMenu" to="." method="_on_voltar_menu_pressed"]
+[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/SairPause" to="." method="_on_sair_pause_pressed"]
+[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Config/CanvasLayer/Control/VoltarFromConfig" to="." method="_on_voltar_from_config_pressed"]
 
+[editable path="ExteriorVizinhos/Player/Camera2D/MenuPausa"]
 [editable path="ExteriorVizinhos/Player/Camera2D/Config"]
-[editable path="ExteriorVizinhos/Player/Camera2D/Pause/MenuPausa"]
