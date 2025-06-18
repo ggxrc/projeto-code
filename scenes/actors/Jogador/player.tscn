@@ -215,7 +215,8 @@ shape = SubResource("RectangleShape2D_15tap")
 
 [node name="BotaoToque" parent="Interagir" instance=ExtResource("4_x2gti")]
 visible = false
-offset_left = 819.0
-offset_top = 462.0
-offset_right = 1250.0
-offset_bottom = 697.0
+offset_left = 816.0
+offset_top = 454.0
+offset_right = 1084.0
+offset_bottom = 588.0
+text = "Interagir"

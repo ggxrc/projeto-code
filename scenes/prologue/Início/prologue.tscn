@@ -2997,6 +2997,9 @@ autoplay = "Padrao"
 position = Vector2(-4.99999, -3.33333)
 scale = Vector2(2, 2)
 
+[node name="BotaoToque" parent="Player/Body/Interagir" index="0"]
+text = "Botão"
+
 [node name="CanvasLayer" type="CanvasLayer" parent="Player"]
 visible = false
 

@@ -31,10 +31,11 @@ var song_names: Array = []
 @export var fade_duration: float = 1.0
 
 func _ready():
-	# Configurar o prompt de interação
-	interaction_prompt = "Usar Jukebox"
+	# Configurar o prompt de interação inicial
+	interaction_prompt = "Tocar Música"
 	
 	# Chamar o _ready() da classe pai (InteractiveObject)
+	# Isso também configura a área de interação
 	super._ready()
 	
 	# Obter referência do AudioManager
@@ -53,29 +54,52 @@ func _ready():
 
 # Esta função é chamada quando o jogador interage com o jukebox
 # Sobrescrevendo o método da classe pai (InteractiveObject)
-func _on_interaction(object):
-	# Verifica se a interação foi com este objeto
-	if object == self:
-		# Ativar/desativar o jukebox
-		toggle_play()
+func interact():
+	if not interaction_enabled:
+		return
+		
+	# Verificar cooldown
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_interaction_time < interaction_cooldown:
+		return
+		
+	last_interaction_time = current_time
+	
+	# Ativar/desativar o jukebox
+	toggle_play()
+	
+	# Emite o sinal para manter compatibilidade com o sistema
+	interaction_triggered.emit(self)
+	
+	# Informa ao player através de animação e/ou som que a interação aconteceu
+	if is_playing:
+		print("Jukebox: Música iniciada pelo jogador")
+	else:
+		print("Jukebox: Música pausada pelo jogador")
 
 # Alterna entre tocar e pausar
 func toggle_play():
 	if is_playing:
 		stop_playback()
+		# Atualiza o prompt para indicar que pode tocar música
+		interaction_prompt = "Tocar Música"
 	else:
 		# Se não estiver tocando, começar a tocar
-		if current_song_index == -1:
-			# Primeira vez, tocar a primeira música
-			play_song(song_names[0])
+		if current_song_index == -1 or song_names.is_empty():
+			# Primeira vez ou playlist vazia, tocar a primeira música
+			if not song_names.is_empty():
+				play_song(song_names[0])
 		else:
 			# Continuar de onde parou
 			play_song(song_names[current_song_index])
-			
-	# Desabilita interação por um momento para evitar cliques duplos
-	interaction_enabled = false
-	await get_tree().create_timer(interaction_cooldown).timeout
-	interaction_enabled = true
+		
+		# Atualiza o prompt para indicar que pode parar a música
+		if is_playing:
+			interaction_prompt = "Parar Música"
+	
+	# Notifica o jogador para atualizar o botão de interação com o novo texto
+	if player_node and player_node.has_method("atualizar_botao_interacao"):
+		player_node.atualizar_botao_interacao()
 
 # Toca a próxima música na playlist
 func next_song():

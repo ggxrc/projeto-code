@@ -237,7 +237,7 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 		_perform_instant_transition(next_scene_node, next_game_state)
 	else:
 		await _perform_loading_transition(next_scene_node, next_game_state)
-
+	
 	is_transitioning = false
 
 func _perform_fade_transition(next_scene: Node, next_state: GameState, duration: float = -1.0) -> void:
@@ -663,3 +663,46 @@ func close_options_from_pause() -> void:
 		if old_state != current_state:
 			emit_signal("game_state_changed", current_state)
 			print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
+
+# Método para continuar o jogo de onde parou após voltar do menu principal
+func continue_game() -> void:
+	print("Game: Continuando jogo da última sessão...")
+	
+	# Ativa a cena de gameplay
+	_deactivate_all_main_scenes()
+	_activate_scene(gameplay, GameState.PLAYING)
+	
+	# Toca a música da gameplay se não estiver tocando
+	if AudioManager and AudioManager.current_music_name != "gameplay":
+		AudioManager.play_music("gameplay", 1.5)
+	
+	# Certifica que o jogo não está pausado
+	get_tree().paused = false
+	
+	# Se houver uma tela de transição, usamos ela
+	if TransitionScreen:
+		await TransitionScreen.fade_in()
+
+# Método para ir ao menu principal a partir de qualquer cena, preservando o estado da gameplay
+func go_to_menu() -> void:
+	print("Game: Voltando ao menu principal, preservando estado da gameplay...")
+	
+	# Se estamos na gameplay, salvamos o estado atual
+	if current_state == GameState.PLAYING:
+		previous_state_before_pause = GameState.PLAYING
+		print("Game: Estado da gameplay salvo para futura continuação")
+	
+	# Despausa o jogo antes de trocar de cena
+	get_tree().paused = false
+	
+	# Ativa o menu principal
+	_deactivate_all_main_scenes()
+	_activate_scene(menu_principal, GameState.MENU)
+	
+	# Inicia a música do menu
+	if AudioManager:
+		AudioManager.play_music("menu", 1.0)
+	
+	# Se houver uma tela de transição, usamos ela
+	if TransitionScreen:
+		await TransitionScreen.fade_in()

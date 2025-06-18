@@ -13,8 +13,7 @@ class_name InteractiveDoor
 
 # Referências
 var game_manager = null  # Referência para o gerenciador do jogo (orquestrador)
-var area_node: Area2D = null
-var interaction_area_size: Vector2 = Vector2(50, 50)  # Tamanho padrão da área de interação
+# Nota: área de interação agora é gerenciada pela classe pai (InteractiveObject)
 var hint_label: Label = null
 
 func _ready() -> void:
@@ -24,56 +23,15 @@ func _ready() -> void:
 	# Tenta obter o gerenciador do jogo (orquestrador)
 	game_manager = get_node_or_null("/root/Game")
 	
-	# Configura a área de interação para a porta
-	_setup_door_area()
-	
 	# Define o estado inicial de interação
 	set_interaction_enabled(not is_locked)
 	
 	# Atualiza o texto de interação se a porta estiver trancada
 	if is_locked:
 		interaction_prompt = "Porta Trancada"
-
-# Configura a área de detecção para interação com a porta
-func _setup_door_area() -> void:
-	# Cria a área de interação
-	area_node = Area2D.new()
-	area_node.name = "DoorInteractionArea"
-	
-	# Adiciona colisão
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = interaction_area_size
-	collision.shape = shape
-	
-	area_node.add_child(collision)
-	
-	# Conecta sinais de área
-	area_node.body_entered.connect(_on_body_entered)
-	area_node.body_exited.connect(_on_body_exited)
-	
-	# Adiciona a área à porta ou ao nó correto
-	add_child(area_node)
-	print("Área de interação da porta configurada em: ", get_path())
-
-# Quando um corpo entra na área da porta
-func _on_body_entered(body: Node) -> void:
-	# Verifica se o corpo é o jogador
-	if _is_player(body):
-		register_player_in_range(body)
-		print("Jogador próximo à porta - Interação disponível")
-
-# Quando um corpo sai da área da porta
-func _on_body_exited(body: Node) -> void:
-	# Verifica se o corpo é o jogador
-	if _is_player(body):
-		unregister_player()
-		print("Jogador saiu da área da porta")
-
-# Função auxiliar para verificar se o nó é o jogador
-func _is_player(node: Node) -> bool:
-	return node.name == "Player" or node.name == "Body" or \
-		   (node.has_method("is_in_group") and node.is_in_group("player"))
+		
+	# Chamada para o _ready() da classe pai para configurar a área de interação
+	super._ready()
 
 # Sobrescreve o método interact para manipular a transição de cena
 func interact() -> void:

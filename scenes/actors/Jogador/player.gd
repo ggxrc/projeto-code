@@ -6,7 +6,7 @@ const InteractiveDoorClass = preload("res://scripts/interactive_door.gd")
 
 @onready var sprite = $Sprite2D
 @onready var animation_player = $AnimationPlayer
-@onready var botao_toque = $CanvasLayer/BotaoToque
+@onready var botao_toque = $Interagir/BotaoToque
 
 # Sistema de interação universal
 var objeto_interagivel_atual = null
@@ -37,6 +37,9 @@ var was_idle_last_frame = true     # Controla se o jogador estava parado no fram
 var footstep_sound_timer = 0.0
 
 func _ready() -> void:
+	# Adicionando o jogador ao grupo "player" para ser detectado pelo sistema de interação
+	add_to_group("player")
+	
 	# Configura a animação padrão - começamos com o jogador olhando para baixo
 	if sprite:
 		last_direction = Vector2.DOWN
@@ -62,7 +65,13 @@ func _ready() -> void:
 	
 	# Configurar o botão Toque
 	if botao_toque:
+		# Desconectar sinais antigos para evitar duplicação
+		if botao_toque.pressed.is_connected(_on_botao_interacao_pressed):
+			botao_toque.pressed.disconnect(_on_botao_interacao_pressed)
+			
+		# Conectar sinal de pressionar botão
 		botao_toque.pressed.connect(_on_botao_interacao_pressed)
+		print("Botão de interação configurado e conexão de sinal estabelecida")
 		botao_toque.visible = false  # Inicialmente invisível
 
 func add_virtual_joystick() -> void:
@@ -395,12 +404,14 @@ func atualizar_botao_interacao() -> void:
 	if botao_toque:
 		# Sempre torna o botão visível quando há objeto interagível
 		botao_toque.visible = pode_interagir
+		print("Atualizando botão de interação. Visível: ", pode_interagir)
 		
 		if pode_interagir:
 			# Configurar o texto do botão baseado no tipo de interação
 			if objeto_interagivel_atual is InteractiveObject:
 				# Primeiro usa o prompt personalizado definido no objeto
 				botao_toque.text = objeto_interagivel_atual.get_interaction_prompt()
+				print("Texto do botão definido para: ", botao_toque.text)
 				
 				# Adiciona efeito visual para destacar o botão
 				_aplicar_efeito_destaque_botao()
@@ -411,6 +422,10 @@ func atualizar_botao_interacao() -> void:
 				# Usa a categoria baseada no nome do objeto, ou valor padrão
 				var categoria = _identificar_categoria_objeto(objeto_interagivel_atual.name)
 				botao_toque.text = textos_interacao.get(categoria, textos_interacao["default"])
+				
+			# Garantir que o botão esteja em uma posição visível
+			if not botao_toque.visible:
+				botao_toque.visible = true
 
 # Interage com o objeto especificado
 func interagir_com_objeto(objeto) -> void:
