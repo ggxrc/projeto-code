@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clw07vgbr3df5"
-path="res://.godot/imported/Sprite EmDuvida.png-a2fc7ca9a3ec3a9c3f4975ced44c9b4f.ctex"
+uid="uid://diacvfs5ovjws"
+path="res://.godot/imported/Sprite Expressao.png-fb5dd1b5ea0cd154dcdca822c23eea23.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character sprites/Sprite EmDuvida.png"
-dest_files=["res://.godot/imported/Sprite EmDuvida.png-a2fc7ca9a3ec3a9c3f4975ced44c9b4f.ctex"]
+source_file="res://assets/character sprites/player/Sprite Expressao.png"
+dest_files=["res://.godot/imported/Sprite Expressao.png-fb5dd1b5ea0cd154dcdca822c23eea23.ctex"]
 
 [params]
 

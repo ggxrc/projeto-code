@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxo1f7mcohn6s"
-path="res://.godot/imported/Sprite Prota dormindo.png-ba96171fb61c1db2440e6321d30c71f2.ctex"
+uid="uid://clw07vgbr3df5"
+path="res://.godot/imported/Sprite EmDuvida.png-df9fe85f2108b536cc5626913afe3a44.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character sprites/Sprite Prota dormindo.png"
-dest_files=["res://.godot/imported/Sprite Prota dormindo.png-ba96171fb61c1db2440e6321d30c71f2.ctex"]
+source_file="res://assets/character sprites/player/Sprite EmDuvida.png"
+dest_files=["res://.godot/imported/Sprite EmDuvida.png-df9fe85f2108b536cc5626913afe3a44.ctex"]
 
 [params]
 

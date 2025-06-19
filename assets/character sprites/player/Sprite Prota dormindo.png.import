@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diacvfs5ovjws"
-path="res://.godot/imported/Sprite Expressao.png-b83ca7d0810827127c36223e7bbe5b67.ctex"
+uid="uid://cxo1f7mcohn6s"
+path="res://.godot/imported/Sprite Prota dormindo.png-7c387cb07e42451fa22763a6dac3934f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character sprites/Sprite Expressao.png"
-dest_files=["res://.godot/imported/Sprite Expressao.png-b83ca7d0810827127c36223e7bbe5b67.ctex"]
+source_file="res://assets/character sprites/player/Sprite Prota dormindo.png"
+dest_files=["res://.godot/imported/Sprite Prota dormindo.png-7c387cb07e42451fa22763a6dac3934f.ctex"]
 
 [params]
 
