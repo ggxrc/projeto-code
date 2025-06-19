@@ -11,7 +11,6 @@ var menu_pausa = null
 var transition_screen = null
 var loading_screen = null
 var pause_button = null
-var audio_manager = null
 
 # Estado do jogo
 var game_paused = false
@@ -19,10 +18,14 @@ var game_paused = false
 func _ready() -> void:
 	print("Cena Gameplay carregada com sucesso!")
 	
-	# Inicializa referência ao AudioManager
-	if Engine.has_singleton("AudioManager"):
-		audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_music("gameplay", 1.5)
+	# Primeiro, interromper qualquer música atual (menu ou jukebox) com fade out de 1.0 segundo
+	AudioManager.stop_music(1.0)
+	
+	# Aguardar o fade out antes de começar a nova música
+	await get_tree().create_timer(1.0).timeout
+	
+	# Iniciar a música de gameplay com fade in
+	AudioManager.play_music("gameplay", 1.5)
 	
 	# Inicialização da referência ao nó de configurações
 	_setup_config_reference()
@@ -156,9 +159,14 @@ func _connect_pause_menu_signals() -> void:
 		
 	print("Conectando sinais do menu de pausa...")
 	
+	# Lista para rastrear quais botões já foram conectados para evitar duplicidades
+	var connected_buttons = []
+	
 	# Mapeamento de botões para funções
 	var button_actions = {
-		"Continuar": toggle_pause,  # Removido "Retomar" pois já está conectado via _on_retomar_pressed
+		"Retomar": _on_retomar_pressed,
+		"Continuar": _on_retomar_pressed,  # Alternativo para o botão de retomar
+		"Resume": _on_retomar_pressed,     # Alternativo para o botão de retomar em inglês
 		"Config": abrir_configuracoes,
 		"MenuPrincipal": voltar_menu_principal,
 		"VoltarMenu": voltar_menu_principal,  # Nome alternativo no menu de pausa
@@ -171,25 +179,42 @@ func _connect_pause_menu_signals() -> void:
 	for button_name in button_actions:
 		var btn = _find_button_in_menu_pausa(button_name)
 		if btn:
-			var action = button_actions[button_name]
-			if btn.pressed.is_connected(action):
-				btn.pressed.disconnect(action)
-			btn.pressed.connect(action)
-			print("Botão '", button_name, "' conectado com sucesso")
+			# Verificar se esse botão físico já foi conectado antes
+			if not btn in connected_buttons:
+				var action = button_actions[button_name]
+				
+				# Limpar conexões anteriores para evitar comportamento imprevisível
+				var connections = btn.get_signal_connection_list("pressed")
+				for connection in connections:
+					btn.disconnect("pressed", connection["callable"])
+				
+				# Conectar o sinal
+				btn.pressed.connect(action)
+				connected_buttons.append(btn)  # Registra que este botão já foi conectado
+				print("Botão '", button_name, "' conectado com sucesso à função ", action.get_method())
+			else:
+				print("Botão '", button_name, "' já foi conectado anteriormente, ignorando...")
 		else:
 			print("AVISO: Botão '", button_name, "' não encontrado no menu de pausa")
 	
 	# Verificar se é um menu personalizado com sinais
 	if menu_pausa.has_signal("continuar_pressed"):
 		print("Usando menu personalizado com sinais")
-		if not menu_pausa.continuar_pressed.is_connected(_on_retomar_pressed):
-			menu_pausa.continuar_pressed.connect(_on_retomar_pressed)
-		if not menu_pausa.reiniciar_pressed.is_connected(reiniciar_cena):
-			menu_pausa.reiniciar_pressed.connect(reiniciar_cena)
-		if not menu_pausa.menu_pressed.is_connected(voltar_menu_principal):
-			menu_pausa.menu_pressed.connect(voltar_menu_principal)
-		if not menu_pausa.sair_pressed.is_connected(sair_jogo):
-			menu_pausa.sair_pressed.connect(sair_jogo)
+		# Desconectar todos os sinais antes para evitar conexões duplicadas
+		if menu_pausa.is_connected("continuar_pressed", _on_retomar_pressed):
+			menu_pausa.disconnect("continuar_pressed", _on_retomar_pressed)
+		if menu_pausa.is_connected("reiniciar_pressed", reiniciar_cena):
+			menu_pausa.disconnect("reiniciar_pressed", reiniciar_cena)
+		if menu_pausa.is_connected("menu_pressed", voltar_menu_principal):
+			menu_pausa.disconnect("menu_pressed", voltar_menu_principal)
+		if menu_pausa.is_connected("sair_pressed", sair_jogo):
+			menu_pausa.disconnect("sair_pressed", sair_jogo)
+			
+		# Reconectar os sinais
+		menu_pausa.continuar_pressed.connect(_on_retomar_pressed)
+		menu_pausa.reiniciar_pressed.connect(reiniciar_cena)
+		menu_pausa.menu_pressed.connect(voltar_menu_principal)
+		menu_pausa.sair_pressed.connect(sair_jogo)
 
 # Função auxiliar para encontrar o jogador em qualquer lugar da cena
 func find_player_in_scene() -> Node:
@@ -212,18 +237,23 @@ func _find_button_in_menu_pausa(button_name: String) -> Button:
 		# Caminhos comuns em containers
 		"VBoxContainer/" + button_name,
 		"Control/VBoxContainer/" + button_name,
-		"Control/Background/VBoxContainer/" + button_name,
-		# Caminhos com nomes de botões alternativos para compatibilidade
-		"Control/Background/VBoxContainer/Retomar",
-		"Control/Background/VBoxContainer/Config",
-		"Control/Background/VBoxContainer/VoltarMenu",
-		"Control/Background/VBoxContainer/SairPause"
+		"Control/Background/VBoxContainer/" + button_name
 	]
+	
+	# Adicionar caminhos específicos apenas para o botão correspondente
+	if button_name == "Retomar" or button_name == "Continuar" or button_name == "Resume":
+		possible_paths.append("Control/Background/VBoxContainer/Retomar")
+	elif button_name == "Config":
+		possible_paths.append("Control/Background/VBoxContainer/Config") 
+	elif button_name == "MenuPrincipal" or button_name == "VoltarMenu":
+		possible_paths.append("Control/Background/VBoxContainer/VoltarMenu")
+	elif button_name == "Sair" or button_name == "SairPause":
+		possible_paths.append("Control/Background/VBoxContainer/SairPause")
 	
 	for path in possible_paths:
 		btn = menu_pausa.get_node_or_null(path)
 		if btn and btn is Button:
-			print("Botão encontrado em: ", path)
+			print("Botão encontrado em: ", path, " para ", button_name)
 			return btn
 	
 	# Se não encontrou por caminhos diretos, tenta procura recursiva
@@ -288,8 +318,8 @@ func toggle_pause() -> void:
 	game_paused = !game_paused
 	get_tree().paused = game_paused
 	
-	if audio_manager:
-		audio_manager.play_sfx("button_click")
+	# Tocar efeito sonoro de clique
+	AudioManager.play_sfx("button_click")
 	
 	if menu_pausa:
 		print("Atualizando estado do menu de pausa: ", game_paused)
@@ -461,31 +491,34 @@ func _on_pause_button_pressed() -> void:
 
 # Sinais para os botões
 func _on_retomar_pressed() -> void:
-	print("\n==========================================")
-	print("Botão Retomar pressionado - vai despausar o jogo e fechar o menu")
+	print("Botão Retomar pressionado")
 	
 	# Tocar som de clique
-	if audio_manager:
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
-	# Estado anterior
-	print("Estado antes: game_paused=", game_paused, ", tree.paused=", get_tree().paused)
+	# Despausar o jogo - definimos diretamente para false
+	game_paused = false
 	
-	# Garantir que não estamos chamando outras funções incorretas
-	print("ATENÇÃO: Se você vir logs de 'toggle_pause' após esta mensagem, há um problema!")
+	# Garantir que a árvore de cena existe antes de despausar
+	if get_tree():
+		get_tree().paused = false
 	
-	# APENAS esconder o menu e despausar - não chama outras funções
+	# Esconder o menu de pausa
 	if menu_pausa:
 		menu_pausa.visible = false
-		print("Menu de pausa escondido diretamente")
 		
-		# Despausar o jogo diretamente
-		get_tree().paused = false
-		game_paused = false
-		print("Jogo despausado diretamente")
+		# Se o menu de pausa tem um nó Control, atualizar sua visibilidade
+		var control = menu_pausa.get_node_or_null("Control")
+		if control:
+			control.visible = false
 		
-	print("Estado depois: game_paused=", game_paused, ", tree.paused=", get_tree().paused)
-	print("==========================================\n")
+		print("Menu de pausa escondido após pressionar Retomar")
+		
+		# Verificar se há um CanvasLayer pai e configurá-lo também
+		var parent = menu_pausa.get_parent()
+		if parent and parent is CanvasLayer:
+			parent.visible = false
+			print("CanvasLayer pai do menu de pausa também escondido")
 
 func _on_config_pressed() -> void:
 	print("Botão Config pressionado")
@@ -681,8 +714,7 @@ func _on_voltar_from_config_pressed() -> void:
 	print("Gameplay: Botão Voltar das configurações pressionado diretamente")
 	
 	# Tocar som de clique
-	if audio_manager:
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Verificar referência ao config
 	if not config:

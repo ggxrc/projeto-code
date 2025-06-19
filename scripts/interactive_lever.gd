@@ -106,10 +106,8 @@ func _animate_lever(active: bool):
 
 # Toca um som usando o AudioManager
 func _play_sound(sound_name: String):
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		if audio_manager.has_method("play_sfx"):
-			audio_manager.play_sfx(sound_name)
+	# O AudioManager é um autoload, podemos chamá-lo diretamente
+	AudioManager.play_sfx(sound_name)
 
 # Afeta o nó alvo quando a alavanca é ativada/desativada
 func _affect_target(active: bool):

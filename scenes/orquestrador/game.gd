@@ -225,12 +225,10 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 		config.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# Preparar transição de áudio se necessário
-	if Engine.has_singleton("AudioManager") and current_state != next_game_state:
-		var audio_manager = Engine.get_singleton("AudioManager")
-		
+	if current_state != next_game_state:
 		# Inicia fade out da música atual para uma transição suave
 		if current_state != GameState.PAUSED and current_state != GameState.CONFIG_FROM_PAUSE:
-			audio_manager.stop_music(1.0)
+			AudioManager.stop_music(1.0)
 	
 	# Usa loading screen para todas as transições exceto 'instant'
 	if transition_effect_type == "instant":

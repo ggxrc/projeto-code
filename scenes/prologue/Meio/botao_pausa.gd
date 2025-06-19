@@ -9,9 +9,7 @@ func _ready():
 
 func _on_pressed():
 	# Tocar som de clique
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Alternar o estado de pausa
 	var parent = get_parent()

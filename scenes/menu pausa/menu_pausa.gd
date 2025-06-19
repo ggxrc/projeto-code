@@ -23,9 +23,7 @@ func _ready() -> void:
 # Manipuladores de eventos para os botões
 func _on_continuar_pressed() -> void:
 	# Reproduz som de clique
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Continua o jogo (saindo do modo de pausa)
 	var orquestrador = _get_orquestrador()
@@ -34,9 +32,7 @@ func _on_continuar_pressed() -> void:
 
 func _on_configuracoes_pressed() -> void:
 	# Reproduz som de clique
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Abre o menu de configurações
 	var orquestrador = _get_orquestrador()
@@ -45,9 +41,7 @@ func _on_configuracoes_pressed() -> void:
 
 func _on_menu_principal_pressed() -> void:
 	# Reproduz som de clique
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Volta ao menu principal
 	var orquestrador = _get_orquestrador()
@@ -56,9 +50,7 @@ func _on_menu_principal_pressed() -> void:
 
 func _on_sair_pressed() -> void:
 	# Reproduz som de clique
-	if Engine.has_singleton("AudioManager"):
-		var audio_manager = Engine.get_singleton("AudioManager")
-		audio_manager.play_sfx("button_click")
+	AudioManager.play_sfx("button_click")
 	
 	# Sai do jogo
 	var orquestrador = _get_orquestrador()
