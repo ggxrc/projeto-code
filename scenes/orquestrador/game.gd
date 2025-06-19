@@ -704,3 +704,28 @@ func go_to_menu() -> void:
 	# Se houver uma tela de transição, usamos ela
 	if TransitionScreen:
 		await TransitionScreen.fade_in()
+
+# Função para pausar o jogo de forma segura
+func pause_game() -> void:
+	print("Orquestrador: Pausando o jogo")
+	
+	# Guardar estado anterior
+	if current_state != GameState.PAUSED:
+		previous_state_before_pause = current_state
+	
+	# Definir estado como pausado
+	current_state = GameState.PAUSED
+	
+	# Pausar a árvore de cenas
+	get_tree().paused = true
+	
+	# Mostrar menu de pausa
+	if menu_pausa:
+		menu_pausa.visible = true
+		menu_pausa.process_mode = Node.PROCESS_MODE_ALWAYS
+		
+		# Tocar efeito sonoro
+		AudioManager.play_sfx("button_click")
+		
+	# Notificar mudança de estado
+	game_state_changed.emit(current_state)
