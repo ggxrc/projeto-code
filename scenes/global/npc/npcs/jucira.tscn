@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cl8ihyn3jdspj"]
+
+[ext_resource type="PackedScene" uid="uid://c6f5kugywu5ip" path="res://scenes/global/npc/npc_base.tscn" id="1_0rf8n"]
+[ext_resource type="Script" path="res://scenes/global/npc/npcs/jucira.gd" id="2_k31uy"]
+
+[node name="Jucira" instance=ExtResource("1_0rf8n")]
+script = ExtResource("2_k31uy")
+npc_id = "jucira"
+interaction_distance = 120.0
+auto_look_at_player = true

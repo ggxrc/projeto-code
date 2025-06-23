@@ -19,6 +19,9 @@ var game_paused = false
 var sequencia_saida_casa_iniciada = false
 # Referência para o script de sequência
 var sequencia_saida_casa = null
+# Variável para controlar a sequência do telefone de Jucira
+var sequencia_telefone_jucira = null
+var sequencia_telefone_iniciada = false
 
 func _ready() -> void:
 	print("Cena Gameplay carregada com sucesso!")
@@ -208,6 +211,56 @@ func _connect_pause_menu_signals() -> void:
 			btn.pressed.connect(_on_retomar_pressed)
 			break
 
+# Método para iniciar a sequência do telefone da Jucira
+func iniciar_sequencia_telefone() -> void:
+	print("DEBUG: Método iniciar_sequencia_telefone() chamado")
+	
+	if sequencia_telefone_iniciada:
+		print("DEBUG: Sequência do telefone já foi iniciada anteriormente, ignorando")
+		return
+	
+	print("DEBUG: Iniciando sequência do telefone de Jucira")
+	sequencia_telefone_iniciada = true
+	
+	# Verifica se já existe uma instância do script de sequência
+	if not sequencia_telefone_jucira:
+		print("DEBUG: Criando instância do script jucira_phone_sequence.gd")
+		var script_path = "res://scenes/prologue/Meio/jucira_phone_sequence.gd"
+		print("DEBUG: Verificando se o script existe:", FileAccess.file_exists(script_path))
+		
+		sequencia_telefone_jucira = load(script_path).new()
+		add_child(sequencia_telefone_jucira)
+		print("DEBUG: Script da sequência instanciado e adicionado como filho")
+		
+		# Conecta os sinais da sequência
+		sequencia_telefone_jucira.sequence_started.connect(_on_phone_sequence_started)
+		sequencia_telefone_jucira.sequence_finished.connect(_on_phone_sequence_finished)
+		print("DEBUG: Sinais conectados")
+	
+	# Inicia a sequência
+	print("DEBUG: Chamando start_sequence()")
+	sequencia_telefone_jucira.start_sequence()
+
+# Callback quando a sequência do telefone inicia
+func _on_phone_sequence_started() -> void:
+	print("Sequência do telefone iniciada")
+	# Aqui você pode pausar o jogador, mostrar efeitos visuais, etc.
+	
+	# Exemplo: desabilitar movimento do jogador durante a sequência
+	var player = find_player_in_scene()
+	if player and player.has_method("set_can_move"):
+		player.set_can_move(false)
+
+# Callback quando a sequência do telefone termina
+func _on_phone_sequence_finished() -> void:
+	print("Sequência do telefone finalizada")
+	# Re-habilitar o jogador, atualizar estado do jogo, etc.
+	
+	# Exemplo: re-habilitar movimento do jogador após a sequência
+	var player = find_player_in_scene()
+	if player and player.has_method("set_can_move"):
+		player.set_can_move(true)
+	
 # Função auxiliar para encontrar o jogador em qualquer lugar da cena
 func find_player_in_scene() -> Node:
 	return _find_node_recursive(self, "Player")
@@ -319,7 +372,13 @@ func toggle_pause() -> void:
 	# Se não encontrou orquestrador, continua com a implementação local
 	print("Alternando pausa localmente...")
 	game_paused = !game_paused
-	get_tree().paused = game_paused
+	
+	# Verificar se get_tree() não é null antes de acessá-lo
+	var tree = get_tree()
+	if tree:
+		tree.paused = game_paused
+	else:
+		print("ERRO: get_tree() retornou null ao tentar alternar pausa!")
 	
 	AudioManager.play_sfx("button_click")
 	
@@ -375,7 +434,7 @@ func voltar_menu_principal() -> void:
 	print("Mostrando menu principal e mantendo gameplay pausada...")
 	
 	# Esconde o menu de pausa se estiver visível
-	_hide_pause_menu()  # Esconde também as configurações se estiverem visíveis
+	_hide_pause_menu()  # Esconde também as configurações se estiver visíveis
 	if config and config.has_node("CanvasLayer") and config.get_node("CanvasLayer").visible:
 		config.get_node("CanvasLayer").visible = false  # Mantém o jogo pausado
 	get_tree().paused = true
@@ -494,24 +553,11 @@ func _on_pause_button_pressed() -> void:
 # Sinais para os botões
 func _on_retomar_pressed() -> void:
 	print("Botão Retomar pressionado")
-	
-	# Verifica se existe um Orquestrador (que tem prioridade)
-	var orquestrador = get_node_or_null("/root/Game")
-	if orquestrador and orquestrador.has_method("_on_retomar_pressed"):
-		print("Delegando retomada ao orquestrador...")
-		AudioManager.play_sfx("button_click")
-		orquestrador._on_retomar_pressed()
-		return
-	
-	# Se não encontrou orquestrador, continua com a implementação local
-	print("Usando implementação local de retomar jogo")
-	
 	# Tocar som de clique
 	AudioManager.play_sfx("button_click")
 	
 	# Despausar o jogo com segurança
 	game_paused = false
-	get_tree().paused = false  # Importante: despausar a árvore de cenas
 	
 	# Esconder o menu de pausa com segurança
 	if menu_pausa:
@@ -528,7 +574,6 @@ func _on_retomar_pressed() -> void:
 		print("Menu de pausa escondido após pressionar Retomar")
 		
 	# Debug: verificar estado de pausa
-	print("Estado de pausa após Retomar: ", get_tree().paused)
 
 func _on_config_pressed() -> void:
 	print("Botão Config pressionado")
@@ -797,3 +842,27 @@ func _on_sequencia_saida_casa_concluida():
 	
 	# Adicionar quaisquer ações adicionais após a conclusão da sequência aqui
 	# Por exemplo, atualizar estados de missão, desbloquear novos objetivos, etc.
+
+# Função para verificar e reportar o estado do orquestrador e do sistema de pausa
+func _debug_pause_system() -> void:
+	print("=== DEPURAÇÃO DO SISTEMA DE PAUSA ===")
+	print("Estado local de pausa (game_paused):", game_paused)
+	
+	var tree = get_tree()
+	print("get_tree() é válido?", tree != null)
+	if tree:
+		print("get_tree().paused =", tree.paused)
+	
+	var orquestrador = get_node_or_null("/root/Game")
+	print("Orquestrador encontrado?", orquestrador != null)
+	if orquestrador:
+		print("Orquestrador tem método pause_game?", orquestrador.has_method("pause_game"))
+		print("Orquestrador tem método _on_retomar_pressed?", orquestrador.has_method("_on_retomar_pressed"))
+		if "current_state" in orquestrador:
+			print("Estado atual do orquestrador:", orquestrador.current_state)
+	
+	print("menu_pausa é válido?", menu_pausa != null)
+	if menu_pausa:
+		print("menu_pausa.visible =", menu_pausa.visible)
+		print("menu_pausa.process_mode =", menu_pausa.process_mode)
+	print("===============================")

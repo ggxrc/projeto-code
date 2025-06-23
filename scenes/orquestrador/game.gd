@@ -225,10 +225,12 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 		config.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# Preparar transição de áudio se necessário
-	if current_state != next_game_state:
+	if Engine.has_singleton("AudioManager") and current_state != next_game_state:
+		var audio_manager = Engine.get_singleton("AudioManager")
+		
 		# Inicia fade out da música atual para uma transição suave
 		if current_state != GameState.PAUSED and current_state != GameState.CONFIG_FROM_PAUSE:
-			AudioManager.stop_music(1.0)
+			audio_manager.stop_music(1.0)
 	
 	# Usa loading screen para todas as transições exceto 'instant'
 	if transition_effect_type == "instant":
@@ -392,13 +394,29 @@ func _on_pause_button_pressed() -> void:
 		_on_retomar_pressed()
 
 func _on_retomar_pressed() -> void:
-	if not menu_pausa or not get_tree().paused:
+	print("Game: Método _on_retomar_pressed chamado")
+	
+	# Proteção contra tentativa de retomar um jogo que não está pausado
+	if not get_tree():
+		print("ERRO: get_tree() retornou nulo em _on_retomar_pressed no Game. Abortando...")
 		return
-
+		
+	# Verifica se realmente estamos no estado pausado e temos o menu
+	if not menu_pausa:
+		print("AVISO: menu_pausa não encontrado em _on_retomar_pressed no Game")
+		# Continua mesmo sem o menu para garantir que o jogo seja despausado
+	else:
+		if not get_tree().paused:
+			print("AVISO: O jogo já não está pausado em _on_retomar_pressed no Game")
+	
+	# Força despausar o jogo
 	get_tree().paused = false
 	
-	menu_pausa.visible = false
-	menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	# Se temos o menu de pausa, atualizamos sua visibilidade
+	if menu_pausa and is_instance_valid(menu_pausa):
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+		print("Game: Menu de pausa escondido com sucesso")
 	
 	var old_state = current_state
 	
@@ -408,14 +426,15 @@ func _on_retomar_pressed() -> void:
 	else:
 		current_state = GameState.PLAYING
 	
-	print("Jogo Retomado. Estado: ", GameState.keys()[current_state])
+	print("Game: Jogo Retomado. Estado: ", GameState.keys()[current_state])
 	
 	# Emite o sinal de mudança de estado
 	if old_state != current_state:
 		emit_signal("game_state_changed", current_state)
 		print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 	
-	if menu_pausa.has_method("_on_scene_deactivating"):
+	# Chama o método de desativação do menu de pausa com segurança
+	if menu_pausa and is_instance_valid(menu_pausa) and menu_pausa.has_method("_on_scene_deactivating"):
 		menu_pausa._on_scene_deactivating()
 
 func _on_config_pressed() -> void:
@@ -705,27 +724,7 @@ func go_to_menu() -> void:
 	if TransitionScreen:
 		await TransitionScreen.fade_in()
 
-# Função para pausar o jogo de forma segura
-func pause_game() -> void:
-	print("Orquestrador: Pausando o jogo")
-	
-	# Guardar estado anterior
-	if current_state != GameState.PAUSED:
-		previous_state_before_pause = current_state
-	
-	# Definir estado como pausado
-	current_state = GameState.PAUSED
-	
-	# Pausar a árvore de cenas
-	get_tree().paused = true
-	
-	# Mostrar menu de pausa
-	if menu_pausa:
-		menu_pausa.visible = true
-		menu_pausa.process_mode = Node.PROCESS_MODE_ALWAYS
-		
-		# Tocar efeito sonoro
-		AudioManager.play_sfx("button_click")
-		
-	# Notificar mudança de estado
-	game_state_changed.emit(current_state)
+# Função para retomar o jogo (chamada pelo menu de pausa)
+func resume_game() -> void:
+	print("Game: resume_game() chamado - redirecionando para _on_retomar_pressed")
+	_on_retomar_pressed()

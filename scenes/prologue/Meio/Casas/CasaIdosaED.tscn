@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=4 uid="uid://ch46fasjb3ljs"]
+[gd_scene load_steps=34 format=4 uid="uid://ch46fasjb3ljs"]
 
 [ext_resource type="Texture2D" uid="uid://bjtsh63edrkb5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls.png" id="1_ns4if"]
 [ext_resource type="Texture2D" uid="uid://3uifcabe7tf5" path="res://assets/textures/sprites interior/TopDownHouse_FloorsAndWalls_OpenDoors.png" id="2_y7pf6"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bnpkc233uxjg2" path="res://assets/textures/Animal House Tileset Pack/House asset hedgedog.png" id="9_wfolo"]
 [ext_resource type="Texture2D" uid="uid://dy7r26o72u8h5" path="res://assets/textures/Animal House Tileset Pack/House asset main.png" id="10_24fjm"]
 [ext_resource type="Texture2D" uid="uid://ctkn4qpqnxhed" path="res://assets/textures/Animal House Tileset Pack/House asset Rabbit.png" id="11_nj1h3"]
+[ext_resource type="PackedScene" path="res://scenes/global/npc/npcs/jucira.tscn" id="12_mj17d"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wfolo"]
 texture = ExtResource("1_ns4if")
@@ -3828,3 +3829,7 @@ tile_set = SubResource("TileSet_k10yy")
 scale = Vector2(0.8, 0.8)
 tile_map_data = PackedByteArray("AAAzABYAAgAGAAcAAAAzABcAAgAGAAgAAAAzABgAAgAGAAkAAAA=")
 tile_set = SubResource("TileSet_k10yy")
+
+[node name="Jucira" parent="." instance=ExtResource("12_mj17d")]
+position = Vector2(560, 420)
+npc_id = "Jucira"
