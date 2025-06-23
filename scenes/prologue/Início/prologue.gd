@@ -341,7 +341,7 @@ func _iniciar_sequencia_jogador_dormindo() -> void:
 		# O jogador já completou o prólogo antes e pulou a intro com o comando de skip
 		print("Prologue: Prólogo já foi concluído e comando de skip usado. Pulando diálogo e indo direto para o gameplay.")
 		dialogue_active = false
-		_prosseguir_apos_dialogo()
+		# Removido: _prosseguir_apos_dialogo() - agora a transição só ocorre ao interagir com a porta
 		return
 	
 	# Se chegamos aqui, o jogador está vendo o prólogo pela primeira vez
@@ -466,12 +466,13 @@ func _finalizar_dialogo_da_introducao() -> void:
 	
 	_iniciar_sequencia_jogador_dormindo()
 
-func _prosseguir_apos_dialogo() -> void:
-	print("Prologue: Diálogo interativo concluído, avançando para gameplay...")
-	if game_manager and game_manager.has_method("navigate_to_gameplay"):
-		game_manager.navigate_to_gameplay("loading")
-	else:
-		printerr("Prologue: Não foi possível encontrar Game.gd ou o método navigate_to_gameplay.")
+# NOTA: Função removida - a transição para a gameplay agora ocorre via porta interativa
+# func _prosseguir_apos_dialogo() -> void:
+# 	print("Prologue: Diálogo interativo concluído, avançando para gameplay...")
+# 	if game_manager and game_manager.has_method("navigate_to_gameplay"):
+# 		game_manager.navigate_to_gameplay("loading")
+# 	else:
+# 		printerr("Prologue: Não foi possível encontrar Game.gd ou o método navigate_to_gameplay.")
 
 # Função auxiliar para verificar se o texto é uma descrição (textos com asteriscos)
 func is_description_text(text: String) -> bool:
@@ -1103,7 +1104,8 @@ func _complete_all_dialogues():
 		player.show_joystick()
 	
 	dialogue_active = false
-	_prosseguir_apos_dialogo()
+	# Removido: _prosseguir_apos_dialogo() - agora a transição só ocorre ao interagir com a porta
+	print("Prologue: Diálogo concluído. O jogador deve interagir com a porta para continuar para a gameplay.")
 
 # Função para salvar as escolhas importantes do diálogo e marcar o prólogo como concluído
 func _save_dialogue_choices():

@@ -21350,3 +21350,4 @@ position = Vector2(2487, -15)
 
 [editable path="ExteriorVizinhos/Player/Camera2D/MenuPausa"]
 [editable path="ExteriorVizinhos/Player/Camera2D/Config"]
+[editable path="InteriorVizinhos/CasaIdosaEd"]

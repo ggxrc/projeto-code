@@ -26,9 +26,19 @@ var sequencia_telefone_iniciada = false
 func _ready() -> void:
 	print("Cena Gameplay carregada com sucesso!")
 	
+	# Detectar se estamos rodando como subcena do Game ou independentemente
+	var game_parent = get_node_or_null("/root/Game")
+	var is_subcena = (get_parent() != get_tree().root)
+	
+	print("Gameplay rodando como subcena: ", is_subcena)
+	print("Game parent encontrado: ", game_parent != null)
+	
 	# Inicializa referência ao AudioManager
 	if Engine.has_singleton("AudioManager"):
 		audio_manager = Engine.get_singleton("AudioManager")
+		audio_manager.play_music("gameplay", 1.5)
+	elif game_parent and game_parent.has_node("AudioManager"):
+		audio_manager = game_parent.get_node("AudioManager")
 		audio_manager.play_music("gameplay", 1.5)
 	
 	# Inicialização da referência ao nó de configurações
@@ -355,21 +365,42 @@ func _ensure_ui_in_canvas_layer() -> void:
 
 # Alterna o estado de pausa do jogo
 func toggle_pause() -> void:
-	# Verifica se existe um Orquestrador (que tem prioridade)
-	var orquestrador = get_node_or_null("/root/Game")
+	# Priorizar o Game parent se estiver disponível
+	var game_parent = get_node_or_null("/root/Game")
+	
+	# Se estamos rodando como subcena do Game, delegar para ele
+	if game_parent and get_parent() == game_parent:
+		print("Delegando controle de pausa ao Game parent...")
+		if game_parent.has_method("pause_game") and game_parent.has_method("_on_retomar_pressed"):
+			if game_paused:
+				# Se já está pausado, despause
+				if AudioManager:
+					AudioManager.play_sfx("button_click")
+				game_parent._on_retomar_pressed()
+			else:
+				# Se não está pausado, pause
+				if AudioManager:
+					AudioManager.play_sfx("button_click")
+				game_parent.pause_game()
+			return
+	
+	# Verificar se existe um Orquestrador (compatibilidade com sistema antigo)
+	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
 	if orquestrador and orquestrador.has_method("pause_game") and orquestrador.has_method("_on_retomar_pressed"):
 		print("Delegando controle de pausa ao orquestrador...")
 		if game_paused:
 			# Se já está pausado, despause
-			AudioManager.play_sfx("button_click")
+			if AudioManager:
+				AudioManager.play_sfx("button_click")
 			orquestrador._on_retomar_pressed()
 		else:
 			# Se não está pausado, pause
-			AudioManager.play_sfx("button_click")
+			if AudioManager:
+				AudioManager.play_sfx("button_click")
 			orquestrador.pause_game()
 		return
 	
-	# Se não encontrou orquestrador, continua com a implementação local
+	# Se não encontrou sistemas superiores, continua com a implementação local
 	print("Alternando pausa localmente...")
 	game_paused = !game_paused
 	
@@ -380,7 +411,8 @@ func toggle_pause() -> void:
 	else:
 		print("ERRO: get_tree() retornou null ao tentar alternar pausa!")
 	
-	AudioManager.play_sfx("button_click")
+	if AudioManager:
+		AudioManager.play_sfx("button_click")
 	
 	if menu_pausa:
 		print("Atualizando estado do menu de pausa: ", game_paused)
@@ -431,12 +463,23 @@ func reiniciar_cena() -> void:
 
 # Volta para o menu principal mantendo a gameplay pausada em segundo plano
 func voltar_menu_principal() -> void:
-	print("Mostrando menu principal e mantendo gameplay pausada...")
+	print("Voltando para menu principal...")
+	
+	# Se estamos rodando como subcena do Game, delegar para ele
+	var game_parent = get_node_or_null("/root/Game")
+	if game_parent and get_parent() == game_parent:
+		print("Delegando volta ao menu para Game parent...")
+		if game_parent.has_method("navigate_to_main_menu"):
+			game_parent.navigate_to_main_menu("loading")
+			return
+	
+	# Implementação local para quando rodando independentemente
+	print("Mostrando menu principal localmente e mantendo gameplay pausada...")
 	
 	# Esconde o menu de pausa se estiver visível
-	_hide_pause_menu()  # Esconde também as configurações se estiver visíveis
+	_hide_pause_menu()
 	if config and config.has_node("CanvasLayer") and config.get_node("CanvasLayer").visible:
-		config.get_node("CanvasLayer").visible = false  # Mantém o jogo pausado
+		config.get_node("CanvasLayer").visible = false
 	get_tree().paused = true
 	
 	# Obtém a cena do menu principal
@@ -458,14 +501,21 @@ func voltar_menu_principal() -> void:
 
 # Sai do jogo
 func sair_jogo() -> void:
-	# Primeiro verificamos se existe um sistema de orquestração
-	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
-	var game_node = get_node_or_null("/root/Game")
+	# Verificar se estamos rodando como subcena do Game
+	var game_parent = get_node_or_null("/root/Game")
+	if game_parent and get_parent() == game_parent:
+		print("Delegando saída do jogo para Game parent...")
+		if game_parent.has_method("trigger_quit_game"):
+			game_parent.trigger_quit_game()
+			return
 	
-	if game_node and game_node.has_method("quit_game"):
+	# Verificar se existe um sistema de orquestração (compatibilidade)
+	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
+	
+	if game_parent and game_parent.has_method("quit_game"):
 		# Se existe um Game com método quit_game, usamos ele
 		print("Saindo do jogo via Game controller...")
-		game_node.quit_game()
+		game_parent.quit_game()
 	elif orquestrador and orquestrador.has_method("quit_game"):
 		# Se existe um Orquestrador, usamos ele
 		print("Saindo do jogo via Orquestrador...")

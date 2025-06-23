@@ -4,11 +4,10 @@ extends InteractiveObject
 # Gerencia a transição entre exterior e interior da casa
 
 # Referências aos nós principais
-var exterior_vizinhos = null
 var interior_vizinhos = null
 var casa_idosa_ed = null
+var transition_screen = null
 var loading_screen = null
-var effects_node = null
 
 func _ready() -> void:
 	# Configurar texto de interação
@@ -20,41 +19,86 @@ func _ready() -> void:
 	# Buscar referências aos nós necessários na cena Gameplay
 	call_deferred("_setup_node_references")
 
+# Sobrescreve o método da classe pai para posicionar a área interativa na posição correta
+func _setup_interaction_area() -> void:
+	# Verifica se já existe uma área de interação
+	if has_node("InteractionArea"):
+		area_node = get_node("InteractionArea")
+		# Ajusta a posição da área existente
+		area_node.position = Vector2(22.1428, 23.5714)
+		return
+		
+	# Cria a área de interação
+	area_node = Area2D.new()
+	area_node.name = "InteractionArea"
+	
+	# Define a posição específica da porta da Jucira
+	area_node.position = Vector2(22.1428, 23.5714)
+	
+	# Adiciona forma de colisão
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = interaction_area_size
+	collision.shape = shape
+	
+	# Adiciona um ColorRect para visualizar a área durante o desenvolvimento
+	var debug_rect = ColorRect.new()
+	debug_rect.color = Color(0, 1, 0, 0.2)  # Verde semi-transparente
+	debug_rect.size = interaction_area_size
+	debug_rect.position = -interaction_area_size / 2  # Centraliza o retângulo
+	
+	area_node.add_child(collision)
+	area_node.add_child(debug_rect)
+	
+	# Conecta sinais de entrada/saída
+	area_node.body_entered.connect(_on_body_entered)
+	area_node.body_exited.connect(_on_body_exited)
+	
+	# Adiciona à árvore
+	add_child(area_node)
+	print("InteractiveObject: Área de interação configurada para porta da Jucira na posição ", area_node.position)
+
 # Configura as referências aos nós da cena
 func _setup_node_references() -> void:
 	var gameplay_scene = get_tree().current_scene
 	
-	if not gameplay_scene:
-		print("ERRO: Cena atual não encontrada!")
-		return
-	
-	# Buscar nós principais
-	exterior_vizinhos = gameplay_scene.get_node_or_null("ExteriorVizinhos")
+	# Buscar nós principais do Gameplay
 	interior_vizinhos = gameplay_scene.get_node_or_null("InteriorVizinhos")
-	effects_node = gameplay_scene.get_node_or_null("Effects")
+	if interior_vizinhos:
+		casa_idosa_ed = interior_vizinhos.get_node_or_null("CasaIdosaEd")
 	
-	if not exterior_vizinhos:
-		print("ERRO: ExteriorVizinhos não encontrado!")
-		return
-		
-	if not interior_vizinhos:
-		print("ERRO: InteriorVizinhos não encontrado!")
-		return
+	# Buscar as telas de transição primeiro no Game (parent do Gameplay)
+	var game_node = gameplay_scene.get_parent()
+	if game_node and game_node.name == "Game":
+		var effects = game_node.get_node_or_null("Effects")
+		if effects:
+			transition_screen = effects.get_node_or_null("TransitionScreen")
+			loading_screen = effects.get_node_or_null("LoadingScreen")
+			print("DEBUG: Usando TransitionScreen e LoadingScreen do Game/Effects")
 	
-	# Buscar casa específica no interior
-	casa_idosa_ed = interior_vizinhos.get_node_or_null("CasaIdosaEd")
+	# Se não encontrou no Game, busca no próprio Gameplay
+	if not transition_screen or not loading_screen:
+		var gameplay_effects = gameplay_scene.get_node_or_null("Effects")
+		if gameplay_effects:
+			if not transition_screen:
+				transition_screen = gameplay_effects.get_node_or_null("TransitionScreen")
+				print("DEBUG: Usando TransitionScreen do Gameplay/Effects")
+			if not loading_screen:
+				loading_screen = gameplay_effects.get_node_or_null("LoadingScreen")
+				print("DEBUG: Usando LoadingScreen do Gameplay/Effects")
 	
-	if not casa_idosa_ed:
-		print("ERRO: CasaIdosaEd não encontrada em InteriorVizinhos!")
-		return
+	# Fallback final para autoloads se não encontrou em lugar nenhum
+	if not transition_screen:
+		transition_screen = TransitionScreen
+		print("DEBUG: Usando TransitionScreen autoload")
+	if not loading_screen:
+		loading_screen = LoadingScreen
+		print("DEBUG: Usando LoadingScreen autoload")
 	
-	# Buscar tela de loading
-	if effects_node:
-		loading_screen = effects_node.get_node_or_null("LoadingScreen")
-		if not loading_screen:
-			print("AVISO: LoadingScreen não encontrada em Effects!")
-	
-	print("DEBUG: Referências configuradas com sucesso para porta da casa da Jucira")
+	print("DEBUG: Referências configuradas - InteriorVizinhos:", interior_vizinhos != null)
+	print("DEBUG: CasaIdosaEd:", casa_idosa_ed != null)
+	print("DEBUG: TransitionScreen:", transition_screen != null)
+	print("DEBUG: LoadingScreen:", loading_screen != null)
 
 # Sobrescreve o método interact para gerenciar a transição
 func interact() -> void:
@@ -79,69 +123,80 @@ func interact() -> void:
 # Gerencia a transição do exterior para o interior da casa
 func _transition_to_interior() -> void:
 	# Verifica se as referências estão configuradas
-	if not exterior_vizinhos or not interior_vizinhos or not casa_idosa_ed:
+	if not interior_vizinhos or not casa_idosa_ed:
 		print("ERRO: Referências de nós não configuradas!")
 		return
 	
+	print("DEBUG: Iniciando transição para interior da casa da Jucira...")
+	
 	# Desabilita movimento do jogador durante transição
 	_disable_player_movement()
+		# Executa a mesma sequência que o Game.gd usa para transições com loading:
+	# 1. Fade out com TransitionScreen
+	if transition_screen and transition_screen.has_method("fade_out"):
+		print("DEBUG: Fazendo fade out...")
+		await transition_screen.fade_out()
+	else:
+		print("ERRO: TransitionScreen não disponível!")
+		return
 	
-	# Mostra tela de loading se disponível
-	if loading_screen:
-		print("DEBUG: Mostrando tela de loading...")
-		loading_screen.visible = true
-		if loading_screen.has_method("show_loading"):
-			loading_screen.show_loading()
-		
-		# Aguarda um frame para que a tela de loading seja exibida
-		await get_tree().process_frame
-	
-	# Esconde o exterior (torna invisível, não remove da cena)
-	print("DEBUG: Escondendo ExteriorVizinhos...")
-	exterior_vizinhos.visible = false
-	
-	# Mostra o interior da casa da Jucira
-	print("DEBUG: Mostrando interior da casa da Jucira...")
+	# 2. Muda a estrutura da cena (equivalente ao _deactivate_all_main_scenes + _activate_scene)
+	print("DEBUG: Ativando interior e movendo jogador...")
 	interior_vizinhos.visible = true
 	casa_idosa_ed.visible = true
+	_teleport_player_to_interior()
 	
-	# Posiciona o jogador no interior (opcional - na entrada da casa)
-	_position_player_in_interior()
+	# 3. Mostra tela de loading
+	if loading_screen and loading_screen.has_method("start_loading"):
+		print("DEBUG: Iniciando loading screen...")
+		loading_screen.start_loading(false) # false = sem transições internas, pois já fizemos fade_out
+		await loading_screen.loading_finished
+		print("DEBUG: Loading concluído!")
+	else:
+		print("AVISO: LoadingScreen não disponível!")
+		# Fallback com timer
+		await get_tree().create_timer(1.5).timeout
 	
-	# Aguarda um tempo para simular loading
-	await get_tree().create_timer(1.0).timeout
-	
-	# Esconde tela de loading
-	if loading_screen:
-		print("DEBUG: Escondendo tela de loading...")
-		loading_screen.visible = false
-		if loading_screen.has_method("hide_loading"):
-			loading_screen.hide_loading()
+	# 4. Fade in para revelar a nova configuração
+	if transition_screen and transition_screen.has_method("fade_in"):
+		print("DEBUG: Fazendo fade in...")
+		await transition_screen.fade_in()
+	else:
+		print("ERRO: TransitionScreen não disponível para fade in!")
 	
 	# Reabilita movimento do jogador
 	_enable_player_movement()
 	
 	print("DEBUG: Transição para interior da casa da Jucira concluída!")
 
-# Posiciona o jogador no interior da casa
-func _position_player_in_interior() -> void:
+# Teleporta o jogador para a posição específica no interior da casa
+func _teleport_player_to_interior() -> void:
 	var player = _find_player()
 	if not player:
-		print("AVISO: Jogador não encontrado para reposicionamento!")
+		print("AVISO: Jogador não encontrado para teleporte!")
 		return
 	
-	# Define uma posição inicial dentro da casa (ajustar conforme necessário)
-	# Você pode definir uma posição específica ou procurar por um marcador
-	var initial_position = Vector2(400, 300)  # Posição inicial padrão
-	
-	# Procura por um marcador de spawn no interior da casa (opcional)
-	var spawn_point = casa_idosa_ed.get_node_or_null("PlayerSpawnPoint")
-	if spawn_point:
-		initial_position = spawn_point.global_position
-		print("DEBUG: Usando spawn point encontrado na casa")
-	
-	player.global_position = initial_position
-	print("DEBUG: Jogador posicionado em: ", initial_position)
+	# Remove o jogador da sua posição atual na árvore
+	var original_parent = player.get_parent()
+	if original_parent:
+		print("DEBUG: Removendo jogador de: ", original_parent.name)
+		original_parent.remove_child(player)
+		# Move o jogador para dentro da casa da Jucira
+	if casa_idosa_ed:
+		print("DEBUG: Movendo jogador para CasaIdosaEd...")
+		casa_idosa_ed.add_child(player)
+		
+		# Define a posição específica solicitada: x: 700, y: 500
+		var target_position = Vector2(700, 480)
+		player.position = target_position  # Usa position local, não global
+		
+		print("DEBUG: Jogador movido para CasaIdosaEd na posição: ", target_position)
+	else:
+		print("ERRO: CasaIdosaEd não disponível para mover o jogador!")
+		# Se falhar, coloca de volta no pai original
+		if original_parent:
+			original_parent.add_child(player)
+		return
 
 # Desativa o movimento do jogador durante a transição
 func _disable_player_movement() -> void:
@@ -205,9 +260,9 @@ func _find_player() -> Node:
 		if player:
 			return player
 		
-		# Tentar no ExteriorVizinhos
-		if exterior_vizinhos:
-			player = exterior_vizinhos.find_child("Player", true, false)
+		# Tentar no InteriorVizinhos
+		if interior_vizinhos:
+			player = interior_vizinhos.find_child("Player", true, false)
 			if player:
 				return player
 	
@@ -216,7 +271,6 @@ func _find_player() -> Node:
 
 # Método para depuração
 func _to_string() -> String:
-	return "PortaCasaJucira(exterior_visible: %s, interior_visible: %s)" % [
-		exterior_vizinhos.visible if exterior_vizinhos else "null",
+	return "PortaCasaJucira(interior_visible: %s)" % [
 		interior_vizinhos.visible if interior_vizinhos else "null"
 	]
