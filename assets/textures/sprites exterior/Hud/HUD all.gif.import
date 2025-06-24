@@ -1,0 +1,15 @@
+[remap]
+
+importer="import_gif_to_sprite_frames"
+type="SpriteFrames"
+uid="uid://bajqglg80soxa"
+path="res://.godot/imported/HUD all.gif-8c15180594388e65a4e9966e8bdf4a53.tres"
+
+[deps]
+
+source_file="res://assets/textures/sprites exterior/Hud/HUD all.gif"
+dest_files=["res://.godot/imported/HUD all.gif-8c15180594388e65a4e9966e8bdf4a53.tres"]
+
+[params]
+
+frames_per_second=30

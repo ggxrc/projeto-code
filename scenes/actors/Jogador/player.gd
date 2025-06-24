@@ -337,8 +337,14 @@ func find_joystick_recursive(node):
 
 # Função chamada quando o botão de interação é pressionado
 func _on_botao_interacao_pressed() -> void:
+	print("Player: Botão de interação pressionado!")
+	print("- pode_interagir: ", pode_interagir)
+	print("- objeto_interagivel_atual: ", objeto_interagivel_atual)
 	if pode_interagir and objeto_interagivel_atual:
+		print("- Chamando interagir_com_objeto...")
 		interagir_com_objeto(objeto_interagivel_atual)
+	else:
+		print("- Interação bloqueada ou sem objeto!")
 
 # Verifica os objetos interagíveis no raio de alcance
 func _process(_delta: float) -> void:
@@ -429,6 +435,8 @@ func atualizar_botao_interacao() -> void:
 
 # Interage com o objeto especificado
 func interagir_com_objeto(objeto) -> void:
+	print("Player: interagir_com_objeto chamado com: ", objeto.name if objeto else "null")
+	
 	# Tocar som de interação
 	if Engine.has_singleton("AudioManager"):
 		var audio_manager = Engine.get_singleton("AudioManager")
@@ -436,7 +444,7 @@ func interagir_com_objeto(objeto) -> void:
 	
 	# Verifica se é um objeto do novo sistema de interação
 	if objeto is InteractiveObject:
-		print("Interagindo com objeto: ", objeto.name)
+		print("Player: Objeto é InteractiveObject, chamando interact()")
 		objeto.interact()
 	# Compatibilidade com o sistema antigo
 	elif objeto.name == "Musica":

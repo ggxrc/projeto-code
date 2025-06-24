@@ -1,10 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://cl8ihyn3jdspj"]
+[gd_scene load_steps=4 format=3 uid="uid://sdhp11183ipx"]
 
-[ext_resource type="PackedScene" uid="uid://c6f5kugywu5ip" path="res://scenes/global/npc/npc_base.tscn" id="1_0rf8n"]
-[ext_resource type="Script" path="res://scenes/global/npc/npcs/jucira.gd" id="2_k31uy"]
+[ext_resource type="Script" uid="uid://bsdxteri7le43" path="res://scenes/global/npc/npcs/jucira.gd" id="2_k31uy"]
+[ext_resource type="Texture2D" uid="uid://c5rlstvgd1yjr" path="res://assets/character sprites/NPC/VelhaED.png" id="3_kwtav"]
 
-[node name="Jucira" instance=ExtResource("1_0rf8n")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(22, 32)
+
+[node name="Jucira" type="Node2D"]
 script = ExtResource("2_k31uy")
-npc_id = "jucira"
-interaction_distance = 120.0
-auto_look_at_player = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(15.5, 20.5)
+scale = Vector2(0.129464, 0.128125)
+texture = ExtResource("3_kwtav")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(16, 24)
+shape = SubResource("RectangleShape2D_1")

@@ -1,0 +1,119 @@
+[gd_scene load_steps=5 format=3 uid="uid://c3hw36v74i2f5"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_titulo"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_texto"]
+font_size = 20
+font_color = Color(0.9, 0.9, 0.9, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lx5wy"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_rodape"]
+font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="Creditos" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TituloContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Titulo" type="Label" parent="VBoxContainer/TituloContainer"]
+layout_mode = 2
+text = "Aventure-se com o faz-tudo"
+label_settings = SubResource("LabelSettings_titulo")
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="ConteudoPrincipal" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Coluna1" type="VBoxContainer" parent="VBoxContainer/ConteudoPrincipal"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Texto1" type="Label" parent="VBoxContainer/ConteudoPrincipal/Coluna1"]
+layout_mode = 2
+text = "Explore a cidade"
+label_settings = SubResource("LabelSettings_texto")
+horizontal_alignment = 1
+
+[node name="Gif1" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna1"]
+position = Vector2(133, 100)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_lx5wy")
+
+[node name="Coluna2" type="VBoxContainer" parent="VBoxContainer/ConteudoPrincipal"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Texto2" type="Label" parent="VBoxContainer/ConteudoPrincipal/Coluna2"]
+layout_mode = 2
+text = "Conclua trabalho"
+label_settings = SubResource("LabelSettings_texto")
+horizontal_alignment = 1
+
+[node name="Gif2" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna2"]
+position = Vector2(133, 100)
+scale = Vector2(2, 2)
+autoplay = "false"
+
+[node name="Coluna3" type="VBoxContainer" parent="VBoxContainer/ConteudoPrincipal"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Texto3" type="Label" parent="VBoxContainer/ConteudoPrincipal/Coluna3"]
+layout_mode = 2
+text = "Aprenda de forma engraçada"
+label_settings = SubResource("LabelSettings_texto")
+horizontal_alignment = 1
+
+[node name="Gif3" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna3"]
+position = Vector2(133, 100)
+scale = Vector2(2, 2)
+autoplay = "false"
+
+[node name="Spacer2" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="RodapeContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TextoRodape" type="Label" parent="VBoxContainer/RodapeContainer"]
+layout_mode = 2
+text = "Mais coisas virão em breve, obrigado por testar"
+label_settings = SubResource("LabelSettings_rodape")
+horizontal_alignment = 1

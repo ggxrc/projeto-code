@@ -1,0 +1,15 @@
+[remap]
+
+importer="import_gif_to_sprite_frames"
+type="SpriteFrames"
+uid="uid://gu848rxlq2f7"
+path="res://.godot/imported/HUDExample.gif-9b0ad7498437ec2ae3312570f50e7bfb.tres"
+
+[deps]
+
+source_file="res://assets/textures/sprites exterior/Hud/HUDExample.gif"
+dest_files=["res://.godot/imported/HUDExample.gif-9b0ad7498437ec2ae3312570f50e7bfb.tres"]
+
+[params]
+
+frames_per_second=30

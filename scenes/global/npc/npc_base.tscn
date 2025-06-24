@@ -5,7 +5,7 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_jusll"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_x2d1o"]
-radius = 60.0
+radius = 15.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_hbpik"]
 font_size = 14

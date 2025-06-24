@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=4 uid="uid://dkpxuuethomde"]
+[gd_scene load_steps=69 format=4 uid="uid://dkpxuuethomde"]
 
 [ext_resource type="Script" uid="uid://dqrav6v7srs1y" path="res://scenes/prologue/Meio/gameplay.gd" id="1_uscqw"]
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/Jogador/player.tscn" id="2_os5tv"]
@@ -31,7 +31,6 @@
 [ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="27_qwek0"]
 [ext_resource type="PackedScene" uid="uid://de0m62clh51a2" path="res://scenes/global/effects/loading_screen.tscn" id="28_2l8ye"]
 [ext_resource type="PackedScene" uid="uid://bstniqeot16yf" path="res://scenes/configurações/config.tscn" id="29_o01fa"]
-[ext_resource type="PackedScene" uid="uid://ch46fasjb3ljs" path="res://scenes/prologue/Meio/Casas/CasaIdosaED.tscn" id="32_2l8ye"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdgvx"]
 texture = ExtResource("3_7gixl")
@@ -21110,6 +21109,7 @@ tile_set = SubResource("TileSet_jx8th")
 
 [node name="Player" parent="ExteriorVizinhos" instance=ExtResource("2_os5tv")]
 position = Vector2(747, 486)
+collision_mask = 14
 
 [node name="PauseButton" type="Button" parent="ExteriorVizinhos/Player"]
 offset_left = 306.0
@@ -21334,11 +21334,6 @@ metadata/_edit_use_anchors_ = true
 [node name="LoadingScreen" parent="Effects" instance=ExtResource("28_2l8ye")]
 visible = false
 
-[node name="InteriorVizinhos" type="Node2D" parent="."]
-
-[node name="CasaIdosaEd" parent="InteriorVizinhos" instance=ExtResource("32_2l8ye")]
-position = Vector2(2487, -15)
-
 [connection signal="pressed" from="ExteriorVizinhos/Player/PauseButton" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Config" to="." method="_on_config_pressed"]
@@ -21350,4 +21345,3 @@ position = Vector2(2487, -15)
 
 [editable path="ExteriorVizinhos/Player/Camera2D/MenuPausa"]
 [editable path="ExteriorVizinhos/Player/Camera2D/Config"]
-[editable path="InteriorVizinhos/CasaIdosaEd"]

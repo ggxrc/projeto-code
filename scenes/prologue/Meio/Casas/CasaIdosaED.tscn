@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bnpkc233uxjg2" path="res://assets/textures/Animal House Tileset Pack/House asset hedgedog.png" id="9_wfolo"]
 [ext_resource type="Texture2D" uid="uid://dy7r26o72u8h5" path="res://assets/textures/Animal House Tileset Pack/House asset main.png" id="10_24fjm"]
 [ext_resource type="Texture2D" uid="uid://ctkn4qpqnxhed" path="res://assets/textures/Animal House Tileset Pack/House asset Rabbit.png" id="11_nj1h3"]
-[ext_resource type="PackedScene" path="res://scenes/global/npc/npcs/jucira.tscn" id="12_mj17d"]
+[ext_resource type="PackedScene" uid="uid://sdhp11183ipx" path="res://scenes/global/npc/npcs/jucira.tscn" id="12_mj17d"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wfolo"]
 texture = ExtResource("1_ns4if")
@@ -3953,5 +3953,19 @@ tile_map_data = PackedByteArray("AAAzABYAAgAGAAcAAAAzABcAAgAGAAgAAAAzABgAAgAGAAk
 tile_set = SubResource("TileSet_k10yy")
 
 [node name="Jucira" parent="." instance=ExtResource("12_mj17d")]
-position = Vector2(560, 420)
+position = Vector2(557, 430)
+scale = Vector2(1.5, 1.5)
 npc_id = "Jucira"
+
+[node name="Sprite2D" parent="Jucira" index="0"]
+position = Vector2(-1.00001, -15)
+scale = Vector2(0.0758928, 0.06875)
+
+[node name="StaticBody2D" parent="Jucira" index="1"]
+position = Vector2(-16, -37)
+collision_layer = 2
+
+[node name="CollisionShape2D" parent="Jucira/StaticBody2D" index="0"]
+position = Vector2(16, 23)
+
+[editable path="Jucira"]

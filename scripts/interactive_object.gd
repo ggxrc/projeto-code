@@ -38,6 +38,10 @@ func _setup_interaction_area() -> void:
 	area_node = Area2D.new()
 	area_node.name = "InteractionArea"
 	
+	# Configurar collision layers para detectar o player
+	area_node.collision_layer = 0  # Esta área não colide com nada
+	area_node.collision_mask = 1   # Detecta objetos na layer 1 (player)
+	
 	# Adiciona forma de colisão
 	var collision = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
@@ -107,7 +111,6 @@ func interact() -> void:
 		return
 		
 	last_interaction_time = current_time
-	print("Interação com objeto: ", self.name)
 	
 	# Emite o sinal para que outros objetos possam responder
 	interaction_triggered.emit(self)
