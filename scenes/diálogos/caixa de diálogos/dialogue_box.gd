@@ -104,3 +104,16 @@ func advance_or_skip_typewriter() -> void:
 		if is_instance_valid(text_label) and text_label.visible_ratio >= 1.0:
 			dialogue_line_finished.emit()
 		pass
+
+# Método para completar imediatamente o efeito de digitação
+func complete_typewriter() -> void:
+	if _current_tween and _current_tween.is_valid() and _current_tween.is_running():
+		_current_tween.kill()
+		_current_tween = null
+		
+		# Mostra o texto completo imediatamente
+		if is_instance_valid(text_label):
+			text_label.visible_ratio = 1.0
+			
+		# Emite o sinal que a linha foi concluída
+		dialogue_line_finished.emit()

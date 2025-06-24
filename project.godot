@@ -23,6 +23,7 @@ TransitionScreen="*res://scenes/global/effects/transition_screen.tscn"
 LoadingScreen="*res://scenes/global/effects/loading_screen.tscn"
 GameUtils="*res://scripts/game_utils.gd"
 AudioManager="*res://scenes/global/audio/AudioManager.tscn"
+NPCManager="*res://scenes/global/npc_manager.gd"
 
 [display]
 

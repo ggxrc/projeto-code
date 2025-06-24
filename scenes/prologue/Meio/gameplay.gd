@@ -11,21 +11,35 @@ var menu_pausa = null
 var transition_screen = null
 var loading_screen = null
 var pause_button = null
+var audio_manager = null
 
 # Estado do jogo
 var game_paused = false
+# Variável para controlar se a sequência de saída de casa já foi iniciada
+var sequencia_saida_casa_iniciada = false
+# Referência para o script de sequência
+var sequencia_saida_casa = null
+# Variável para controlar a sequência do telefone de Jucira
+var sequencia_telefone_jucira = null
+var sequencia_telefone_iniciada = false
 
 func _ready() -> void:
 	print("Cena Gameplay carregada com sucesso!")
 	
-	# Primeiro, interromper qualquer música atual (menu ou jukebox) com fade out de 1.0 segundo
-	AudioManager.stop_music(1.0)
+	# Detectar se estamos rodando como subcena do Game ou independentemente
+	var game_parent = get_node_or_null("/root/Game")
+	var is_subcena = (get_parent() != get_tree().root)
 	
-	# Aguardar o fade out antes de começar a nova música
-	await get_tree().create_timer(1.0).timeout
+	print("Gameplay rodando como subcena: ", is_subcena)
+	print("Game parent encontrado: ", game_parent != null)
 	
-	# Iniciar a música de gameplay com fade in
-	AudioManager.play_music("gameplay", 1.5)
+	# Inicializa referência ao AudioManager
+	if Engine.has_singleton("AudioManager"):
+		audio_manager = Engine.get_singleton("AudioManager")
+		audio_manager.play_music("gameplay", 1.5)
+	elif game_parent and game_parent.has_node("AudioManager"):
+		audio_manager = game_parent.get_node("AudioManager")
+		audio_manager.play_music("gameplay", 1.5)
 	
 	# Inicialização da referência ao nó de configurações
 	_setup_config_reference()
@@ -153,20 +167,17 @@ func _setup_pause_button() -> void:
 	else:
 		print("AVISO: Botão de pausa não encontrado na cena. Não será criado um novo botão.")
 
+# Conecta sinais do menu de pausa
 func _connect_pause_menu_signals() -> void:
 	if not menu_pausa:
 		return
 		
 	print("Conectando sinais do menu de pausa...")
 	
-	# Lista para rastrear quais botões já foram conectados para evitar duplicidades
-	var connected_buttons = []
-	
 	# Mapeamento de botões para funções
 	var button_actions = {
 		"Retomar": _on_retomar_pressed,
 		"Continuar": _on_retomar_pressed,  # Alternativo para o botão de retomar
-		"Resume": _on_retomar_pressed,     # Alternativo para o botão de retomar em inglês
 		"Config": abrir_configuracoes,
 		"MenuPrincipal": voltar_menu_principal,
 		"VoltarMenu": voltar_menu_principal,  # Nome alternativo no menu de pausa
@@ -179,43 +190,87 @@ func _connect_pause_menu_signals() -> void:
 	for button_name in button_actions:
 		var btn = _find_button_in_menu_pausa(button_name)
 		if btn:
-			# Verificar se esse botão físico já foi conectado antes
-			if not btn in connected_buttons:
-				var action = button_actions[button_name]
-				
-				# Limpar conexões anteriores para evitar comportamento imprevisível
-				var connections = btn.get_signal_connection_list("pressed")
-				for connection in connections:
-					btn.disconnect("pressed", connection["callable"])
-				
-				# Conectar o sinal
-				btn.pressed.connect(action)
-				connected_buttons.append(btn)  # Registra que este botão já foi conectado
-				print("Botão '", button_name, "' conectado com sucesso à função ", action.get_method())
-			else:
-				print("Botão '", button_name, "' já foi conectado anteriormente, ignorando...")
+			var action = button_actions[button_name]
+			if btn.pressed.is_connected(action):
+				btn.pressed.disconnect(action)
+			btn.pressed.connect(action)
+			print("Botão '", button_name, "' conectado com sucesso")
 		else:
 			print("AVISO: Botão '", button_name, "' não encontrado no menu de pausa")
 	
 	# Verificar se é um menu personalizado com sinais
 	if menu_pausa.has_signal("continuar_pressed"):
 		print("Usando menu personalizado com sinais")
-		# Desconectar todos os sinais antes para evitar conexões duplicadas
-		if menu_pausa.is_connected("continuar_pressed", _on_retomar_pressed):
-			menu_pausa.disconnect("continuar_pressed", _on_retomar_pressed)
-		if menu_pausa.is_connected("reiniciar_pressed", reiniciar_cena):
-			menu_pausa.disconnect("reiniciar_pressed", reiniciar_cena)
-		if menu_pausa.is_connected("menu_pressed", voltar_menu_principal):
-			menu_pausa.disconnect("menu_pressed", voltar_menu_principal)
-		if menu_pausa.is_connected("sair_pressed", sair_jogo):
-			menu_pausa.disconnect("sair_pressed", sair_jogo)
-			
-		# Reconectar os sinais
-		menu_pausa.continuar_pressed.connect(_on_retomar_pressed)
-		menu_pausa.reiniciar_pressed.connect(reiniciar_cena)
-		menu_pausa.menu_pressed.connect(voltar_menu_principal)
-		menu_pausa.sair_pressed.connect(sair_jogo)
+		if not menu_pausa.continuar_pressed.is_connected(_on_retomar_pressed):
+			menu_pausa.continuar_pressed.connect(_on_retomar_pressed)
+		if not menu_pausa.reiniciar_pressed.is_connected(reiniciar_cena):
+			menu_pausa.reiniciar_pressed.connect(reiniciar_cena)
+		if not menu_pausa.menu_pressed.is_connected(voltar_menu_principal):
+			menu_pausa.menu_pressed.connect(voltar_menu_principal)
+		if not menu_pausa.sair_pressed.is_connected(sair_jogo):
+			menu_pausa.sair_pressed.connect(sair_jogo)
+	
+	# Procurar especificamente pelos botões com nomes comuns
+	var retomar_buttons = ["Retomar", "Continuar", "Resume"]
+	for btn_name in retomar_buttons:
+		var btn = _find_button_in_menu_pausa(btn_name)
+		if btn:
+			print("Conectando botão '", btn_name, "' ao método _on_retomar_pressed")
+			if btn.pressed.is_connected(_on_retomar_pressed):
+				btn.pressed.disconnect(_on_retomar_pressed)
+			btn.pressed.connect(_on_retomar_pressed)
+			break
 
+# Método para iniciar a sequência do telefone da Jucira
+func iniciar_sequencia_telefone() -> void:
+	print("DEBUG: Método iniciar_sequencia_telefone() chamado")
+	
+	if sequencia_telefone_iniciada:
+		print("DEBUG: Sequência do telefone já foi iniciada anteriormente, ignorando")
+		return
+	
+	print("DEBUG: Iniciando sequência do telefone de Jucira")
+	sequencia_telefone_iniciada = true
+	
+	# Verifica se já existe uma instância do script de sequência
+	if not sequencia_telefone_jucira:
+		print("DEBUG: Criando instância do script jucira_phone_sequence.gd")
+		var script_path = "res://scenes/prologue/Meio/jucira_phone_sequence.gd"
+		print("DEBUG: Verificando se o script existe:", FileAccess.file_exists(script_path))
+		
+		sequencia_telefone_jucira = load(script_path).new()
+		add_child(sequencia_telefone_jucira)
+		print("DEBUG: Script da sequência instanciado e adicionado como filho")
+		
+		# Conecta os sinais da sequência
+		sequencia_telefone_jucira.sequence_started.connect(_on_phone_sequence_started)
+		sequencia_telefone_jucira.sequence_finished.connect(_on_phone_sequence_finished)
+		print("DEBUG: Sinais conectados")
+	
+	# Inicia a sequência
+	print("DEBUG: Chamando start_sequence()")
+	sequencia_telefone_jucira.start_sequence()
+
+# Callback quando a sequência do telefone inicia
+func _on_phone_sequence_started() -> void:
+	print("Sequência do telefone iniciada")
+	# Aqui você pode pausar o jogador, mostrar efeitos visuais, etc.
+	
+	# Exemplo: desabilitar movimento do jogador durante a sequência
+	var player = find_player_in_scene()
+	if player and player.has_method("set_can_move"):
+		player.set_can_move(false)
+
+# Callback quando a sequência do telefone termina
+func _on_phone_sequence_finished() -> void:
+	print("Sequência do telefone finalizada")
+	# Re-habilitar o jogador, atualizar estado do jogo, etc.
+	
+	# Exemplo: re-habilitar movimento do jogador após a sequência
+	var player = find_player_in_scene()
+	if player and player.has_method("set_can_move"):
+		player.set_can_move(true)
+	
 # Função auxiliar para encontrar o jogador em qualquer lugar da cena
 func find_player_in_scene() -> Node:
 	return _find_node_recursive(self, "Player")
@@ -237,23 +292,18 @@ func _find_button_in_menu_pausa(button_name: String) -> Button:
 		# Caminhos comuns em containers
 		"VBoxContainer/" + button_name,
 		"Control/VBoxContainer/" + button_name,
-		"Control/Background/VBoxContainer/" + button_name
+		"Control/Background/VBoxContainer/" + button_name,
+		# Caminhos com nomes de botões alternativos para compatibilidade
+		"Control/Background/VBoxContainer/Retomar",
+		"Control/Background/VBoxContainer/Config",
+		"Control/Background/VBoxContainer/VoltarMenu",
+		"Control/Background/VBoxContainer/SairPause"
 	]
-	
-	# Adicionar caminhos específicos apenas para o botão correspondente
-	if button_name == "Retomar" or button_name == "Continuar" or button_name == "Resume":
-		possible_paths.append("Control/Background/VBoxContainer/Retomar")
-	elif button_name == "Config":
-		possible_paths.append("Control/Background/VBoxContainer/Config") 
-	elif button_name == "MenuPrincipal" or button_name == "VoltarMenu":
-		possible_paths.append("Control/Background/VBoxContainer/VoltarMenu")
-	elif button_name == "Sair" or button_name == "SairPause":
-		possible_paths.append("Control/Background/VBoxContainer/SairPause")
 	
 	for path in possible_paths:
 		btn = menu_pausa.get_node_or_null(path)
 		if btn and btn is Button:
-			print("Botão encontrado em: ", path, " para ", button_name)
+			print("Botão encontrado em: ", path)
 			return btn
 	
 	# Se não encontrou por caminhos diretos, tenta procura recursiva
@@ -315,11 +365,54 @@ func _ensure_ui_in_canvas_layer() -> void:
 
 # Alterna o estado de pausa do jogo
 func toggle_pause() -> void:
-	game_paused = !game_paused
-	get_tree().paused = game_paused
+	# Priorizar o Game parent se estiver disponível
+	var game_parent = get_node_or_null("/root/Game")
 	
-	# Tocar efeito sonoro de clique
-	AudioManager.play_sfx("button_click")
+	# Se estamos rodando como subcena do Game, delegar para ele
+	if game_parent and get_parent() == game_parent:
+		print("Delegando controle de pausa ao Game parent...")
+		if game_parent.has_method("pause_game") and game_parent.has_method("_on_retomar_pressed"):
+			if game_paused:
+				# Se já está pausado, despause
+				if AudioManager:
+					AudioManager.play_sfx("button_click")
+				game_parent._on_retomar_pressed()
+			else:
+				# Se não está pausado, pause
+				if AudioManager:
+					AudioManager.play_sfx("button_click")
+				game_parent.pause_game()
+			return
+	
+	# Verificar se existe um Orquestrador (compatibilidade com sistema antigo)
+	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
+	if orquestrador and orquestrador.has_method("pause_game") and orquestrador.has_method("_on_retomar_pressed"):
+		print("Delegando controle de pausa ao orquestrador...")
+		if game_paused:
+			# Se já está pausado, despause
+			if AudioManager:
+				AudioManager.play_sfx("button_click")
+			orquestrador._on_retomar_pressed()
+		else:
+			# Se não está pausado, pause
+			if AudioManager:
+				AudioManager.play_sfx("button_click")
+			orquestrador.pause_game()
+		return
+	
+	# Se não encontrou sistemas superiores, continua com a implementação local
+	print("Alternando pausa localmente...")
+	game_paused = !game_paused
+	
+	# Verificar se get_tree() não é null antes de acessá-lo
+	var tree = get_tree()
+	if tree:
+		tree.paused = game_paused
+	else:
+		print("ERRO: get_tree() retornou null ao tentar alternar pausa!")
+	
+	if AudioManager:
+		AudioManager.play_sfx("button_click")
 	
 	if menu_pausa:
 		print("Atualizando estado do menu de pausa: ", game_paused)
@@ -328,7 +421,7 @@ func toggle_pause() -> void:
 		menu_pausa.visible = game_paused
 		
 		# Garantir que o menu de pausa está no modo de processo correto
-		menu_pausa.process_mode = Node.PROCESS_MODE_ALWAYS
+		menu_pausa.process_mode = Node.PROCESS_MODE_ALWAYS if game_paused else Node.PROCESS_MODE_DISABLED
 		
 		# Se o menu_pausa não estiver aparecendo, verificamos se precisamos mudar o layer
 		if game_paused:
@@ -370,12 +463,23 @@ func reiniciar_cena() -> void:
 
 # Volta para o menu principal mantendo a gameplay pausada em segundo plano
 func voltar_menu_principal() -> void:
-	print("Mostrando menu principal e mantendo gameplay pausada...")
+	print("Voltando para menu principal...")
+	
+	# Se estamos rodando como subcena do Game, delegar para ele
+	var game_parent = get_node_or_null("/root/Game")
+	if game_parent and get_parent() == game_parent:
+		print("Delegando volta ao menu para Game parent...")
+		if game_parent.has_method("navigate_to_main_menu"):
+			game_parent.navigate_to_main_menu("loading")
+			return
+	
+	# Implementação local para quando rodando independentemente
+	print("Mostrando menu principal localmente e mantendo gameplay pausada...")
 	
 	# Esconde o menu de pausa se estiver visível
-	_hide_pause_menu()  # Esconde também as configurações se estiverem visíveis
+	_hide_pause_menu()
 	if config and config.has_node("CanvasLayer") and config.get_node("CanvasLayer").visible:
-		config.get_node("CanvasLayer").visible = false  # Mantém o jogo pausado
+		config.get_node("CanvasLayer").visible = false
 	get_tree().paused = true
 	
 	# Obtém a cena do menu principal
@@ -397,14 +501,21 @@ func voltar_menu_principal() -> void:
 
 # Sai do jogo
 func sair_jogo() -> void:
-	# Primeiro verificamos se existe um sistema de orquestração
-	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
-	var game_node = get_node_or_null("/root/Game")
+	# Verificar se estamos rodando como subcena do Game
+	var game_parent = get_node_or_null("/root/Game")
+	if game_parent and get_parent() == game_parent:
+		print("Delegando saída do jogo para Game parent...")
+		if game_parent.has_method("trigger_quit_game"):
+			game_parent.trigger_quit_game()
+			return
 	
-	if game_node and game_node.has_method("quit_game"):
+	# Verificar se existe um sistema de orquestração (compatibilidade)
+	var orquestrador = get_node_or_null("/root/Game/Orquestrador")
+	
+	if game_parent and game_parent.has_method("quit_game"):
 		# Se existe um Game com método quit_game, usamos ele
 		print("Saindo do jogo via Game controller...")
-		game_node.quit_game()
+		game_parent.quit_game()
 	elif orquestrador and orquestrador.has_method("quit_game"):
 		# Se existe um Orquestrador, usamos ele
 		print("Saindo do jogo via Orquestrador...")
@@ -492,18 +603,13 @@ func _on_pause_button_pressed() -> void:
 # Sinais para os botões
 func _on_retomar_pressed() -> void:
 	print("Botão Retomar pressionado")
-	
 	# Tocar som de clique
 	AudioManager.play_sfx("button_click")
 	
-	# Despausar o jogo - definimos diretamente para false
+	# Despausar o jogo com segurança
 	game_paused = false
 	
-	# Garantir que a árvore de cena existe antes de despausar
-	if get_tree():
-		get_tree().paused = false
-	
-	# Esconder o menu de pausa
+	# Esconder o menu de pausa com segurança
 	if menu_pausa:
 		menu_pausa.visible = false
 		
@@ -512,13 +618,12 @@ func _on_retomar_pressed() -> void:
 		if control:
 			control.visible = false
 		
+		# Definir modo de processo para desativar
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+		
 		print("Menu de pausa escondido após pressionar Retomar")
 		
-		# Verificar se há um CanvasLayer pai e configurá-lo também
-		var parent = menu_pausa.get_parent()
-		if parent and parent is CanvasLayer:
-			parent.visible = false
-			print("CanvasLayer pai do menu de pausa também escondido")
+	# Debug: verificar estado de pausa
 
 func _on_config_pressed() -> void:
 	print("Botão Config pressionado")
@@ -714,7 +819,8 @@ func _on_voltar_from_config_pressed() -> void:
 	print("Gameplay: Botão Voltar das configurações pressionado diretamente")
 	
 	# Tocar som de clique
-	AudioManager.play_sfx("button_click")
+	if audio_manager:
+		audio_manager.play_sfx("button_click")
 	
 	# Verificar referência ao config
 	if not config:
@@ -730,3 +836,83 @@ func _on_voltar_from_config_pressed() -> void:
 	# Mostrar menu de pausa se estiver pausado
 	_force_show_pause_menu()
 	print("Gameplay: Menu de pausa restaurado")
+
+# Iniciar a sequência de diálogos quando o jogador sai da casa
+func iniciar_sequencia_saida_casa() -> void:
+	print("Iniciando sequência de saída da casa no gameplay...")
+	
+	# Evitar iniciar a sequência mais de uma vez
+	if sequencia_saida_casa_iniciada:
+		print("Sequência de saída já foi iniciada anteriormente!")
+		return
+	
+	sequencia_saida_casa_iniciada = true
+	
+	# Criar instância do script de sequência
+	var sequencia_script = load("res://scenes/prologue/Meio/sequencia_saida_casa.gd")
+	if not sequencia_script:
+		push_error("Não foi possível carregar o script sequencia_saida_casa.gd!")
+		return
+	
+	sequencia_saida_casa = sequencia_script.new()
+	add_child(sequencia_saida_casa)
+	
+	# Conectar sinal de conclusão da sequência
+	if sequencia_saida_casa.has_signal("sequencia_completa"):
+		sequencia_saida_casa.connect("sequencia_completa", _on_sequencia_saida_casa_concluida)
+	
+	# Imprimir métodos disponíveis para debug
+	print("Métodos disponíveis no script de sequência: ", _get_available_methods(sequencia_saida_casa))
+	
+	# Iniciar a sequência
+	if sequencia_saida_casa.has_method("iniciar_sequencia"):
+		print("Chamando método iniciar_sequencia() do script sequencia_saida_casa")
+		sequencia_saida_casa.iniciar_sequencia()
+	else:
+		push_error("O script de sequência não possui o método iniciar_sequencia!")
+		
+		# Como alternativa, tentar iniciar os diálogos diretamente
+		print("Tentando chamar métodos de diálogo individualmente como alternativa")
+		if sequencia_saida_casa.has_method("mostrar_dialogo_inicial"):
+			sequencia_saida_casa.desativar_controles_jogador()
+			sequencia_saida_casa.mostrar_dialogo_inicial()
+		else:
+			push_error("O script de sequência não possui os métodos necessários!")
+
+# Função auxiliar para obter métodos disponíveis de um nó (para debug)
+func _get_available_methods(node):
+	var methods = []
+	for method in node.get_method_list():
+		methods.append(method["name"])
+	return methods
+
+# Quando a sequência terminar
+func _on_sequencia_saida_casa_concluida():
+	print("Sequência de saída da casa concluída!")
+	
+	# Adicionar quaisquer ações adicionais após a conclusão da sequência aqui
+	# Por exemplo, atualizar estados de missão, desbloquear novos objetivos, etc.
+
+# Função para verificar e reportar o estado do orquestrador e do sistema de pausa
+func _debug_pause_system() -> void:
+	print("=== DEPURAÇÃO DO SISTEMA DE PAUSA ===")
+	print("Estado local de pausa (game_paused):", game_paused)
+	
+	var tree = get_tree()
+	print("get_tree() é válido?", tree != null)
+	if tree:
+		print("get_tree().paused =", tree.paused)
+	
+	var orquestrador = get_node_or_null("/root/Game")
+	print("Orquestrador encontrado?", orquestrador != null)
+	if orquestrador:
+		print("Orquestrador tem método pause_game?", orquestrador.has_method("pause_game"))
+		print("Orquestrador tem método _on_retomar_pressed?", orquestrador.has_method("_on_retomar_pressed"))
+		if "current_state" in orquestrador:
+			print("Estado atual do orquestrador:", orquestrador.current_state)
+	
+	print("menu_pausa é válido?", menu_pausa != null)
+	if menu_pausa:
+		print("menu_pausa.visible =", menu_pausa.visible)
+		print("menu_pausa.process_mode =", menu_pausa.process_mode)
+	print("===============================")

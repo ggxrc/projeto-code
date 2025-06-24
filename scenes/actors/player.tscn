@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/actors/player.gd" id="1_ru62r"]
 [ext_resource type="Texture2D" uid="uid://b52wgkv5ey5cd" path="res://assets/character sprites/Sprite Padronização.png" id="3_7wueq"]
-[ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/Sprite Prota.png" id="3_ktjr4"]
+[ext_resource type="Texture2D" uid="uid://cjdijr6we0wm" path="res://assets/character sprites/player/Sprite Prota.png" id="3_ktjr4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7860b"]
 atlas = ExtResource("3_ktjr4")

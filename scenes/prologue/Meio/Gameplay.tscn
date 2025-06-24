@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=4 uid="uid://dkpxuuethomde"]
+[gd_scene load_steps=70 format=4 uid="uid://dkpxuuethomde"]
 
 [ext_resource type="Script" uid="uid://dqrav6v7srs1y" path="res://scenes/prologue/Meio/gameplay.gd" id="1_uscqw"]
 [ext_resource type="PackedScene" uid="uid://cbdw2mmnv7a53" path="res://scenes/actors/Jogador/player.tscn" id="2_os5tv"]
@@ -26,9 +26,12 @@
 [ext_resource type="Texture2D" uid="uid://btgqop3x3251s" path="res://assets/UI/icons/Pause.svg" id="24_o01fa"]
 [ext_resource type="Script" uid="uid://bm8gce32d4dkx" path="res://scripts/touch_screen_joystick.gd" id="24_rk7ta"]
 [ext_resource type="PackedScene" uid="uid://6kksgt7lj1ch" path="res://scenes/menu pausa/MenuPausa.tscn" id="26_7vbrj"]
+[ext_resource type="Script" uid="uid://bf2nl5togr2hk" path="res://scenes/prologue/Meio/porta_casa_jucira.gd" id="27_2l8ye"]
+[ext_resource type="Script" uid="uid://b2n72d54d6gp" path="res://scenes/prologue/Meio/phone_trigger_area.gd" id="27_7vbrj"]
 [ext_resource type="PackedScene" uid="uid://cpry4snt0vn2j" path="res://scenes/global/effects/transition_screen.tscn" id="27_qwek0"]
 [ext_resource type="PackedScene" uid="uid://de0m62clh51a2" path="res://scenes/global/effects/loading_screen.tscn" id="28_2l8ye"]
 [ext_resource type="PackedScene" uid="uid://bstniqeot16yf" path="res://scenes/configurações/config.tscn" id="29_o01fa"]
+[ext_resource type="PackedScene" uid="uid://ch46fasjb3ljs" path="res://scenes/prologue/Meio/Casas/CasaIdosaED.tscn" id="32_2l8ye"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jdgvx"]
 texture = ExtResource("3_7gixl")
@@ -21083,8 +21086,13 @@ sources/0 = SubResource("TileSetAtlasSource_nbkph")
 sources/5 = SubResource("TileSetAtlasSource_bko1w")
 sources/7 = SubResource("TileSetAtlasSource_hpuvn")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v5fko"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rk7ta"]
 size = Vector2(13.5714, 25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o01fa"]
+size = Vector2(39, 31)
 
 [node name="GameplayPrologue" type="Node"]
 script = ExtResource("1_uscqw")
@@ -21103,10 +21111,7 @@ tile_set = SubResource("TileSet_jx8th")
 [node name="Player" parent="ExteriorVizinhos" instance=ExtResource("2_os5tv")]
 position = Vector2(747, 486)
 
-[node name="Camera2D" type="Camera2D" parent="ExteriorVizinhos/Player"]
-zoom = Vector2(1.8, 1.8)
-
-[node name="PauseButton" type="Button" parent="ExteriorVizinhos/Player/Camera2D"]
+[node name="PauseButton" type="Button" parent="ExteriorVizinhos/Player"]
 offset_left = 306.0
 offset_top = -199.0
 offset_right = 354.0
@@ -21115,6 +21120,9 @@ icon = ExtResource("24_o01fa")
 flat = true
 expand_icon = true
 metadata/_edit_use_anchors_ = true
+
+[node name="Camera2D" type="Camera2D" parent="ExteriorVizinhos/Player"]
+zoom = Vector2(1.8, 1.8)
 
 [node name="MenuPausa" parent="ExteriorVizinhos/Player/Camera2D" instance=ExtResource("26_7vbrj")]
 process_mode = 3
@@ -21126,7 +21134,7 @@ visible = false
 [node name="CanvasLayer" parent="ExteriorVizinhos/Player/Camera2D/Config" index="0"]
 visible = false
 
-[node name="Casas" type="Node" parent="ExteriorVizinhos"]
+[node name="Casas" type="Node2D" parent="ExteriorVizinhos"]
 
 [node name="Predio" type="TileMapLayer" parent="ExteriorVizinhos/Casas"]
 position = Vector2(132, 310)
@@ -21148,6 +21156,13 @@ position = Vector2(4, -27)
 scale = Vector2(1.4, 1.4)
 tile_map_data = PackedByteArray("AAABAAEABQAUABoAAAD//wAABQAbABAAAAA=")
 tile_set = SubResource("TileSet_jx8th")
+
+[node name="PortaDaVelha" type="Area2D" parent="ExteriorVizinhos/Casas/Casa da  Velha/Porta e Janela"]
+script = ExtResource("27_2l8ye")
+
+[node name="PortaDaVelha" type="CollisionShape2D" parent="ExteriorVizinhos/Casas/Casa da  Velha/Porta e Janela/PortaDaVelha"]
+position = Vector2(22.1428, 23.5714)
+shape = SubResource("RectangleShape2D_v5fko")
 
 [node name="CasaProta" type="TileMapLayer" parent="ExteriorVizinhos/Casas"]
 position = Vector2(737, 427)
@@ -21171,7 +21186,7 @@ tile_set = SubResource("TileSet_jx8th")
 position = Vector2(81.7857, 86.7857)
 shape = SubResource("RectangleShape2D_rk7ta")
 
-[node name="Sinais" type="Node" parent="ExteriorVizinhos"]
+[node name="Sinais" type="Node2D" parent="ExteriorVizinhos"]
 
 [node name="Placa" type="TileMapLayer" parent="ExteriorVizinhos/Sinais"]
 position = Vector2(710, 426)
@@ -21218,7 +21233,7 @@ position = Vector2(1227, 67)
 tile_map_data = PackedByteArray("AAD///3/AwABAAAAAAD///7/AwABAAEAAAD/////AwABAAIAAAAAAP3/AwACAAAAAAAAAP7/AwACAAEAAAAAAP//AwACAAIAAAD//wAAAwABAAAAAAD//wEAAwABAAEAAAD//wIAAwABAAIAAAAAAAAAAwACAAAAAAAAAAEAAwACAAEAAAAAAAIAAwACAAIAAAA=")
 tile_set = SubResource("TileSet_jx8th")
 
-[node name="Fauna" type="Node" parent="ExteriorVizinhos"]
+[node name="Fauna" type="Node2D" parent="ExteriorVizinhos"]
 
 [node name="Floresta 3" type="TileMapLayer" parent="ExteriorVizinhos/Fauna"]
 position = Vector2(1251, 350)
@@ -21278,6 +21293,14 @@ position = Vector2(-32, 23)
 tile_map_data = PackedByteArray("AAD6////EAACAAIAAAD6/wAAEAACAAMAAAD6/wEAEAACAAQAAAD6/wIAEAACAAUAAAD7//7/EAADAAEAAAD7////EAADAAIAAAD7/wAAEAADAAMAAAD7/wEAEAADAAQAAAD7/wIAEAADAAUAAAD7/wMAEAADAAYAAAD8//7/EAAEAAEAAAD8////EAAEAAIAAAD8/wAAEAAEAAMAAAD8/wEAEAAEAAQAAAD8/wIAEAAEAAUAAAD8/wMAEAAEAAYAAAD9////EAAFAAIAAAD9/wAAEAAFAAMAAAD9/wEAEAAFAAQAAAD9/wIAEAAFAAUAAAD+////EAACAAIAAAD+/wAAEAACAAMAAAD+/wEAEAACAAQAAAD+/wIAEAACAAUAAAD///7/EAADAAEAAAD/////EAADAAIAAAD//wAAEAADAAMAAAD//wEAEAADAAQAAAD//wIAEAADAAUAAAD//wMAEAADAAYAAAAAAP7/EAAEAAEAAAAAAP//EAAEAAIAAAAAAAAAEAAEAAMAAAAAAAEAEAAEAAQAAAAAAAIAEAAEAAUAAAAAAAMAEAAEAAYAAAABAP//EAAFAAIAAAABAAAAEAAFAAMAAAABAAEAEAAFAAQAAAABAAIAEAAFAAUAAAACAP//EAACAAIAAAACAAAAEAACAAMAAAACAAEAEAACAAQAAAACAAIAEAACAAUAAAADAP7/EAADAAEAAAADAP//EAADAAIAAAADAAAAEAADAAMAAAADAAEAEAADAAQAAAADAAIAEAADAAUAAAADAAMAEAADAAYAAAAEAP7/EAAEAAEAAAAEAP//EAAEAAIAAAAEAAAAEAAEAAMAAAAEAAEAEAAEAAQAAAAEAAIAEAAEAAUAAAAEAAMAEAAEAAYAAAAFAP//EAAFAAIAAAAFAAAAEAAFAAMAAAAFAAEAEAAFAAQAAAAFAAIAEAAFAAUAAAAGAP//EAACAAIAAAAGAAAAEAACAAMAAAAGAAEAEAACAAQAAAAGAAIAEAACAAUAAAAHAP7/EAADAAEAAAAHAP//EAADAAIAAAAHAAAAEAADAAMAAAAHAAEAEAADAAQAAAAHAAIAEAADAAUAAAAHAAMAEAADAAYAAAAIAP7/EAAEAAEAAAAIAP//EAAEAAIAAAAIAAAAEAAEAAMAAAAIAAEAEAAEAAQAAAAIAAIAEAAEAAUAAAAIAAMAEAAEAAYAAAAJAP//EAAFAAIAAAAJAAAAEAAFAAMAAAAJAAEAEAAFAAQAAAAJAAIAEAAFAAUAAAA=")
 tile_set = SubResource("TileSet_jx8th")
 
+[node name="Area2D" type="Area2D" parent="ExteriorVizinhos"]
+position = Vector2(745.34, 482.463)
+script = ExtResource("27_7vbrj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExteriorVizinhos/Area2D"]
+position = Vector2(0.159668, 4.03699)
+shape = SubResource("RectangleShape2D_o01fa")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="TouchScreenJoystick" type="Control" parent="CanvasLayer"]
@@ -21311,12 +21334,20 @@ metadata/_edit_use_anchors_ = true
 [node name="LoadingScreen" parent="Effects" instance=ExtResource("28_2l8ye")]
 visible = false
 
-[connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/PauseButton" to="." method="_on_pause_button_pressed"]
+[node name="InteriorVizinhos" type="Node2D" parent="."]
+
+[node name="CasaIdosaEd" parent="InteriorVizinhos" instance=ExtResource("32_2l8ye")]
+position = Vector2(2487, -15)
+
+[connection signal="pressed" from="ExteriorVizinhos/Player/PauseButton" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Retomar" to="." method="_on_retomar_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/Config" to="." method="_on_config_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/VoltarMenu" to="." method="_on_voltar_menu_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/MenuPausa/Control/Background/VBoxContainer/SairPause" to="." method="_on_sair_pause_pressed"]
 [connection signal="pressed" from="ExteriorVizinhos/Player/Camera2D/Config/CanvasLayer/Control/VoltarFromConfig" to="." method="_on_voltar_from_config_pressed"]
+[connection signal="body_entered" from="ExteriorVizinhos/Area2D" to="ExteriorVizinhos/Area2D" method="_on_body_entered"]
+[connection signal="body_exited" from="ExteriorVizinhos/Area2D" to="ExteriorVizinhos/Area2D" method="_on_body_exited"]
 
 [editable path="ExteriorVizinhos/Player/Camera2D/MenuPausa"]
 [editable path="ExteriorVizinhos/Player/Camera2D/Config"]
+[editable path="InteriorVizinhos/CasaIdosaEd"]

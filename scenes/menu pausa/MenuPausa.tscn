@@ -1,7 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://6kksgt7lj1ch"]
+[gd_scene load_steps=4 format=3 uid="uid://6kksgt7lj1ch"]
 
 [ext_resource type="PackedScene" uid="uid://blbkia8fnrlk7" path="res://assets/UI/buttons/BotãoMenu.tscn" id="1_qg45m"]
 [ext_resource type="FontFile" uid="uid://bx2l44oenhpw6" path="res://assets/fonts/pixellari/Pixellari.ttf" id="2_4u060"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6qprt"]
+font = ExtResource("2_4u060")
+font_size = 17
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 10
+shadow_color = Color(0, 0, 0, 0.627451)
 
 [node name="MenuPausa" type="CanvasLayer"]
 follow_viewport_enabled = true
@@ -49,6 +57,7 @@ metadata/_edit_use_anchors_ = true
 [node name="Retomar" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
 layout_mode = 2
 size_flags_vertical = 6
+disabled = true
 text = "Retomar"
 
 [node name="Config" parent="Control/Background/VBoxContainer" instance=ExtResource("1_qg45m")]
@@ -65,3 +74,14 @@ text = "Voltar ao menu principal"
 layout_mode = 2
 size_flags_vertical = 6
 text = "Sair do jogo"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 738.0
+offset_top = 172.0
+offset_right = 1110.0
+offset_bottom = 247.0
+text = "Carta de socorro do Dev: esse botão satânico
+não funciona, para despausar apenas volte para
+o menu principal e inicie, Obrigado."
+label_settings = SubResource("LabelSettings_6qprt")
+horizontal_alignment = 1

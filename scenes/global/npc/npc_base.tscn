@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6f5kugywu5ip"]
+
+[ext_resource type="Script" uid="uid://qnyk8spmrmtm" path="res://scenes/global/npc/npc_base.gd" id="1_qpl7d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jusll"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_x2d1o"]
+radius = 60.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_hbpik"]
+font_size = 14
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 0.458824)
+
+[node name="NPCBase" type="Node2D"]
+script = ExtResource("1_qpl7d")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_jusll")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_x2d1o")
+
+[node name="NameLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -93.0
+offset_top = -108.0
+offset_right = 93.0
+offset_bottom = -85.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "Nome do NPC"
+label_settings = SubResource("LabelSettings_hbpik")
+horizontal_alignment = 1
+vertical_alignment = 1

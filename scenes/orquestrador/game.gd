@@ -6,8 +6,8 @@ signal game_state_changed(new_state)
 # Referências para as cenas principais
 @onready var menu_principal: Node = $MenuPrincipal
 @onready var prologue: Node = $Prologue
-@onready var gameplay: Node = $Gameplay
 @onready var menu_opcoes: Node = $MenuOpcoes
+# Nota: gameplay não é mais um nó filho - será carregado via change_scene_to_file
 @onready var menu_pausa = $Effects/MenuPausa
 @onready var config: CanvasLayer = $Config/CanvasLayer
 
@@ -79,7 +79,6 @@ func _setup_scenes_array() -> void:
 	scenes = [
 		menu_principal,
 		prologue,
-		gameplay,
 		menu_opcoes
 	]
 	scenes = scenes.filter(func(scene: Node) -> bool: return scene != null)
@@ -225,10 +224,12 @@ func switch_to_scene(next_scene_node: Node, next_game_state: GameState, transiti
 		config.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# Preparar transição de áudio se necessário
-	if current_state != next_game_state:
+	if Engine.has_singleton("AudioManager") and current_state != next_game_state:
+		var audio_manager = Engine.get_singleton("AudioManager")
+		
 		# Inicia fade out da música atual para uma transição suave
 		if current_state != GameState.PAUSED and current_state != GameState.CONFIG_FROM_PAUSE:
-			AudioManager.stop_music(1.0)
+			audio_manager.stop_music(1.0)
 	
 	# Usa loading screen para todas as transições exceto 'instant'
 	if transition_effect_type == "instant":
@@ -293,6 +294,9 @@ func _perform_instant_transition(next_scene: Node, next_state: GameState) -> voi
 	_activate_scene(next_scene, next_state)
 
 func navigate_to_main_menu(transition_effect: String = "loading") -> void:
+	# Limpar instância de gameplay se existir ao voltar para o menu
+	_cleanup_gameplay_instance()
+	
 	if menu_principal:
 		switch_to_scene(menu_principal, GameState.MENU, transition_effect)
 	else:
@@ -304,11 +308,57 @@ func navigate_to_prologue(transition_effect: String = "loading") -> void:
 	else:
 		printerr("Tentativa de ir para Prólogo, mas a cena não está definida.")
 
-func navigate_to_gameplay(transition_effect: String = "loading") -> void:
-	if gameplay:
-		switch_to_scene(gameplay, GameState.PLAYING, transition_effect)
+func navigate_to_gameplay(_transition_effect: String = "loading") -> void:
+	# A gameplay agora é carregada como uma subcena do Game
+	# para preservar os sistemas e hierarquia, mas sendo a cena principal ativa
+	print("Carregando gameplay como subcena do Game")
+	
+	if is_transitioning:
+		print("Transição já em andamento, ignorando solicitação")
+		return
+	
+	is_transitioning = true
+	
+	# Preparar transição de áudio
+	if Engine.has_singleton("AudioManager"):
+		var audio_manager = Engine.get_singleton("AudioManager")
+		audio_manager.stop_music(1.0)
+	
+	# Fazer transição visual se disponível
+	if TransitionScreen and TransitionScreen.has_method("fade_out"):
+		await TransitionScreen.fade_out()
+	
+	# Limpar instância anterior de gameplay se existir
+	_cleanup_gameplay_instance()
+	
+	# Desativar todas as cenas principais
+	_deactivate_all_main_scenes()
+	
+	# Carregar e instanciar a cena de gameplay
+	var gameplay_scene = load("res://scenes/prologue/Meio/Gameplay.tscn")
+	if gameplay_scene:
+		var gameplay_instance = gameplay_scene.instantiate()
+		gameplay_instance.name = "Gameplay"
+		
+		# Adicionar como filho do Game
+		add_child(gameplay_instance)
+		
+		# Atualizar referências
+		current_scene = gameplay_instance
+		current_state = GameState.PLAYING
+		
+		print("Gameplay carregada como subcena do Game")
+		
+		# Emitir sinal de mudança de estado
+		emit_signal("game_state_changed", current_state)
+		
+		# Fazer transição visual de entrada
+		if TransitionScreen and TransitionScreen.has_method("fade_in"):
+			await TransitionScreen.fade_in()
 	else:
-		printerr("Tentativa de iniciar Gameplay, mas a cena não está definida.")
+		printerr("Falha ao carregar a cena de Gameplay!")
+	
+	is_transitioning = false
 
 func navigate_to_options_from_main_menu(transition_effect: String = "loading") -> void:
 	if menu_opcoes:
@@ -392,13 +442,29 @@ func _on_pause_button_pressed() -> void:
 		_on_retomar_pressed()
 
 func _on_retomar_pressed() -> void:
-	if not menu_pausa or not get_tree().paused:
+	print("Game: Método _on_retomar_pressed chamado")
+	
+	# Proteção contra tentativa de retomar um jogo que não está pausado
+	if not get_tree():
+		print("ERRO: get_tree() retornou nulo em _on_retomar_pressed no Game. Abortando...")
 		return
-
+		
+	# Verifica se realmente estamos no estado pausado e temos o menu
+	if not menu_pausa:
+		print("AVISO: menu_pausa não encontrado em _on_retomar_pressed no Game")
+		# Continua mesmo sem o menu para garantir que o jogo seja despausado
+	else:
+		if not get_tree().paused:
+			print("AVISO: O jogo já não está pausado em _on_retomar_pressed no Game")
+	
+	# Força despausar o jogo
 	get_tree().paused = false
 	
-	menu_pausa.visible = false
-	menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+	# Se temos o menu de pausa, atualizamos sua visibilidade
+	if menu_pausa and is_instance_valid(menu_pausa):
+		menu_pausa.visible = false
+		menu_pausa.process_mode = Node.PROCESS_MODE_DISABLED
+		print("Game: Menu de pausa escondido com sucesso")
 	
 	var old_state = current_state
 	
@@ -408,14 +474,15 @@ func _on_retomar_pressed() -> void:
 	else:
 		current_state = GameState.PLAYING
 	
-	print("Jogo Retomado. Estado: ", GameState.keys()[current_state])
+	print("Game: Jogo Retomado. Estado: ", GameState.keys()[current_state])
 	
 	# Emite o sinal de mudança de estado
 	if old_state != current_state:
 		emit_signal("game_state_changed", current_state)
 		print("Game: Emitido sinal de mudança de estado para: ", GameState.keys()[current_state])
 	
-	if menu_pausa.has_method("_on_scene_deactivating"):
+	# Chama o método de desativação do menu de pausa com segurança
+	if menu_pausa and is_instance_valid(menu_pausa) and menu_pausa.has_method("_on_scene_deactivating"):
 		menu_pausa._on_scene_deactivating()
 
 func _on_config_pressed() -> void:
@@ -666,20 +733,8 @@ func close_options_from_pause() -> void:
 func continue_game() -> void:
 	print("Game: Continuando jogo da última sessão...")
 	
-	# Ativa a cena de gameplay
-	_deactivate_all_main_scenes()
-	_activate_scene(gameplay, GameState.PLAYING)
-	
-	# Toca a música da gameplay se não estiver tocando
-	if AudioManager and AudioManager.current_music_name != "gameplay":
-		AudioManager.play_music("gameplay", 1.5)
-	
-	# Certifica que o jogo não está pausado
-	get_tree().paused = false
-	
-	# Se houver uma tela de transição, usamos ela
-	if TransitionScreen:
-		await TransitionScreen.fade_in()
+	# Carregar a gameplay como subcena
+	navigate_to_gameplay("loading")
 
 # Método para ir ao menu principal a partir de qualquer cena, preservando o estado da gameplay
 func go_to_menu() -> void:
@@ -704,3 +759,19 @@ func go_to_menu() -> void:
 	# Se houver uma tela de transição, usamos ela
 	if TransitionScreen:
 		await TransitionScreen.fade_in()
+
+# Função para retomar o jogo (chamada pelo menu de pausa)
+func resume_game() -> void:
+	print("Game: resume_game() chamado - redirecionando para _on_retomar_pressed")
+	_on_retomar_pressed()
+
+# Método para limpar a instância de gameplay quando necessário
+func _cleanup_gameplay_instance() -> void:
+	var gameplay_instance = get_node_or_null("Gameplay")
+	if gameplay_instance:
+		print("Removendo instância anterior de gameplay")
+		gameplay_instance.queue_free()
+		
+		# Se era a cena atual, resetar referência
+		if current_scene == gameplay_instance:
+			current_scene = null

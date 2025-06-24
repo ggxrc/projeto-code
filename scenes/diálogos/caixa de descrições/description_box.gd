@@ -67,3 +67,16 @@ func skip_typewriter_effect() -> void:
 			description_label.visible_ratio = 1.0
 		# Se você adicionou o sinal:
 		# description_shown_completely.emit()
+
+# Método para completar imediatamente o efeito de digitação
+func complete_typewriter() -> void:
+	if _current_tween and _current_tween.is_valid() and _current_tween.is_running():
+		_current_tween.kill()
+		_current_tween = null
+		
+		# Mostra o texto completo imediatamente
+		if is_instance_valid(description_label):
+			description_label.visible_ratio = 1.0
+			
+		# Emite o sinal que a linha foi concluída
+		dialogue_line_finished.emit()
