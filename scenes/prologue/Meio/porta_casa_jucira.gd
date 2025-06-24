@@ -10,7 +10,7 @@ var is_transitioning: bool = false
 
 func _ready() -> void:
 	# Configurar propriedades de InteractiveObject
-	interaction_prompt = "Entrar na casa"
+	interaction_prompt = "Finalizar jogo"
 	interaction_area_size = Vector2(20, 20)
 	interaction_cooldown = 1.0
 	
@@ -21,8 +21,8 @@ func _ready() -> void:
 	if area_node:
 		area_node.position = Vector2(22.143, 23.571)
 	
-	# Carregar a cena da casa da Jucira
-	target_scene_packed = load("res://scenes/prologue/Meio/Casas/CasaIdosaED.tscn")
+	# Carregar a cena de Créditos ao invés da casa da Jucira
+	target_scene_packed = load("res://scenes/prologue/Creditos.tscn")
 	if not target_scene_packed:
 		return
 	

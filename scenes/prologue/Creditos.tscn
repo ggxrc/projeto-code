@@ -1,4 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3hw36v74i2f5"]
+[gd_scene load_steps=7 format=3 uid="uid://c3hw36v74i2f5"]
+
+[ext_resource type="Texture2D" uid="uid://dtgcivgqidgtc" path="res://fotosjogo/Mapa exterior.png" id="1_iuh4f"]
+[ext_resource type="Texture2D" uid="uid://c76sl6mafibj0" path="res://fotosjogo/Prota dormindo sofar.png" id="2_21rur"]
+[ext_resource type="Texture2D" uid="uid://yuhx1qybi3gr" path="res://fotosjogo/Interação velha.png" id="3_wiwy3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_titulo"]
 font_size = 32
@@ -6,8 +10,6 @@ font_size = 32
 [sub_resource type="LabelSettings" id="LabelSettings_texto"]
 font_size = 20
 font_color = Color(0.9, 0.9, 0.9, 1)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_lx5wy"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rodape"]
 font_color = Color(0.7, 0.7, 0.7, 1)
@@ -70,10 +72,10 @@ text = "Explore a cidade"
 label_settings = SubResource("LabelSettings_texto")
 horizontal_alignment = 1
 
-[node name="Gif1" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna1"]
-position = Vector2(133, 100)
-scale = Vector2(2, 2)
-sprite_frames = SubResource("SpriteFrames_lx5wy")
+[node name="imagem" type="Sprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna1"]
+position = Vector2(127, 100)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("1_iuh4f")
 
 [node name="Coluna2" type="VBoxContainer" parent="VBoxContainer/ConteudoPrincipal"]
 layout_mode = 2
@@ -85,10 +87,10 @@ text = "Conclua trabalho"
 label_settings = SubResource("LabelSettings_texto")
 horizontal_alignment = 1
 
-[node name="Gif2" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna2"]
-position = Vector2(133, 100)
-scale = Vector2(2, 2)
-autoplay = "false"
+[node name="imagem" type="Sprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna2"]
+position = Vector2(126, 97)
+scale = Vector2(0.512411, 0.381148)
+texture = ExtResource("2_21rur")
 
 [node name="Coluna3" type="VBoxContainer" parent="VBoxContainer/ConteudoPrincipal"]
 layout_mode = 2
@@ -100,10 +102,10 @@ text = "Aprenda de forma engraçada"
 label_settings = SubResource("LabelSettings_texto")
 horizontal_alignment = 1
 
-[node name="Gif3" type="AnimatedSprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna3"]
-position = Vector2(133, 100)
-scale = Vector2(2, 2)
-autoplay = "false"
+[node name="imagem" type="Sprite2D" parent="VBoxContainer/ConteudoPrincipal/Coluna3"]
+position = Vector2(144, 102)
+scale = Vector2(0.250754, 0.156471)
+texture = ExtResource("3_wiwy3")
 
 [node name="Spacer2" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
